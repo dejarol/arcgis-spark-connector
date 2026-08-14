@@ -13,16 +13,6 @@ import scala.collection.immutable.{Seq => ISeq}
 trait SttpMultiPartMixins {
 
   /**
-   * Builds a single multipart form part from a name/value pair.
-   *
-   * @param name  form field name
-   * @param value form field value
-   * @return a multipart body part ready to attach to a request
-   * @since 0.1.0
-   */
-  protected final def createPart(name: String, value: String): Part[BasicBodyPart] = multipart(name, value)
-
-  /**
    * Builds multipart form parts from a map of field names to string values.
    *
    * @param parts field names mapped to their string values
@@ -33,7 +23,7 @@ trait SttpMultiPartMixins {
 
     ISeq(
       parts.map {
-      case (k, v) => createPart(k, v)
+      case (k, v) => multipart(k, v)
     }.toArray: _*
     )
   }

@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core
 
-import sttp.client4.{PartialRequest, Request, Response, basicRequest}
+import sttp.client4.{PartialRequest, Request, basicRequest}
 import sttp.model.Uri
 
 /**
@@ -10,9 +10,8 @@ import sttp.model.Uri
  */
 package object http {
 
-  type PRType = PartialRequest[Either[String, String]]
-  type RType = Request[Either[String, String]]
-  type RespType = Response[Either[String, String]]
+  type PReqType = PartialRequest[Either[String, String]]
+  type EitherReq[L, R] = Request[Either[L, R]]
 
   /**
    * Returns a fresh partial STTP request with the connector's default body type.
@@ -20,7 +19,7 @@ package object http {
    * @return an empty partial request ready to be customized
    * @since 0.1.0
    */
-  def initialRequest(): PRType = basicRequest
+  def initialRequest(): PReqType = basicRequest
 
   /**
    * Parses a URI from its string representation.

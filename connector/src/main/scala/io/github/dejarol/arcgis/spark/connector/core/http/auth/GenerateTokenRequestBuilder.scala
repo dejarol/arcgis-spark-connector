@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.auth
 
-import io.github.dejarol.arcgis.spark.connector.core.http.{SttpMultiPartMixins, SttpRequestBuilder, PRType, RType}
+import io.github.dejarol.arcgis.spark.connector.core.http._
 import sttp.model.{Method, Uri}
 
 import java.time.Duration
@@ -22,10 +22,12 @@ case class GenerateTokenRequestBuilder(
                                         private[auth] val referer: String,
                                         private[auth] val duration: Duration = Duration.ofHours(1)
                                       )
-  extends SttpRequestBuilder
+  extends SttpEitherThrowableOrValueBuilder[GenerateTokenResponse]
     with SttpMultiPartMixins {
 
-  override def build(initial: PRType): RType = {
+  import ResponseAsBuilders._
+
+  override def build(initial: PReqType): EitherReq[Throwable, GenerateTokenResponse] = {
 
     initial.method(
       Method.POST, authUri
@@ -40,6 +42,8 @@ case class GenerateTokenRequestBuilder(
           "expiration" -> String.valueOf(duration.toMinutes)
         )
       )
+    ).response(
+      eitherThrowableOr[GenerateTokenResponse]().build()
     )
   }
 }

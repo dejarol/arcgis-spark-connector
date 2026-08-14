@@ -4,12 +4,14 @@ ThisBuild / scalaVersion := "2.12.15"
 // Dependencies versions
 lazy val sparkVersion = "3.5.0"
 lazy val sttpVersion = "4.0.0"
+lazy val json4sVersion = "3.7.0-M11"
 lazy val scalaTestVersion = "3.2.20"
 
 // Compile dependencies
 lazy val sparkCore = "org.apache.spark" %% "spark-core" % sparkVersion
 lazy val sparkSql = "org.apache.spark" %% "spark-sql" % sparkVersion
 lazy val sttpCore = "com.softwaremill.sttp.client4" %% "core" % sttpVersion
+lazy val json4sNative = "org.json4s" %% "json4s-native" % json4sVersion
 
 // Test dependencies
 lazy val scalactic = "org.scalactic" %% "scalactic" % scalaTestVersion
@@ -21,6 +23,7 @@ lazy val connector = (project in file("connector"))
       sparkCore % Provided,
       sparkSql % Provided,
       sttpCore,
+      json4sNative,
       scalactic,
       scalaTest
     )
