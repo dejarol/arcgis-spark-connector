@@ -6,22 +6,28 @@ import sttp.model.Part
 import scala.collection.immutable.{Seq => ISeq}
 
 /**
- * TODO
+ * Helpers for building STTP multipart form body parts from string fields.
+ *
+ * @since 0.1.0
  */
 trait SttpMultiPartMixins {
 
   /**
-   * TODO
-   * @param name
-   * @param value
-   * @return
+   * Builds a single multipart form part from a name/value pair.
+   *
+   * @param name  form field name
+   * @param value form field value
+   * @return a multipart body part ready to attach to a request
+   * @since 0.1.0
    */
   protected final def createPart(name: String, value: String): Part[BasicBodyPart] = multipart(name, value)
 
   /**
-   * TODO
-   * @param parts
-   * @return
+   * Builds multipart form parts from a map of field names to string values.
+   *
+   * @param parts field names mapped to their string values
+   * @return an immutable sequence of multipart body parts
+   * @since 0.1.0
    */
   protected final def createParts(parts: Map[String, String]): ISeq[Part[BasicBodyPart]] = {
 

@@ -8,17 +8,21 @@ import sttp.model.Part
 import scala.reflect.ClassTag
 
 /**
- * TODO
+ * Shared assertions for specs that exercise STTP request builders.
+ *
+ * @since 0.1.0
  */
 trait SttpRequestBuilderSpec
   extends BasicSpec
     with Inspectors {
 
   /**
-   * TODO
-   * @param body
-   * @param assertion
-   * @tparam B
+   * Asserts that a request body has the expected concrete type, then runs a typed check.
+   *
+   * @param body      request body under test
+   * @param assertion additional assertions on the cast body
+   * @tparam B expected concrete body type
+   * @since 0.1.0
    */
   protected final def assertBodyIsInstanceOf[B <: BasicBody: ClassTag](
                                                                         body: BasicBody
@@ -31,9 +35,11 @@ trait SttpRequestBuilderSpec
   }
 
   /**
-   * TODO
-   * @param actual
-   * @param expected
+   * Asserts that multipart parts match the expected name/value pairs.
+   *
+   * @param actual   multipart parts present on the request
+   * @param expected expected field names mapped to string values
+   * @since 0.1.0
    */
   protected final def assertMultiPartsMatch(
                                              actual: Seq[Part[BasicBodyPart]],

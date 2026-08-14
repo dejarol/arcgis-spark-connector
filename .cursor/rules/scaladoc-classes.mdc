@@ -1,0 +1,106 @@
+---
+description: Scaladoc style for Scala classes (description, @param attributes, construction alternatives, @since)
+globs: "**/*.scala"
+alwaysApply: false
+---
+
+# Scaladoc for classes
+
+When writing or completing Scaladoc on classes (including `case class`), follow this format.
+
+## Required structure
+
+1. **Description** — at most **10 lines** summarizing the overall meaning and responsibility of the class (not implementation detail). No empty `TODO` stubs. This limit applies only to the descriptive prose, **not** to the full Scaladoc block (tags may make the comment longer).
+2. **`@param name description`** — one tag per class attribute exposed by the primary constructor (e.g. `val` / `var` parameters and case-class fields). Name must match the attribute; include a short description after the name. Omit `@param` only when the class has no such attributes.
+3. **Construction guidance** — required when the **primary constructor is `private`** (or otherwise not meant for callers) **and** alternative construction methods exist (companion `apply` / factory methods, or a dedicated factory class). Tell the reader to use those alternatives and link to them with Scaladoc wiki links (`[[...]]`).
+4. **`@since X.Y.Z`** — required on every **newly created** class. Set `X.Y.Z` to the current `ThisBuild / version` value in the project-root `build.sbt` (e.g. `"0.1.0"` → `@since 0.1.0`). Do not invent a version; read it from `build.sbt`.
+
+Block / tag order: description → construction guidance (if applicable) → `@param` → `@since`.
+
+## Construction alternatives
+
+When documenting private construction, name the intended entry points and link them:
+
+- Companion methods: `[[MyClass.apply]]`, `[[MyClass.fromUri]]`, etc.
+- Factory type / methods: `[[MyClassFactory]]`, `[[MyClassFactory.create]]`, etc.
+
+Prefer one short sentence plus links over listing every overload.
+
+## Do / don't
+
+```scala
+// ❌ BAD — empty TODO, no @param for attributes, no @since, no companion pointer
+/**
+ * TODO
+ */
+class Token private (val value: String)
+
+object Token {
+  def apply(raw: String): Token = new Token(raw.trim)
+}
+
+// ✅ GOOD — short description (≤10 lines), @param per attribute, construction link, @since
+/**
+ * Immutable authentication token used by HTTP requests.
+ *
+ * Do not instantiate directly; use [[Token.apply]] instead.
+ *
+ * @param value raw token string
+ * @since 0.1.0
+ */
+class Token private (val value: String)
+
+object Token {
+  def apply(raw: String): Token = new Token(raw.trim)
+}
+```
+
+```scala
+// ✅ GOOD — dedicated factory class
+/**
+ * Parsed ArcGIS service endpoint.
+ *
+ * Construction is private; create instances via [[ServiceEndpointFactory.create]].
+ *
+ * @param uri absolute service URI
+ * @since 0.1.0
+ */
+class ServiceEndpoint private (val uri: String)
+```
+
+```scala
+// ✅ GOOD — public primary constructor; @param for each field; no construction guidance
+/**
+ * Configuration for STTP multipart form encoding.
+ *
+ * @param boundary multipart boundary string
+ * @since 0.1.0
+ */
+case class MultipartSettings(boundary: String)
+```
+
+```scala
+// ✅ GOOD — multiple attributes each get @param; description stays short
+/**
+ * Credentials used to request an ArcGIS generate-token response.
+ *
+ * @param username account user name
+ * @param password account password
+ * @param referer  optional HTTP referer sent with the request
+ * @since 0.1.0
+ */
+case class GenerateTokenCredentials(
+  username: String,
+  password: String,
+  referer: Option[String]
+)
+```
+
+## Notes
+
+- The **description** must be ≤ 10 lines; `@param`, construction guidance, and `@since` do not count toward that limit.
+- Always fill in text after each `@param` — bare tags are invalid.
+- Do not document every method on the class Scaladoc; members have their own docs (see the methods Scaladoc rule).
+- `@since` applies to **new** classes only; do not rewrite `@since` on existing classes unless the user asks.
+- When completing incomplete Scaladoc (e.g. `TODO`), apply this full template.
+- This rule targets **classes**; method Scaladoc is covered by `scaladoc-methods`.

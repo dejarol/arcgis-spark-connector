@@ -1,0 +1,89 @@
+---
+description: Scaladoc style for Scala methods (@param, @return, @throws, @since)
+globs: "**/*.scala"
+alwaysApply: false
+---
+
+# Scaladoc for methods
+
+When writing or completing Scaladoc on methods, follow this format.
+
+## Required structure
+
+1. **Summary** — 1–5 lines describing what the method does (not how). No empty `TODO` stubs.
+2. **`@param name description`** — one tag per parameter; name must match the signature; include a short description after the name.
+3. **`@tparam T description`** — one tag per type parameter when present.
+4. **`@return description`** — required when the return type is not `Unit`; omit for `Unit` / side-effect-only methods.
+5. **`@throws ExceptionType description`** — only when this method’s body **explicitly** throws (e.g. `throw new …` or a helper that always rethrows a documented exception from this method). Do **not** document exceptions that may bubble up from third-party libraries. Omit the tag entirely when there is no explicit `throw` in the method.
+6. **`@since X.Y.Z`** — required on every **newly created** method. Set `X.Y.Z` to the current `ThisBuild / version` value in the project-root `build.sbt` (e.g. `"0.1.0"` → `@since 0.1.0`). Do not invent a version; read it from `build.sbt`.
+
+Tag order: summary → `@param` → `@tparam` → `@return` → `@throws` → `@since`.
+
+## Do / don't
+
+```scala
+// ❌ BAD — empty tags, missing descriptions, stale TODO, no @since;
+//          @throws for a library call that may fail (not an explicit throw here)
+/**
+ * TODO
+ * @param name
+ * @param value
+ * @throws IllegalArgumentException
+ * @since
+ */
+protected final def createPart(name: String, value: String): Part[BasicBodyPart] =
+  multipart(name, value)
+
+// ✅ GOOD — no @throws (no explicit throw in the method body)
+/**
+ * Builds a single multipart form part from a name/value pair.
+ *
+ * @param name  form field name
+ * @param value form field value
+ * @return a multipart body part ready to attach to a request
+ * @since 0.1.0
+ */
+protected final def createPart(name: String, value: String): Part[BasicBodyPart] =
+  multipart(name, value)
+```
+
+```scala
+// ✅ GOOD — @throws only because the method itself throws
+/**
+ * Parses a non-empty token from the input.
+ *
+ * @param raw raw token string
+ * @return the trimmed token
+ * @throws IllegalArgumentException if `raw` is blank
+ * @since 0.1.0
+ */
+def requireToken(raw: String): String = {
+  if (raw.trim.isEmpty) throw new IllegalArgumentException("token must be non-empty")
+  raw.trim
+}
+```
+
+```scala
+// ❌ BAD — @return on Unit; missing @param descriptions
+/**
+ * Clears the buffer.
+ * @return
+ */
+def clear(): Unit = ...
+
+// ✅ GOOD — no @return for Unit
+/**
+ * Clears the buffer.
+ *
+ * @since 0.1.0
+ */
+def clear(): Unit = ...
+```
+
+## Notes
+
+- Keep the summary factual and under 5 lines; prefer one short paragraph over long essays.
+- Always fill in text after `@param`, `@return`, and `@throws` — bare tags are invalid.
+- Never add `@throws` for exceptions raised by third-party APIs invoked inside the method.
+- `@since` applies to **new** methods only; do not rewrite `@since` on existing methods unless the user asks.
+- When completing incomplete Scaladoc (e.g. `TODO` / empty tags), apply this full template.

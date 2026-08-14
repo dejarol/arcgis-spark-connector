@@ -6,12 +6,14 @@ import sttp.model.{Method, Uri}
 import java.time.Duration
 
 /**
- * TODO
- * @param authUri
- * @param username
- * @param password
- * @param referer
- * @param duration
+ * Builds a POST multipart request for ArcGIS generateToken authentication.
+ *
+ * @param authUri  generateToken endpoint URI
+ * @param username account user name
+ * @param password account password
+ * @param referer  HTTP referer sent as the token client identity
+ * @param duration requested token lifetime
+ * @since 0.1.0
  */
 case class GenerateTokenRequestBuilder(
                                         private[auth] val authUri: Uri,
