@@ -10,6 +10,8 @@ import org.jetbrains.annotations.NotNull;
 public class UnexpectedAPIResponse
         extends RuntimeException {
 
+    private final String apiMessage;
+
     /**
      * Creates an exception that wraps the API response text.
      *
@@ -19,6 +21,15 @@ public class UnexpectedAPIResponse
     public UnexpectedAPIResponse(
             @NotNull String apiMessage
     ) {
-        super("Unexpected ARCGIS API response: " + apiMessage);
+        super("Unexpected response from ARCGIS API: " + apiMessage);
+        this.apiMessage = apiMessage;
+    }
+
+    /**
+     * TODO
+     * @return
+     */
+    public String getApiMessage() {
+        return apiMessage;
     }
 }

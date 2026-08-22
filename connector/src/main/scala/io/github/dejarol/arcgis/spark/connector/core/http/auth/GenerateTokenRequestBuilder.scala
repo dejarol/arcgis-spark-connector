@@ -8,7 +8,7 @@ import java.time.Duration
 /**
  * Builds a POST multipart request for ArcGIS generateToken authentication.
  *
- * @param authUri  generateToken endpoint URI
+ * @param root  ArcGIS Online/enterprise root URL
  * @param username account user name
  * @param password account password
  * @param referer  HTTP referer sent as the token client identity
@@ -16,7 +16,7 @@ import java.time.Duration
  * @since 0.1.0
  */
 case class GenerateTokenRequestBuilder(
-                                        private[auth] val authUri: Uri,
+                                        private[auth] val root: Uri,
                                         private[auth] val username: String,
                                         private[auth] val password: String,
                                         private[auth] val referer: String,
@@ -30,7 +30,7 @@ case class GenerateTokenRequestBuilder(
   override def build(initial: PReqType): EitherReq[Throwable, GenerateTokenResponse] = {
 
     initial.method(
-      Method.POST, authUri
+      Method.POST, root.addPath("generateToken")
     ).multipartBody(
       createParts(
         Map(

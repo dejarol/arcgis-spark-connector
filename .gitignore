@@ -36,3 +36,6 @@ build/
 
 ### Scala ###
 .bsp/
+
+### secrets ###
+*.secrets

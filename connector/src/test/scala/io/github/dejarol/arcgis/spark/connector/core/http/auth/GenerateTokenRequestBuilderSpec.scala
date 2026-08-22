@@ -23,7 +23,7 @@ class GenerateTokenRequestBuilderSpec
         val actual = builder.build(initialRequest())
 
         actual.method shouldBe Method.POST
-        actual.uri shouldBe builder.authUri
+        actual.uri shouldBe builder.root.addPath("generateToken")
         assertBodyIsInstanceOf[BasicMultipartBody](actual.body) {
           b => assertMultiPartsMatch(
             b.parts, Map(

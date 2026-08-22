@@ -4,6 +4,12 @@ import io.github.dejarol.arcgis.spark.connector.core.http._
 import sttp.client4.multipart
 import sttp.model.{Method, Uri}
 
+/**
+ * TODO
+ * @param queryUrl
+ * @param token
+ * @param queryParameters
+ */
 case class QueryUsingPostRequestBuilder(
                                          private val queryUrl: Uri,
                                          private val token: String,
