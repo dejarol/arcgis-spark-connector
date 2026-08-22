@@ -8,7 +8,7 @@ import scala.util.Try
 /**
  * TODO
  */
-object IntegrationPropertiesSuppliers {
+object IntegrationSecretsSuppliers {
 
   final val CI_CD_ENV_VAR = "IS_CI_CD_ENV"
 
@@ -16,7 +16,7 @@ object IntegrationPropertiesSuppliers {
    * TODO
    */
   private object EnvSupplier
-    extends IntegrationPropertiesSupplier {
+    extends IntegrationSecretsSupplier {
 
     override def root(): String = getPropertyOfThrow("CI_ARCGIS_TESTING_ROOT")
     override def username(): String = getPropertyOfThrow("CI_ARCGIS_USERNAME")
@@ -43,7 +43,7 @@ object IntegrationPropertiesSuppliers {
    * @param properties
    */
   private case class FileSupplier(private val properties: Properties)
-    extends IntegrationPropertiesSupplier {
+    extends IntegrationSecretsSupplier {
 
     override def root(): String = getPropertyOrThrow("ci.arcgis.root")
     override def username(): String = getPropertyOrThrow("ci.arcgis.username")
@@ -66,7 +66,7 @@ object IntegrationPropertiesSuppliers {
    * TODO
    * @return
    */
-  final def create(): IntegrationPropertiesSupplier = {
+  final def create(): IntegrationSecretsSupplier = {
 
     // Detect if we're on CI/CD by reading an env variable
     val isCICDEnv = sys.env.get(CI_CD_ENV_VAR).exists(JBoolean.parseBoolean)
@@ -83,7 +83,7 @@ object IntegrationPropertiesSuppliers {
    * @return
    */
   //noinspection SameParameterValue
-  private def createSecretSupplier(fileName: String): IntegrationPropertiesSupplier = {
+  private def createSecretSupplier(fileName: String): IntegrationSecretsSupplier = {
 
     Try {
       val properties = new Properties()

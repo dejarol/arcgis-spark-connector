@@ -3,7 +3,7 @@ package io.github.dejarol.arcgis.spark.connector;
 /**
  * TODO
  */
-public interface IntegrationPropertiesSupplier {
+public interface IntegrationSecretsSupplier {
 
     /**
      * TODO

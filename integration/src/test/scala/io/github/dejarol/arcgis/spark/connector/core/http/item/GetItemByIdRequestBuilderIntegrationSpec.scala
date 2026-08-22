@@ -9,15 +9,18 @@ class GetItemByIdRequestBuilderIntegrationSpec
     describe(SHOULD) {
       it("get the details of an item") {
 
+        lazy val polygonLayerId = integrationProperties.getProperty("ci.arcgis.test.polygonLayer.id")
+        lazy val polygonLayerUrl = integrationProperties.getProperty("ci.arcgis.test.polygonLayer.url")
+
         // the item should be 'ACS Population (Latest)'
         val body = sendRequestAndGetBody[GetItemByIdResponse](
           GetItemByIdRequestBuilder(
-            rootUri, "60c98f20a162416ea1725b94d7297f83", token
+            rootUri, polygonLayerId, token
           )
         )
 
-        body.id shouldNot be (null)
-        body.url shouldNot be (null)
+        body.id shouldBe polygonLayerId
+        body.url.toLowerCase shouldBe polygonLayerUrl.toLowerCase
       }
     }
   }

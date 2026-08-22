@@ -71,4 +71,15 @@ object ResponseAsSuppliers {
 
     EitherThrowableOr[R](DefaultFormats)
   }
+
+  /**
+   * TODO
+   * @param formats
+   * @tparam R
+   * @return
+   */
+  def eitherThrowableOr[R: Manifest](formats: Formats): ResponseAsSupplier[Either[Throwable, R]] = {
+
+    EitherThrowableOr[R](formats)
+  }
 }
