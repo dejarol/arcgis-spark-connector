@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.auth
 
 import io.github.dejarol.arcgis.spark.connector.core.http._
-import sttp.client4.BasicMultipartBody
+import sttp.client4.{BasicMultipartBody, DefaultSyncBackend}
 import sttp.model.Method
 
 import java.time.Duration

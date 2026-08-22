@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 0.1.0
  */
-public class ResponseFromAPIException
+public class UnexpectedAPIResponse
         extends RuntimeException {
 
     /**
@@ -16,9 +16,9 @@ public class ResponseFromAPIException
      * @param apiMessage raw API response (or message) that could not be interpreted as success
      * @since 0.1.0
      */
-    public ResponseFromAPIException(
+    public UnexpectedAPIResponse(
             @NotNull String apiMessage
     ) {
-        super("ARCGIS API exception: " + apiMessage);
+        super("Unexpected ARCGIS API response: " + apiMessage);
     }
 }

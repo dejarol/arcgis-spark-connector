@@ -25,7 +25,7 @@ case class GenerateTokenRequestBuilder(
   extends SttpEitherThrowableOrValueBuilder[GenerateTokenResponse]
     with SttpMultiPartMixins {
 
-  import ResponseAsBuilders._
+  import ResponseAsSuppliers._
 
   override def build(initial: PReqType): EitherReq[Throwable, GenerateTokenResponse] = {
 
@@ -43,7 +43,7 @@ case class GenerateTokenRequestBuilder(
         )
       )
     ).response(
-      eitherThrowableOr[GenerateTokenResponse]().build()
+      eitherThrowableOr[GenerateTokenResponse]().get()
     )
   }
 }
