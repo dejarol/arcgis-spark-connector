@@ -44,8 +44,10 @@ public class MismatchingAPIResponseException
     ) {
 
         return new MismatchingAPIResponseException(
-            "Received an API response that could not be mapped to " + manifest.toString() + ". " +
-            "Response content was\n" + apiResponse,
+                String.format(
+                        "Received an API response that could not be mapped to %s. Response content was\n%s",
+                        manifest, apiResponse
+                ),
             cause
         );
     }
