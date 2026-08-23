@@ -1,13 +1,14 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.item
 
 import io.github.dejarol.arcgis.spark.connector.core.http._
-import sttp.model.{Method, Uri}
+import sttp.model.Uri
 
 /**
- * TODO
- * @param root
- * @param itemId
- * @param token
+ * Builds a request that retrieves an ArcGIS portal item by identifier.
+ *
+ * @param root   URI of the ArcGIS portal root
+ * @param itemId identifier of the item to retrieve
+ * @param token  ArcGIS authentication token
  */
 case class GetItemByIdRequestBuilder(
                                       private val root: Uri,
@@ -18,8 +19,8 @@ case class GetItemByIdRequestBuilder(
 
   override def build(initial: PReqType): EitherReq[Throwable, GetItemByIdResponse] = {
 
-    initial.method(
-      Method.GET, root.addPath(
+    initial.get(
+      root.addPath(
         "content", "items", itemId
       ).addParams(
         Map(

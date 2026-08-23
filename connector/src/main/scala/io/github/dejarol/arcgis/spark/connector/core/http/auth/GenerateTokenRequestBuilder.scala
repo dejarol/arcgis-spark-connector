@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.auth
 
 import io.github.dejarol.arcgis.spark.connector.core.http._
-import sttp.model.{Method, Uri}
+import sttp.model.Uri
 
 import java.time.Duration
 
@@ -29,8 +29,8 @@ case class GenerateTokenRequestBuilder(
 
   override def build(initial: PReqType): EitherReq[Throwable, GenerateTokenResponse] = {
 
-    initial.method(
-      Method.POST, root.addPath("generateToken")
+    initial.post(
+      root.addPath("generateToken")
     ).multipartBody(
       createParts(
         Map(

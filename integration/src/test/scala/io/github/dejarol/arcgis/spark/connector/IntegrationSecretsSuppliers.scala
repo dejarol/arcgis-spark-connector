@@ -6,14 +6,14 @@ import scala.io.Source
 import scala.util.Try
 
 /**
- * TODO
+ * Creates integration-test credential suppliers for local and CI/CD environments.
  */
 object IntegrationSecretsSuppliers {
 
   final val CI_CD_ENV_VAR = "IS_CI_CD_ENV"
 
   /**
-   * TODO
+   * Supplies integration-test credentials from environment variables.
    */
   private object EnvSupplier
     extends IntegrationSecretsSupplier {
@@ -23,9 +23,11 @@ object IntegrationSecretsSuppliers {
     override def password(): String = getPropertyOfThrow("CI_ARCGIS_PASSWORD")
 
     /**
-     * TODO
-     * @param key
-     * @return
+     * Reads a required environment variable.
+     *
+     * @param key environment-variable name
+     * @return the configured value
+     * @throws java.lang.IllegalStateException if the environment variable is not defined
      */
     private def getPropertyOfThrow(key: String): String = {
 
@@ -39,8 +41,11 @@ object IntegrationSecretsSuppliers {
   }
 
   /**
-   * TODO
-   * @param properties
+   * Supplies integration-test credentials from properties loaded from a file.
+   *
+ * Created internally by [[IntegrationSecretsSuppliers.create]].
+ *
+   * @param properties properties containing the required credentials
    */
   private case class FileSupplier(private val properties: Properties)
     extends IntegrationSecretsSupplier {
@@ -63,8 +68,9 @@ object IntegrationSecretsSuppliers {
   }
 
   /**
-   * TODO
-   * @return
+   * Selects a credential supplier for the current execution environment.
+   *
+   * @return an environment-based supplier on CI/CD, otherwise a file-based supplier
    */
   final def create(): IntegrationSecretsSupplier = {
 
@@ -78,9 +84,11 @@ object IntegrationSecretsSuppliers {
   }
 
   /**
-   * TODO
-   * @param fileName
-   * @return
+   * Creates a credential supplier from a local properties file.
+   *
+   * @param fileName path to the local secrets file
+   * @return a supplier backed by the loaded properties
+   * @throws java.lang.IllegalStateException if the secrets file cannot be loaded
    */
   //noinspection SameParameterValue
   private def createSecretSupplier(fileName: String): IntegrationSecretsSupplier = {

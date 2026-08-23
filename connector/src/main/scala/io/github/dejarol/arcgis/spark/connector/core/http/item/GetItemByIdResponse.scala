@@ -1,11 +1,12 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.item
 
 /**
- * TODO
- * @param id
- * @param url
- * @param name
- * @param title
+ * Describes an ArcGIS portal item returned by an item lookup request.
+ *
+ * @param id    item identifier
+ * @param url   URL of the item resource
+ * @param name  optional internal item name
+ * @param title optional display title
  */
 case class GetItemByIdResponse(
                                 id: String,

@@ -1,5 +1,18 @@
 ThisBuild / version := "0.1.0"
 ThisBuild / scalaVersion := "2.12.15"
+ThisBuild / scalacOptions ++= Seq(
+  "-deprecation",
+  "-release", "11",
+  "-Ywarn-unused:implicits",
+  "-Ywarn-unused:imports",
+  "-Ywarn-unused:locals",
+  "-Ywarn-unused:params",
+  "-Ywarn-unused:privates"
+)
+ThisBuild / javacOptions ++= Seq(
+  "-source", "11",
+  "-target", "11"
+)
 
 // Dependencies versions
 lazy val sparkVersion = "3.5.0"
@@ -38,7 +51,7 @@ lazy val integration = (project in file("integration")).settings(
   connector % "test->test"
 )
 
-lazy val root = rootProject
+lazy val root = (project in file("."))
   .aggregate(connector, integration)
   .settings(
     name := "arcgis-spark-connector"

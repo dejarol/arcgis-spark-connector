@@ -5,10 +5,11 @@ import sttp.client4.multipart
 import sttp.model.{Method, Uri}
 
 /**
- * TODO
- * @param queryUrl
- * @param token
- * @param queryParameters
+ * Builds a multipart POST request that queries an ArcGIS feature layer.
+ *
+ * @param queryUrl       URI of the layer query endpoint
+ * @param token          ArcGIS authentication token
+ * @param queryParameters parameters to include in the query
  */
 case class QueryUsingPostRequestBuilder(
                                          private val queryUrl: Uri,

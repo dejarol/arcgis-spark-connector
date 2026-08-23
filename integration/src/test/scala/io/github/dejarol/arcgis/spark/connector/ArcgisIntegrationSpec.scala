@@ -11,7 +11,9 @@ import java.util.Properties
 import scala.io.Source
 
 /**
- * TODO
+ * Base suite for integration tests that communicate with an ArcGIS deployment.
+ *
+ * Provides shared credentials, authentication and integration-test configuration.
  */
 trait ArcgisIntegrationSpec
   extends BasicSpec {
@@ -33,11 +35,12 @@ trait ArcgisIntegrationSpec
 object ArcgisIntegrationSpec {
 
   /**
-   * TODO
-   * @param rootUri
-   * @param username
-   * @param password
-   * @return
+   * Requests an authentication token for integration tests.
+   *
+   * @param rootUri  URI of the ArcGIS deployment root
+   * @param username ArcGIS account user name
+   * @param password ArcGIS account password
+   * @return either the request failure or the generated token
    */
   private def eitherCauseOrToken(
                                   rootUri: Uri,
@@ -59,8 +62,9 @@ object ArcgisIntegrationSpec {
   }
 
   /**
-   * TODO
-   * @return
+   * Loads the shared integration-test configuration from the classpath.
+   *
+   * @return the loaded integration-test properties
    */
   private def readIntegrationProperties(): Properties = {
 

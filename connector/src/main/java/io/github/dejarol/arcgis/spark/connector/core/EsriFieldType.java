@@ -5,6 +5,9 @@ import org.jetbrains.annotations.Contract;
 public enum EsriFieldType
         implements EnumWithAPIName {
 
+    DOUBLE("esriFieldTypeDouble"),
+    INTEGER("esriFieldTypeInteger"),
+    OID("esriFieldTypeOID"),
     STRING("esriFieldTypeString");
 
     private final String apiName;

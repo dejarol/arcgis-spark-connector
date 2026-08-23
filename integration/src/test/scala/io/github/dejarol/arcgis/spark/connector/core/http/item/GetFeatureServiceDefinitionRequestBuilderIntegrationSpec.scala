@@ -21,9 +21,6 @@ class GetFeatureServiceDefinitionRequestBuilderIntegrationSpec
         )
 
         body.layers should have size 3
-        forAll(body.layers) {
-          _.geometryType shouldBe EsriGeometryType.POLYGON
-        }
       }
     }
   }

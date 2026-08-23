@@ -1,5 +1,5 @@
 ---
-description: Scaladoc style for Scala classes (description, @param attributes, construction alternatives, @since)
+description: Scaladoc style for Scala classes (description, @param attributes, construction alternatives, @since); abstract test suites only among tests
 globs: "**/*.scala"
 alwaysApply: false
 ---
@@ -96,6 +96,46 @@ case class GenerateTokenCredentials(
 )
 ```
 
+## Test suites
+
+Class-level Scaladoc is written **only for abstract test suites** — the reusable `trait` / `abstract class` bases that other suites extend (e.g. `BasicSpec`, `RequestBuilderIntegrationSpec`). Document them with the same structure described above, so that readers know what the base suite provides.
+
+**Concrete test suites** (the `class ...Spec extends ...` leaves that actually contain `describe` / `it` blocks) get **no class-level Scaladoc**: the suite title and the `describe` / `it` strings already state what is tested.
+
+This exclusion covers the class comment only. Methods declared inside a test suite — abstract or concrete — are always documented; see `scaladoc-methods`.
+
+```scala
+// ✅ GOOD — abstract suite: documented
+/**
+ * Base suite for integration tests on request builders.
+ *
+ * Provides a shared STTP backend and helpers to send a request and unwrap its body.
+ *
+ * @since 0.1.0
+ */
+trait RequestBuilderIntegrationSpec
+  extends ArcgisIntegrationSpec {
+  ...
+}
+
+// ❌ BAD — concrete suite with a class-level comment
+/**
+ * Tests for GetFeatureLayerDefinitionRequestBuilder.
+ *
+ * @since 0.1.0
+ */
+class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
+  extends RequestBuilderIntegrationSpec {
+  ...
+}
+
+// ✅ GOOD — concrete suite: no class-level Scaladoc
+class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
+  extends RequestBuilderIntegrationSpec {
+  ...
+}
+```
+
 ## Notes
 
 - The **description** must be ≤ 10 lines; `@param`, construction guidance, and `@since` do not count toward that limit.
@@ -103,4 +143,5 @@ case class GenerateTokenCredentials(
 - Do not document every method on the class Scaladoc; members have their own docs (see the methods Scaladoc rule).
 - `@since` applies to **new** classes only; do not rewrite `@since` on existing classes unless the user asks.
 - When completing incomplete Scaladoc (e.g. `TODO`), apply this full template.
+- Do not add class-level Scaladoc to a concrete test suite; if one is already there, leave it alone unless the user asks to remove it.
 - This rule targets **classes**; method Scaladoc is covered by `scaladoc-methods`.

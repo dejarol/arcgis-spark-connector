@@ -80,6 +80,33 @@ def clear(): Unit = ...
 def clear(): Unit = ...
 ```
 
+## Test suites
+
+This rule applies to every method declared in a test suite, whether the suite is abstract (`BasicSpec`, `RequestBuilderIntegrationSpec`) or concrete. Helpers, fixtures and factory methods defined inside a concrete suite are documented exactly like production methods, even though the concrete suite itself carries no class-level Scaladoc (see `scaladoc-classes`).
+
+The `describe` / `it` bodies of a suite are test declarations, not methods, and are never given Scaladoc.
+
+```scala
+// ✅ GOOD — helper inside a concrete suite is still documented
+class TokenSpec extends BasicSpec {
+
+  /**
+   * Creates a token with a fixed expiration for the tests in this suite.
+   *
+   * @param value raw token string
+   * @return a token expiring one hour from now
+   * @since 0.1.0
+   */
+  private def tokenOf(value: String): Token = Token(value, Instant.now().plusSeconds(3600))
+
+  describe(anInstanceOf[Token]) {
+    it("should expose its raw value") {
+      tokenOf("abc").value shouldBe "abc"
+    }
+  }
+}
+```
+
 ## Notes
 
 - Keep the summary factual and under 5 lines; prefer one short paragraph over long essays.
@@ -87,3 +114,4 @@ def clear(): Unit = ...
 - Never add `@throws` for exceptions raised by third-party APIs invoked inside the method.
 - `@since` applies to **new** methods only; do not rewrite `@since` on existing methods unless the user asks.
 - When completing incomplete Scaladoc (e.g. `TODO` / empty tags), apply this full template.
+- Methods in test sources follow the same template as production methods; the concrete/abstract distinction only affects class-level Scaladoc.

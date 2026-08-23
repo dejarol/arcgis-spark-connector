@@ -1,8 +1,10 @@
 package io.github.dejarol.arcgis.spark.connector.core.http
 
 import org.json4s.native.JsonMethods.{parseOpt, pretty, render}
-import org.json4s.{DefaultFormats, Formats, JValue}
+import org.json4s.{DefaultFormats, Formats, JValue, Serializer}
 import sttp.client4.{ResponseAs, asStringAlways}
+
+import scala.util.Try
 
 /**
  * Factory methods for [[ResponseAsSupplier]] instances used by STTP requests.
@@ -50,12 +52,10 @@ object ResponseAsSuppliers {
 
       // Safely convert the parsed JSON tree to a value of type `R`.
       // If the conversion fails, create a dedicated exception.
-      jValue.extractOpt[R](
-        formats, implicitly[Manifest[R]]
-      ).toRight {
-        new UnexpectedAPIResponse(
-          pretty(render(jValue))
-        )
+      Try {
+        jValue.extract[R](formats, implicitly[Manifest[R]])
+      }.toEither.left.map {
+        cause => MismatchingAPIResponseException.create(jValue, cause)
       }
     }
   }
@@ -73,13 +73,20 @@ object ResponseAsSuppliers {
   }
 
   /**
-   * TODO
-   * @param formats
-   * @tparam R
-   * @return
+   * Creates a builder that decodes JSON responses using custom serializers.
+   *
+   * @param head first custom JSON serializer
+   * @param tail additional custom JSON serializers
+   * @tparam R expected response payload type
+   * @return a response-as builder for `Either[Throwable, R]`
    */
-  def eitherThrowableOr[R: Manifest](formats: Formats): ResponseAsSupplier[Either[Throwable, R]] = {
+  def eitherThrowableOr[R: Manifest](
+                                      head: Serializer[_],
+                                      tail: Serializer[_]*
+                                    ): ResponseAsSupplier[Either[Throwable, R]] = {
 
-    EitherThrowableOr[R](formats)
+    EitherThrowableOr[R](
+      DefaultFormats + head ++ tail
+    )
   }
 }
