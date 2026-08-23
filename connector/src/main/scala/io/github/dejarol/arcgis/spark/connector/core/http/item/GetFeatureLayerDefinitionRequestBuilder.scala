@@ -6,10 +6,11 @@ import io.github.dejarol.arcgis.spark.connector.core.{EsriFieldType, EsriGeometr
 import sttp.model.Uri
 
 /**
- * TODO
- * @param featureServiceUri
- * @param layerId
- * @param token
+ * Builds a request that retrieves an ArcGIS feature layer definition.
+ *
+ * @param featureServiceUri URI of the parent feature service
+ * @param layerId           identifier of the layer within the service
+ * @param token             ArcGIS authentication token
  */
 case class GetFeatureLayerDefinitionRequestBuilder(
                                                     private val featureServiceUri: Uri,

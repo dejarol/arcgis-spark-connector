@@ -28,7 +28,7 @@ object ResponseAsSuppliers {
     /**
      * Builds a response decoder that yields `Either[Throwable, R]`.
      *
-     * @return decoder that fails with [[ResponseNotJsonException]] or [[UnexpectedAPIResponse]] on the left
+     * @return decoder that fails with [[ResponseNotJsonException]] or [[MismatchingAPIResponseException]] on the left
      * @since 0.1.0
      */
     override def get(): ResponseAs[Either[Throwable, R]] = {
@@ -45,17 +45,20 @@ object ResponseAsSuppliers {
      * Extracts a value of type `R` from a parsed JSON tree.
      *
      * @param jValue parsed JSON value
-     * @return the extracted value, or a [[UnexpectedAPIResponse]] on the left
+     * @return the extracted value, or a [[MismatchingAPIResponseException]] on the left
      * @since 0.1.0
      */
     private def extractValue(jValue: JValue): Either[Throwable, R] = {
 
       // Safely convert the parsed JSON tree to a value of type `R`.
       // If the conversion fails, create a dedicated exception.
+      val manifestOfR = implicitly[Manifest[R]]
       Try {
-        jValue.extract[R](formats, implicitly[Manifest[R]])
+        jValue.extract[R](formats, manifestOfR)
       }.toEither.left.map {
-        cause => MismatchingAPIResponseException.create(jValue, cause)
+        cause => MismatchingAPIResponseException.create(
+          pretty(render(jValue)), manifestOfR, cause
+        )
       }
     }
   }
