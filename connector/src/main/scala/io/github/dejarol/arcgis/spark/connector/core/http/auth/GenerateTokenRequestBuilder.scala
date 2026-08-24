@@ -1,29 +1,21 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.auth
 
 import io.github.dejarol.arcgis.spark.connector.core.http._
+import sttp.client4.multipart
 import sttp.model.Uri
-
-import java.time.Duration
 
 /**
  * Builds a POST multipart request for ArcGIS generateToken authentication.
  *
  * @param root  ArcGIS Online/enterprise root URL
- * @param username account user name
- * @param password account password
- * @param referer  HTTP referer sent as the token client identity
- * @param duration requested token lifetime
+ * @param parameters TODO
  * @since 0.1.0
  */
 case class GenerateTokenRequestBuilder(
-                                        private[auth] val root: Uri,
-                                        private[auth] val username: String,
-                                        private[auth] val password: String,
-                                        private[auth] val referer: String,
-                                        private[auth] val duration: Duration = Duration.ofHours(1)
+                                        root: Uri,
+                                        parameters: GenerateTokenParameters
                                       )
-  extends SttpEitherThrowableOrValueBuilder[GenerateTokenResponse]
-    with SttpMultiPartMixins {
+  extends SttpEitherThrowableOrValueBuilder[GenerateTokenResponse] {
 
   import ResponseAsSuppliers._
 
@@ -32,16 +24,8 @@ case class GenerateTokenRequestBuilder(
     initial.post(
       root.addPath("generateToken")
     ).multipartBody(
-      createParts(
-        Map(
-          "f" -> "json",
-          "username" -> username,
-          "password" -> password,
-          "client" -> "referer",
-          "referer" -> referer,
-          "expiration" -> String.valueOf(duration.toMinutes)
-        )
-      )
+      multipart("f", "json"),
+      parameters.parts(): _*
     ).response(
       eitherThrowableOr[GenerateTokenResponse]().get()
     )

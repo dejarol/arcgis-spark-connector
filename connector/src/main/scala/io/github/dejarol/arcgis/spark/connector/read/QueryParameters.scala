@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read
 
-import io.github.dejarol.arcgis.spark.connector.AsMultiParts
+import io.github.dejarol.arcgis.spark.connector.core.http.AsMultiParts
 import sttp.client4.{BasicBodyPart, multipart}
 import sttp.model.Part
 

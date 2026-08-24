@@ -16,8 +16,7 @@ case class QueryUsingPostRequestBuilder(
                                          private val token: String,
                                          private val queryParameters: QueryParameters
                                        )
-  extends SttpEitherThrowableOrValueBuilder[QueryResponse]
-    with SttpMultiPartMixins {
+  extends SttpEitherThrowableOrValueBuilder[QueryResponse] {
 
   override def build(initial: PReqType): EitherReq[Throwable, QueryResponse] = {
 
