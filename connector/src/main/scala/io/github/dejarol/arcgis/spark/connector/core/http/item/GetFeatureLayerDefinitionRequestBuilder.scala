@@ -8,33 +8,57 @@ import sttp.model.Uri
 /**
  * Builds a request that retrieves an ArcGIS feature layer definition.
  *
- * @param featureServiceUri URI of the parent feature service
- * @param layerId           identifier of the layer within the service
- * @param token             ArcGIS authentication token
+ * @param featureLayerUri URI of the parent feature service
+ * @param token             ArcGIS authentication token (required only for protected content)
  */
 case class GetFeatureLayerDefinitionRequestBuilder(
-                                                    private val featureServiceUri: Uri,
-                                                    private val layerId: Int,
-                                                    private val token: String
+                                                    private val featureLayerUri: Uri,
+                                                    private val token: Option[String]
                                                   )
   extends SttpEitherThrowableOrValueBuilder[FeatureLayerDefinition] {
 
   override def build(initial: PReqType): EitherReq[Throwable, FeatureLayerDefinition] = {
 
+    // Set parameters
+    val defaultParams = Map("f" -> "json")
+    val paramsMaybeWithToken = token.map {
+      t => defaultParams + ("token" -> t)
+    }.getOrElse(defaultParams)
+
+    // Build request
     initial.get(
-      featureServiceUri.addPath(
-        String.valueOf(layerId)
-      ).addParams(
-        Map(
-          "f" -> "json",
-          "token" -> token
-        )
+      featureLayerUri.addParams(
+        paramsMaybeWithToken
       )
     ).response(
       ResponseAsSuppliers.eitherThrowableOr[FeatureLayerDefinition](
         Customizations.serializerForEnumWithAPIName[EsriGeometryType](),
         Customizations.serializerForEnumWithAPIName[EsriFieldType]()
       ).get()
+    )
+  }
+}
+
+object GetFeatureLayerDefinitionRequestBuilder {
+
+  /**
+   * TODO
+   * @param featureServiceUri
+   * @param layerId
+   * @param token
+   * @return
+   */
+  def fromServiceUriAndLayerId(
+                                featureServiceUri: Uri,
+                                layerId: Int,
+                                token: Option[String]
+                              ): GetFeatureLayerDefinitionRequestBuilder = {
+
+    GetFeatureLayerDefinitionRequestBuilder(
+      featureServiceUri.addPath(
+        String.valueOf(layerId)
+      ),
+      token
     )
   }
 }

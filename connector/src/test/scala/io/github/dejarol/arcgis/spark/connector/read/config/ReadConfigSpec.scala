@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
-import io.github.dejarol.arcgis.spark.connector.core.config.BaseConfig
+import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, NoSuchPropertyException}
 import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JavaMapMixins}
 import org.scalatest.enablers.KeyMapping
 import sttp.model.Uri
@@ -16,11 +16,13 @@ class ReadConfigSpec
     describe(SHOULD) {
       it("retrieve the layerUri") {
 
-        emptyReadConfig.layerUri shouldBe empty
+        a [NoSuchPropertyException] shouldBe thrownBy {
+          emptyReadConfig.layerUri
+        }
 
         val value = "http://localhost:6080/arcgis/rest/services/ServiceName/MapServer/0"
         val valid = createReadConfig(ReadConfig.LAYER_URI_KEY, value)
-        valid.layerUri shouldBe Some(Uri.unsafeParse(value))
+        valid.layerUri shouldBe Uri.unsafeParse(value)
       }
 
       it("retrieve query options") {

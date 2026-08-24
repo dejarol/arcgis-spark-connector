@@ -1,8 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector
 
 import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
-import io.github.dejarol.arcgis.spark.connector.core.http.auth.GenerateTokenRequestBuilder
-import io.github.dejarol.arcgis.spark.connector.core.http.{initialRequest, uriFromString}
+import io.github.dejarol.arcgis.spark.connector.core.http.auth.{GenerateTokenParameters, GenerateTokenRequestBuilder}
+import io.github.dejarol.arcgis.spark.connector.core.http.{initialRequest}
 import sttp.client4.DefaultSyncBackend
 import sttp.model.Uri
 
@@ -21,7 +21,7 @@ trait ArcgisIntegrationSpec
   import ArcgisIntegrationSpec._
 
   protected final lazy val secretsSupplier = IntegrationSecretsSuppliers.create()
-  protected final lazy val rootUri: Uri = uriFromString(secretsSupplier.root())
+  protected final lazy val rootUri: Uri = Uri.unsafeParse(secretsSupplier.root())
   protected final lazy val token: String = eitherCauseOrToken(
     rootUri, secretsSupplier.username(), secretsSupplier.password()
   ) match {
@@ -50,10 +50,9 @@ object ArcgisIntegrationSpec {
 
     GenerateTokenRequestBuilder(
       rootUri,
-      username,
-      password,
-      "http://localhost:6080",
-      Duration.ofMinutes(15)
+      GenerateTokenParameters(
+        username, password, "http://localhost:6080", Duration.ofMinutes(15)
+      )
     ).build(
       initialRequest()
     ).send(

@@ -28,5 +28,6 @@ package object http {
    * @return the parsed STTP URI
    * @since 0.1.0
    */
+  @deprecated("Will be moved to test method soon. Use Uri.unsafeParse instead", "0.1.0")
   def uriFromString(string: String): Uri = Uri.unsafeParse(string)
 }
