@@ -89,7 +89,7 @@ class SchemaUtilsSpec
 
           forAll(actual) {
             field =>
-              expectedDataTypes should contain key (field.name)
+              expectedDataTypes should contain key field.name
               field.dataType shouldBe expectedDataTypes(field.name)
           }
         }
@@ -112,7 +112,7 @@ class SchemaUtilsSpec
 
           forAll(actual) {
             field =>
-              expectedDataTypes should contain key (field.name)
+              expectedDataTypes should contain key field.name
               field.dataType shouldBe expectedDataTypes(field.name)
           }
         }

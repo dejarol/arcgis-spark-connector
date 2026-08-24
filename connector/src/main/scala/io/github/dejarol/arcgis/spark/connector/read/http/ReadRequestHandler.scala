@@ -3,6 +3,7 @@ package io.github.dejarol.arcgis.spark.connector.read.http
 import io.github.dejarol.arcgis.spark.connector.core.http.BaseRequestHandler
 import io.github.dejarol.arcgis.spark.connector.core.http.item.GetFeatureLayerDefinitionRequestBuilder
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
+import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, QueryParameters, QueryResponse}
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 
@@ -45,6 +46,25 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
     (
       maybeFilteredFeatureLayerFields,
       featureLayerDefinition.geometryType
+    )
+  }
+
+  /**
+   * @param layerUri
+   * @param queryParameters
+   * @param token
+   * @return
+   */
+  def queryUsingPost(
+                      layerUri: Uri,
+                      queryParameters: QueryParameters,
+                      token: Option[String]
+                    ): QueryResponse = {
+
+    unsafelySend(
+      QueryFeatureLayerUsingPostRequestBuilder(
+        layerUri, queryParameters, token
+      )
     )
   }
 }

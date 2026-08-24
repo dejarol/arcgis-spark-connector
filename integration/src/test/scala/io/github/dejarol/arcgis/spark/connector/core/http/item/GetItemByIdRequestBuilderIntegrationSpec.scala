@@ -10,7 +10,7 @@ class GetItemByIdRequestBuilderIntegrationSpec
       it("get the details of an item") {
 
         lazy val polygonLayerId = integrationProperties.getProperty("ci.arcgis.test.polygonLayer.id")
-        lazy val polygonLayerUrl = integrationProperties.getProperty("ci.arcgis.test.polygonLayer.url")
+        lazy val polygonLayerUrl = integrationProperties.getProperty("ci.arcgis.test.polygonLayer.serviceUri")
 
         // the item should be 'ACS Population (Latest)'
         val body = sendRequestAndGetBody[GetItemByIdResponse](

@@ -2,27 +2,29 @@ package io.github.dejarol.arcgis.spark.connector.read
 
 import io.github.dejarol.arcgis.spark.connector.core.http._
 import sttp.client4.multipart
-import sttp.model.{Method, Uri}
+import sttp.model.Uri
 
 /**
  * Builds a multipart POST request that queries an ArcGIS feature layer.
  *
  * @param queryUrl       URI of the layer query endpoint
- * @param token          ArcGIS authentication token
  * @param queryParameters parameters to include in the query
+ * @param token          ArcGIS authentication token
  */
-case class QueryUsingPostRequestBuilder(
-                                         private val queryUrl: Uri,
-                                         private val token: String,
-                                         private val queryParameters: QueryParameters
-                                       )
+case class QueryFeatureLayerUsingPostRequestBuilder(
+                                                     private val queryUrl: Uri,
+                                                     private val queryParameters: QueryParameters,
+                                                     private val token: Option[String]
+                                                   )
   extends SttpEitherThrowableOrValueBuilder[QueryResponse] {
 
   override def build(initial: PReqType): EitherReq[Throwable, QueryResponse] = {
 
-    initial.method(
-      Method.POST, queryUrl.addParam("token", token)
-    ).multipartBody(
+    val queryUrlWithToken = token.map {
+      t => queryUrl.addParam("token", t)
+    }.getOrElse(queryUrl)
+
+    initial.post(queryUrlWithToken).multipartBody(
       multipart("f", "json"),
       queryParameters.parts(): _*
     ).response(

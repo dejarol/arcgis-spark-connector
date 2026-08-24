@@ -77,4 +77,4 @@ class EnumsSpec extends BasicSpec {
 
 - One production type per suite; put helpers on the suite companion when needed.
 - Mix extra traits (`OptionValues`, `JavaMapMixins`, …) **after** the `BasicSpec` (or descendant) parent.
-- Concrete suites get no class-level Scaladoc; methods inside them still do (see `scaladoc-classes` and `scaladoc-methods`).
+- Concrete suites get no class-level Scaladoc; methods inside them (and on the suite companion) always do (see `scaladoc-classes`, `scaladoc-companions`, and `scaladoc-methods`).

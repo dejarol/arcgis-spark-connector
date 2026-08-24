@@ -1,6 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.core.schema
 
-import org.apache.spark.sql.types.{DataTypes, DoubleType, IntegerType, StructField, StructType}
+import io.github.dejarol.arcgis.spark.connector.core.models.{PointGeometry, PolygonGeometry, SpatialReference}
+import org.apache.spark.sql.Encoders
+import org.apache.spark.sql.types.StructType
 
 /**
  * Spark SQL struct types that represent ArcGIS geometries.
@@ -14,41 +16,19 @@ object SparkGeometryTypes {
    *
    * @since 0.1.0
    */
-  final val SPATIAL_REFERENCE_TYPE: StructType = StructType(
-    Seq(
-      StructField("wkid", IntegerType),
-      StructField("latestWkid", IntegerType)
-    )
-  )
+  final val SPATIAL_REFERENCE_TYPE: StructType = Encoders.product[SpatialReference].schema
 
   /**
    * Spark schema of an ArcGIS point geometry.
    *
    * @since 0.1.0
    */
-  final val POINT: StructType = StructType(
-    Seq(
-      StructField("x", DoubleType),
-      StructField("y", DoubleType),
-      StructField("spatialReference", SPATIAL_REFERENCE_TYPE)
-    )
-  )
+  final val POINT: StructType = Encoders.product[PointGeometry].schema
 
   /**
    * Spark schema of an ArcGIS polygon geometry.
    *
    * @since 0.1.0
    */
-  final val POLYGON: StructType = StructType(
-    Seq(
-      StructField("rings",
-        DataTypes.createArrayType(
-          DataTypes.createArrayType(
-            DataTypes.createArrayType(DoubleType)
-          )
-        )
-      ),
-      StructField("spatialReference", SPATIAL_REFERENCE_TYPE)
-    )
-  )
+  final val POLYGON: StructType = Encoders.product[PolygonGeometry].schema
 }

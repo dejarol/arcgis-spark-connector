@@ -1,5 +1,5 @@
 ---
-description: Scaladoc style for Scala methods (@param, @return, @throws, @since)
+description: Scaladoc is always required on Scala methods (@param, @return, @throws, @since), including companions and standalone objects
 globs: "**/*.scala"
 alwaysApply: false
 ---
@@ -7,6 +7,8 @@ alwaysApply: false
 # Scaladoc for methods
 
 When writing or completing Scaladoc on methods, follow this format.
+
+Document **every** method (`def`), wherever it is declared: classes, traits, case classes, standalone objects, companion objects, and test suites (abstract or concrete). There is no enclosing type that skips method Scaladoc. Class-level comments on companions are a separate concern (see `scaladoc-companions`).
 
 ## Required structure
 
@@ -82,7 +84,7 @@ def clear(): Unit = ...
 
 ## Test suites
 
-This rule applies to every method declared in a test suite, whether the suite is abstract (`BasicSpec`, `RequestBuilderIntegrationSpec`) or concrete. Helpers, fixtures and factory methods defined inside a concrete suite are documented exactly like production methods, even though the concrete suite itself carries no class-level Scaladoc (see `scaladoc-classes`).
+Helpers, fixtures and factory methods in a test suite — including those on the suite companion — are documented exactly like production methods, even though a concrete suite (and its companion) carries no class-level Scaladoc (see `scaladoc-classes` and `scaladoc-companions`).
 
 The `describe` / `it` bodies of a suite are test declarations, not methods, and are never given Scaladoc.
 
@@ -114,4 +116,5 @@ class TokenSpec extends BasicSpec {
 - Never add `@throws` for exceptions raised by third-party APIs invoked inside the method.
 - `@since` applies to **new** methods only; do not rewrite `@since` on existing methods unless the user asks.
 - When completing incomplete Scaladoc (e.g. `TODO` / empty tags), apply this full template.
-- Methods in test sources follow the same template as production methods; the concrete/abstract distinction only affects class-level Scaladoc.
+- Method Scaladoc is always required; the concrete/abstract and companion/standalone distinctions only affect **class-level** Scaladoc.
+- Methods in companion objects and standalone objects use this same template (see `scaladoc-companions` and `scaladoc-classes`).

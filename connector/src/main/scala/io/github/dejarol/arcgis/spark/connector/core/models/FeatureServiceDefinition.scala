@@ -21,5 +21,6 @@ case class FeatureServiceDefinition(layers: Seq[ShortLayerDefinition]) {
   }
 
   private lazy val layersById: Map[Int, ShortLayerDefinition] = layersByKey(_.id)
+
   private lazy val layersByName: Map[String, ShortLayerDefinition] = layersByKey(_.name)
 }

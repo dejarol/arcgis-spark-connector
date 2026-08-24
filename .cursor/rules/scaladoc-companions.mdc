@@ -1,0 +1,51 @@
+---
+description: Companion objects get no class-level Scaladoc; methods inside them are always documented
+globs: "**/*.scala"
+alwaysApply: false
+---
+
+# Scaladoc for companion objects
+
+A **companion** is an `object` with the same name as a `class`, `case class`, or `trait` in the same file (e.g. `case class QueryLayerConfig` and `object QueryLayerConfig`).
+
+This is **not** the same as a standalone object such as `SchemaUtils`, which has no paired type and **does** get class-level Scaladoc (see `scaladoc-classes`).
+
+## What to document
+
+- **Do not** write class-level (object-level) Scaladoc on a companion. The paired type already carries that description.
+- **Do** document **every** method declared in the companion, using `scaladoc-methods` (summary, `@param`, `@tparam`, `@return`, `@throws`, `@since`). Method Scaladoc is never skipped because the method lives on a companion.
+
+This applies to production companions and to test-suite companions (`object FooSpec`).
+
+## Do / don't
+
+```scala
+// ❌ BAD — class-level Scaladoc on a companion
+/**
+ * Property keys used by QueryLayerConfig.
+ *
+ * @since 0.1.0
+ */
+object QueryLayerConfig {
+  def fromMap(properties: util.Map[String, String]): QueryLayerConfig = ...
+}
+
+// ✅ GOOD — no class-level Scaladoc; methods always documented
+object QueryLayerConfig {
+
+  /**
+   * Builds a query-layer configuration from a property map.
+   *
+   * @param properties configuration entries keyed by property name
+   * @return a query-layer configuration
+   * @since 0.1.0
+   */
+  def fromMap(properties: util.Map[String, String]): QueryLayerConfig = ...
+}
+```
+
+## Notes
+
+- Do not add class-level Scaladoc to a companion; if one is already there, leave it alone unless the user asks to remove it.
+- Empty `TODO` class-level comments on companions should be removed, not filled in.
+- Standalone objects (no paired type) are documented at class level; see `scaladoc-classes`.

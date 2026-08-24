@@ -27,38 +27,12 @@ case class GetFeatureLayerDefinitionRequestBuilder(
 
     // Build request
     initial.get(
-      featureLayerUri.addParams(
-        paramsMaybeWithToken
-      )
+      featureLayerUri.addParams(paramsMaybeWithToken)
     ).response(
       ResponseAsSuppliers.eitherThrowableOr[FeatureLayerDefinition](
         Customizations.serializerForEnumWithAPIName[EsriGeometryType](),
         Customizations.serializerForEnumWithAPIName[EsriFieldType]()
       ).get()
-    )
-  }
-}
-
-object GetFeatureLayerDefinitionRequestBuilder {
-
-  /**
-   * TODO
-   * @param featureServiceUri
-   * @param layerId
-   * @param token
-   * @return
-   */
-  def fromServiceUriAndLayerId(
-                                featureServiceUri: Uri,
-                                layerId: Int,
-                                token: Option[String]
-                              ): GetFeatureLayerDefinitionRequestBuilder = {
-
-    GetFeatureLayerDefinitionRequestBuilder(
-      featureServiceUri.addPath(
-        String.valueOf(layerId)
-      ),
-      token
     )
   }
 }

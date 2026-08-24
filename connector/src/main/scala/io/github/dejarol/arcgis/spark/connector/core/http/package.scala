@@ -1,7 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core
 
 import sttp.client4.{PartialRequest, Request, basicRequest}
-import sttp.model.Uri
 
 /**
  * Core HTTP helpers and type aliases for STTP requests used by the connector.
@@ -20,14 +19,4 @@ package object http {
    * @since 0.1.0
    */
   def initialRequest(): PReqType = basicRequest
-
-  /**
-   * Parses a URI from its string representation.
-   *
-   * @param string URI text to parse
-   * @return the parsed STTP URI
-   * @since 0.1.0
-   */
-  @deprecated("Will be moved to test method soon. Use Uri.unsafeParse instead", "0.1.0")
-  def uriFromString(string: String): Uri = Uri.unsafeParse(string)
 }

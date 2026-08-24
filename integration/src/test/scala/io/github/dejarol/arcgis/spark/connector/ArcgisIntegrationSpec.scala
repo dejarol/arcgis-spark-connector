@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector
 
 import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
 import io.github.dejarol.arcgis.spark.connector.core.http.auth.{GenerateTokenParameters, GenerateTokenRequestBuilder}
-import io.github.dejarol.arcgis.spark.connector.core.http.{initialRequest}
+import io.github.dejarol.arcgis.spark.connector.core.http.initialRequest
 import sttp.client4.DefaultSyncBackend
 import sttp.model.Uri
 
@@ -30,6 +30,13 @@ trait ArcgisIntegrationSpec
   }
 
   protected final lazy val integrationProperties: Properties = readIntegrationProperties()
+
+  /**
+   * Converts a string to a URI
+   * @param string the raw URI string
+   * @return the parsed URI
+   */
+  protected final def uriFromString(string: String): Uri = Uri.unsafeParse(string)
 }
 
 object ArcgisIntegrationSpec {

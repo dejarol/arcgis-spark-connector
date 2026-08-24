@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.item
 
-import io.github.dejarol.arcgis.spark.connector.core.http.{RequestBuilderIntegrationSpec, uriFromString}
-import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureServiceDefinition}
+import io.github.dejarol.arcgis.spark.connector.core.http.RequestBuilderIntegrationSpec
+import io.github.dejarol.arcgis.spark.connector.core.models.FeatureServiceDefinition
 import org.scalatest.Inspectors
 
 class GetFeatureServiceDefinitionRequestBuilderIntegrationSpec
@@ -15,7 +15,7 @@ class GetFeatureServiceDefinitionRequestBuilderIntegrationSpec
         val body = sendRequestAndGetBody[FeatureServiceDefinition](
           GetFeatureServiceDefinitionRequestBuilder(
             uriFromString(
-              integrationProperties.getProperty("ci.arcgis.test.polygonLayer.url")
+              integrationProperties.getProperty("ci.arcgis.test.polygonLayer.serviceUri")
             ), token
           )
         )

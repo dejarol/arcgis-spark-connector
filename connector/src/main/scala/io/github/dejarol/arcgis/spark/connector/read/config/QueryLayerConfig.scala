@@ -65,11 +65,6 @@ case class QueryLayerConfig(override protected val properties: util.Map[String, 
   }
 }
 
-/**
- * Property keys used by [[QueryLayerConfig]].
- *
- * @since 0.1.0
- */
 object QueryLayerConfig {
 
   /**

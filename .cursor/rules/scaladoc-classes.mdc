@@ -1,12 +1,12 @@
 ---
-description: Scaladoc style for Scala classes (description, @param attributes, construction alternatives, @since); abstract test suites only among tests
+description: Scaladoc style for Scala classes and standalone objects (description, @param attributes, construction alternatives, @since); not companions; abstract test suites only among tests
 globs: "**/*.scala"
 alwaysApply: false
 ---
 
 # Scaladoc for classes
 
-When writing or completing Scaladoc on classes (including `case class`), follow this format.
+When writing or completing **class-level** Scaladoc on classes (including `case class`) and **standalone objects**, follow this format. Do **not** write class-level Scaladoc on companion objects (see `scaladoc-companions`). Methods are always documented separately (see `scaladoc-methods`).
 
 ## Required structure
 
@@ -55,6 +55,8 @@ object Token {
 }
 ```
 
+The companion above still needs **method** Scaladoc on `apply` (see `scaladoc-methods`); it must **not** get object-level Scaladoc.
+
 ```scala
 // ✅ GOOD — dedicated factory class
 /**
@@ -95,6 +97,24 @@ case class GenerateTokenCredentials(
   referer: Option[String]
 )
 ```
+
+## Standalone objects
+
+A **standalone object** is an `object` that is **not** a companion: the file has no `class` / `case class` / `trait` of the same name. Document it with this same class-level template (description + `@since`; omit `@param` and construction guidance unless it exposes constructor-like attributes). Example: `SchemaUtils`.
+
+```scala
+// ✅ GOOD — standalone object gets class-level Scaladoc
+/**
+ * Converts ArcGIS feature layer definitions into Spark SQL schemas.
+ *
+ * @since 0.1.0
+ */
+object SchemaUtils {
+  def toStructType(...): StructType = ...
+}
+```
+
+Methods inside the standalone object are still documented with `scaladoc-methods`.
 
 ## Test suites
 
@@ -144,4 +164,5 @@ class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
 - `@since` applies to **new** classes only; do not rewrite `@since` on existing classes unless the user asks.
 - When completing incomplete Scaladoc (e.g. `TODO`), apply this full template.
 - Do not add class-level Scaladoc to a concrete test suite; if one is already there, leave it alone unless the user asks to remove it.
-- This rule targets **classes**; method Scaladoc is covered by `scaladoc-methods`.
+- This rule targets **classes** and **standalone objects**. Companion objects get no class-level Scaladoc; see `scaladoc-companions`.
+- Method Scaladoc is always required, including inside standalone objects; see `scaladoc-methods`.

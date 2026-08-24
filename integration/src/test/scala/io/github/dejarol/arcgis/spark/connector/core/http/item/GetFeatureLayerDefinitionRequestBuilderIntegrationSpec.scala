@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.item
 
-import io.github.dejarol.arcgis.spark.connector.core.http.{RequestBuilderIntegrationSpec, uriFromString}
+import io.github.dejarol.arcgis.spark.connector.core.http.RequestBuilderIntegrationSpec
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerDefinition}
 
 class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
@@ -12,9 +12,8 @@ class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
         it("a polygon layer") {
 
           val body = sendRequestAndGetBody[FeatureLayerDefinition](
-            GetFeatureLayerDefinitionRequestBuilder.fromServiceUriAndLayerId(
-              uriFromString(integrationProperties.getProperty("ci.arcgis.test.polygonLayer.url")),
-              0,
+            GetFeatureLayerDefinitionRequestBuilder(
+              uriFromString(integrationProperties.getProperty("ci.arcgis.test.polygonLayer.layerUri")),
               None
             )
           )

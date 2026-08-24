@@ -105,6 +105,7 @@ object BaseConfigSpec
    * @return a configuration containing only that entry
    * @since 0.1.0
    */
+  //noinspection SameParameterValue
   private def createConfig(
                               key: String,
                               value: String
@@ -129,9 +130,7 @@ object BaseConfigSpec
                           ): BaseConfig = {
 
     new BaseConfig(
-      createSimpleMap(
-        first, others: _*
-      )
+      createSimpleMap(first, others: _*)
     )
   }
 }
