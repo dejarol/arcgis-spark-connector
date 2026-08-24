@@ -1,13 +1,15 @@
 package io.github.dejarol.arcgis.spark.connector.core.json
 
 import io.github.dejarol.arcgis.spark.connector.core.EnumWithAPIName
+import io.github.dejarol.arcgis.spark.connector.core.models.{Geometry, PointGeometry, PolygonGeometry, SpatialReference}
 import io.github.dejarol.arcgis.spark.connector.core.utils.Enums
-import org.json4s.{CustomSerializer, JString}
+import org.json4s.JsonAST.{JDouble, JObject}
+import org.json4s.{CustomSerializer, JArray, JField, JString, JsonAST}
 
 import scala.reflect.ClassTag
 
 /**
- * Provides json4s serializers for ArcGIS-specific value types.
+ * Provides JSON4s serializers for ArcGIS-specific value types.
  */
 object Customizations {
 
@@ -28,5 +30,11 @@ object Customizations {
         case e: E => JString(e.getAPIName)
       }
     ))
+  }
+
+  def serializerForGeometry(): CustomSerializer[Geometry] = {
+
+    // TODO
+    null
   }
 }
