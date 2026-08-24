@@ -85,9 +85,10 @@ object BaseConfigSpec
   extends JavaMapMixins {
 
   /**
-   * TODO
-   * @param initial
-   * @return
+   * Creates an empty configuration for the tests in this suite.
+   *
+   * @return a configuration with no properties
+   * @since 0.1.0
    */
   private def createEmptyConfig(): BaseConfig = {
 
@@ -97,10 +98,12 @@ object BaseConfigSpec
   }
 
   /**
-   * TODO
-   * @param key
-   * @param value
-   * @return
+   * Creates a configuration with a single property for the tests in this suite.
+   *
+   * @param key   property name
+   * @param value property value
+   * @return a configuration containing only that entry
+   * @since 0.1.0
    */
   private def createConfig(
                               key: String,
@@ -113,10 +116,12 @@ object BaseConfigSpec
   }
 
   /**
-   * TODO
-   * @param first
-   * @param others
-   * @return
+   * Creates a configuration from one or more entries for the tests in this suite.
+   *
+   * @param first  first property entry
+   * @param others additional property entries
+   * @return a configuration containing the given entries
+   * @since 0.1.0
    */
   private def createConfig(
                           first: (String, String),

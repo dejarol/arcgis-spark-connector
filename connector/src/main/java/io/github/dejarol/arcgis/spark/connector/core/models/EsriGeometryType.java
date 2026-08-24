@@ -1,19 +1,18 @@
-package io.github.dejarol.arcgis.spark.connector.core;
+package io.github.dejarol.arcgis.spark.connector.core.models;
 
+import io.github.dejarol.arcgis.spark.connector.core.EnumWithAPIName;
 import org.jetbrains.annotations.Contract;
 
 /**
- * ArcGIS field data types used in feature layer definitions.
+ * ArcGIS geometry types used in feature layer definitions.
  *
  * @since 0.1.0
  */
-public enum EsriFieldType
+public enum EsriGeometryType
         implements EnumWithAPIName {
 
-    DOUBLE("esriFieldTypeDouble"),
-    INTEGER("esriFieldTypeInteger"),
-    OID("esriFieldTypeOID"),
-    STRING("esriFieldTypeString");
+    POLYGON("esriGeometryPolygon"),
+    POINT("esriGeometryPoint");
 
     private final String apiName;
 
@@ -24,18 +23,18 @@ public enum EsriFieldType
      * @since 0.1.0
      */
     @Contract(pure = true)
-    EsriFieldType(String apiName) {
+    EsriGeometryType(String apiName) {
         this.apiName = apiName;
     }
 
     /**
-     * Returns the ArcGIS REST API name of this field type.
+     * Returns the ArcGIS REST API name of this geometry type.
      *
      * @return the API name
      * @since 0.1.0
      */
-    @Contract(pure = true)
     @Override
+    @Contract(pure = true)
     public String getAPIName() {
         return apiName;
     }

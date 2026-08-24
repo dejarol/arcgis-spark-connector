@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.item
 
-import io.github.dejarol.arcgis.spark.connector.core.EsriGeometryType
 import io.github.dejarol.arcgis.spark.connector.core.http.{RequestBuilderIntegrationSpec, uriFromString}
+import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureServiceDefinition}
 import org.scalatest.Inspectors
 
 class GetFeatureServiceDefinitionRequestBuilderIntegrationSpec

@@ -1,6 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.http.item
 
 import io.github.dejarol.arcgis.spark.connector.core.http.{EitherReq, PReqType, ResponseAsSuppliers, SttpEitherThrowableOrValueBuilder}
+import io.github.dejarol.arcgis.spark.connector.core.models.FeatureServiceDefinition
 import sttp.model.Uri
 
 /**

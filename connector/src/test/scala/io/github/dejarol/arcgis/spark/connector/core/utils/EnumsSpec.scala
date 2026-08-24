@@ -1,6 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.utils
 
-import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, EsriGeometryType}
+import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import io.github.dejarol.arcgis.spark.connector.core.models.EsriGeometryType
 
 class EnumsSpec
   extends BasicSpec {

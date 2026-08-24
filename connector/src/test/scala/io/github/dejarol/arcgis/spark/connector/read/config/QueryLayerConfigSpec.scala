@@ -65,8 +65,10 @@ object QueryLayerConfigSpec
   extends JavaMapMixins {
 
   /**
-   * TODO
-   * @return
+   * Creates an empty query-layer configuration for the tests in this suite.
+   *
+   * @return a query-layer configuration with no properties
+   * @since 0.1.0
    */
   private def createEmptyConfig(): QueryLayerConfig = {
 
@@ -76,10 +78,12 @@ object QueryLayerConfigSpec
   }
 
   /**
-   * TODO
-   * @param key
-   * @param value
-   * @return
+   * Creates a query-layer configuration with a single property for the tests in this suite.
+   *
+   * @param key   property name
+   * @param value property value
+   * @return a query-layer configuration containing only that entry
+   * @since 0.1.0
    */
   private def createSingletonConfig(key: String, value: String): QueryLayerConfig = {
 

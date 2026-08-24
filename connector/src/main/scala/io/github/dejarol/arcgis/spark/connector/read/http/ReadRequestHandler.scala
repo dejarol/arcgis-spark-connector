@@ -1,8 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.read.http
 
-import io.github.dejarol.arcgis.spark.connector.core.EsriGeometryType
 import io.github.dejarol.arcgis.spark.connector.core.http.BaseRequestHandler
-import io.github.dejarol.arcgis.spark.connector.core.http.item.{FeatureLayerField, GetFeatureLayerDefinitionRequestBuilder}
+import io.github.dejarol.arcgis.spark.connector.core.http.item.GetFeatureLayerDefinitionRequestBuilder
+import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 
@@ -56,6 +56,7 @@ object ReadRequestHandler {
    * @return
    */
   def withDefaultBackend(): ReadRequestHandler = {
+
     new ReadRequestHandler(
       DefaultSyncBackend()
     )

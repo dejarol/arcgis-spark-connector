@@ -6,8 +6,10 @@ import io.github.dejarol.arcgis.spark.connector.read.QueryParameters
 import java.util
 
 /**
- * TODO
- * @param properties
+ * Query options sent to an ArcGIS feature layer query endpoint.
+ *
+ * @param properties configuration entries keyed by property name
+ * @since 0.1.0
  */
 case class QueryLayerConfig(override protected val properties: util.Map[String, String])
   extends BaseConfig(properties) {
@@ -15,32 +17,42 @@ case class QueryLayerConfig(override protected val properties: util.Map[String, 
   import QueryLayerConfig._
 
   /**
-   * TODO
-   * @return
+   * Returns the ArcGIS `where` clause, if set.
+   *
+   * @return the where expression, or `None` if unset
+   * @since 0.1.0
    */
   def where: Option[String] = get(WHERE_KEY)
 
   /**
-   * TODO
-   * @return
+   * Returns the output field names, if set.
+   *
+   * @return the field names, or `None` if unset
+   * @since 0.1.0
    */
   def outFields: Option[Seq[String]] = getAs[Seq[String]](OUT_FIELDS_KEY, PropertyConversions.ToList)
 
-  /** TODO
-   * @return
+  /**
+   * Returns whether the query should include geometry, if set.
+   *
+   * @return `true` or `false` when the option is present, otherwise `None`
+   * @since 0.1.0
    */
-
   def returnGeometry: Option[Boolean] = getAs[Boolean](RETURN_GEOMETRY_KEY, PropertyConversions.ToBoolean)
 
   /**
-   * TODo
-   * @return
+   * Returns the output spatial reference WKID, if set.
+   *
+   * @return the spatial reference identifier, or `None` if unset
+   * @since 0.1.0
    */
   def outSR: Option[Int] = getAs[Int](OUT_SR_KEY, PropertyConversions.ToInteger)
 
   /**
-   * TODO
-   * @return
+   * Builds the query parameters represented by this configuration.
+   *
+   * @return query parameters ready to be sent to ArcGIS
+   * @since 0.1.0
    */
   def asQueryParameters: QueryParameters = {
 
@@ -53,10 +65,38 @@ case class QueryLayerConfig(override protected val properties: util.Map[String, 
   }
 }
 
+/**
+ * Property keys used by [[QueryLayerConfig]].
+ *
+ * @since 0.1.0
+ */
 object QueryLayerConfig {
 
+  /**
+   * Property key for the ArcGIS `where` clause.
+   *
+   * @since 0.1.0
+   */
   final val WHERE_KEY = "where"
+
+  /**
+   * Property key for the comma-separated output field names.
+   *
+   * @since 0.1.0
+   */
   final val OUT_FIELDS_KEY = "outFields"
+
+  /**
+   * Property key for whether the query should include geometry.
+   *
+   * @since 0.1.0
+   */
   final val RETURN_GEOMETRY_KEY = "returnGeometry"
+
+  /**
+   * Property key for the output spatial reference WKID.
+   *
+   * @since 0.1.0
+   */
   final val OUT_SR_KEY = "outSR"
 }

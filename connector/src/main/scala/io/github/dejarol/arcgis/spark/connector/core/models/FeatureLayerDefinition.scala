@@ -1,18 +1,5 @@
-package io.github.dejarol.arcgis.spark.connector.core.http.item
+package io.github.dejarol.arcgis.spark.connector.core.models
 
-import io.github.dejarol.arcgis.spark.connector.core.{EsriFieldType, EsriGeometryType}
-
-/**
- * Describes a field exposed by an ArcGIS feature layer.
- *
- * @param name   field name
- * @param `type` ArcGIS field data type
- * @since 0.1.0
- */
-case class FeatureLayerField(
-                            name: String,
-                            `type`: EsriFieldType
-                            )
 
 /**
  * Describes the schema and query limits of an ArcGIS feature layer.

@@ -45,13 +45,19 @@ class ReadConfigSpec
 object ReadConfigSpec
   extends JavaMapMixins {
 
-  // Implicit value for allowing the use of the `contain` matcher on BaseConfig
+  /**
+   * Enables ScalaTest `contain key` matchers on [[BaseConfig]].
+   *
+   * @since 0.1.0
+   */
   lazy implicit val BASE_CONFIG_KEY_MAPPING: KeyMapping[BaseConfig] =
     (map: BaseConfig, key: Any) => map.containsKey(String.valueOf(key))
 
   /**
-   * TODO
-   * @return
+   * Creates an empty read configuration for the tests in this suite.
+   *
+   * @return a read configuration with no properties
+   * @since 0.1.0
    */
   private def createEmptyReadConfig(): ReadConfig = {
 
@@ -61,10 +67,12 @@ object ReadConfigSpec
   }
 
   /**
-   * TODO
-   * @param k
-   * @param v
-   * @return
+   * Creates a read configuration with a single property for the tests in this suite.
+   *
+   * @param k property name
+   * @param v property value
+   * @return a read configuration containing only that entry
+   * @since 0.1.0
    */
   private def createReadConfig(
                                 k: String,
@@ -77,9 +85,12 @@ object ReadConfigSpec
   }
 
   /**
-   * @param first
-   * @param others
-   * @return
+   * Creates a read configuration from one or more entries for the tests in this suite.
+   *
+   * @param first  first property entry
+   * @param others additional property entries
+   * @return a read configuration containing the given entries
+   * @since 0.1.0
    */
   private def createReadConfig(
                                 first: (String, String),

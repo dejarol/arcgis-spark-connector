@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.core.http.item
 
 import io.github.dejarol.arcgis.spark.connector.core.http._
 import io.github.dejarol.arcgis.spark.connector.core.json.Customizations
-import io.github.dejarol.arcgis.spark.connector.core.{EsriFieldType, EsriGeometryType}
+import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerDefinition}
 import sttp.model.Uri
 
 /**
