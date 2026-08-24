@@ -1,0 +1,80 @@
+---
+description: ScalaTest suite naming (Spec / IntegrationSpec), BasicSpec inheritance, and describe(anInstanceOf|object) + describe(SHOULD) structure
+globs: "**/*.scala"
+alwaysApply: false
+---
+
+# Test suites
+
+When creating or editing a ScalaTest suite, follow this format.
+
+## Naming
+
+Name the suite after the **single type under test**:
+
+| Location | Template | Example |
+|---|---|---|
+| `connector` (unit) | `{Type}Spec` | `QueryLayerConfigSpec` |
+| `integration` | `{Type}IntegrationSpec` | `GetItemByIdRequestBuilderIntegrationSpec` |
+
+Do not invent other suffixes (`Test`, `Tests`, `IT`, …). Abstract base suites that are not tied to one production type (e.g. `BasicSpec`, `ArcgisIntegrationSpec`) are exempt from this template.
+
+## Inheritance
+
+Every suite — concrete or abstract — must extend [[BasicSpec]] **or** another abstract suite that already extends it (e.g. [[ArcgisIntegrationSpec]], [[RequestBuilderIntegrationSpec]]).
+
+Do not extend `AnyFunSpec` (or any other ScalaTest style) directly.
+
+```scala
+// ❌ BAD — skips BasicSpec
+class TokenSpec extends AnyFunSpec with Matchers
+
+// ✅ GOOD — unit suite
+class QueryLayerConfigSpec extends BasicSpec
+
+// ✅ GOOD — integration suite via a BasicSpec descendant
+class GetItemByIdRequestBuilderIntegrationSpec
+  extends RequestBuilderIntegrationSpec
+```
+
+## Structure
+
+A concrete suite always opens with two nested `describe` blocks:
+
+1. **Subject** — `describe(anInstanceOf[T])` when `T` is a class / case class / trait; `describe(`object`[T.type])` when `T` is a companion (or standalone) object. Use the helpers from [[BasicSpec]]; do not hard-code the title string.
+2. **Expectation** — `describe(SHOULD)`, using the `SHOULD` constant from [[BasicSpec]]. Use `describe(SHOULD_NOT)` only for the negative counterpart.
+
+Further `describe` / `it` blocks go **inside** that second describe. The `describe` / `it` strings themselves are not methods and get no Scaladoc.
+
+```scala
+// ❌ BAD — hardcoded title, missing SHOULD
+class QueryLayerConfigSpec extends BasicSpec {
+  describe("QueryLayerConfig") {
+    it("extracts where") { ... }
+  }
+}
+
+// ✅ GOOD — class under test
+class QueryLayerConfigSpec extends BasicSpec {
+  describe(anInstanceOf[QueryLayerConfig]) {
+    describe(SHOULD) {
+      it("extract the where clause") { ... }
+    }
+  }
+}
+
+// ✅ GOOD — object under test
+class EnumsSpec extends BasicSpec {
+  describe(`object`[Enums.type]) {
+    describe(SHOULD) {
+      it("return the first enum constant that matches a predicate") { ... }
+    }
+  }
+}
+```
+
+## Notes
+
+- One production type per suite; put helpers on the suite companion when needed.
+- Mix extra traits (`OptionValues`, `JavaMapMixins`, …) **after** the `BasicSpec` (or descendant) parent.
+- Concrete suites get no class-level Scaladoc; methods inside them still do (see `scaladoc-classes` and `scaladoc-methods`).

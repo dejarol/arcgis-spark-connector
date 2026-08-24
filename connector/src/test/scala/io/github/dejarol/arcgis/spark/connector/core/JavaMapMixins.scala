@@ -40,7 +40,7 @@ trait JavaMapMixins {
    * @param v
    * @return
    */
-  protected final def createSimpleMap(
+  protected final def createSingletonMap(
                                        k: String,
                                        v: String
                                      ): util.Map[String, String] = {

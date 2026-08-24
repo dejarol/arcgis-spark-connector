@@ -3,27 +3,37 @@ package io.github.dejarol.arcgis.spark.connector.core.config
 import io.github.dejarol.arcgis.spark.connector.core.JavaCollectionsUtils
 
 import java.util
-import java.util.stream.Collectors
 import scala.util.Try
 
 /**
  * TODO
  * @param properties
  */
-class ParentConfig(
-                protected val properties: util.Map[String, String]
-              ) {
+class BaseConfig(protected val properties: util.Map[String, String]) {
 
-  import ParentConfig._
+  import BaseConfig._
+
+  /**
+   * TODO
+   * @return
+   */
+  final def isEmpty: Boolean = properties.isEmpty
+
+  /** TODO
+   * @param key
+   * @return
+   */
+
+  final def containsKey(key: String): Boolean = properties.containsKey(key)
 
   /**
    * TODO
    * @param key
    * @return
    */
-  final def get(key: String): Option[String] = {
+  protected[config] final def get(key: String): Option[String] = {
 
-    if (properties.containsKey(key)) {
+    if (containsKey(key)) {
       Some(properties.get(key))
     } else {
       None
@@ -36,10 +46,10 @@ class ParentConfig(
    * @param defaultValue
    * @return
    */
-  final def getOrElse(
-                       key: String,
-                       defaultValue: String
-                     ): String = {
+  protected[config] final def getOrElse(
+                                         key: String,
+                                         defaultValue: String
+                                       ): String = {
 
     get(key).getOrElse(defaultValue)
   }
@@ -49,7 +59,7 @@ class ParentConfig(
    * @param key
    * @return
    */
-  final def unsafelyGet(key: String): String = {
+  protected[config] final def unsafelyGet(key: String): String = {
 
     get(key).getOrElse {
       throw new NoSuchPropertyException(key)
@@ -63,10 +73,10 @@ class ParentConfig(
    * @tparam T
    * @return
    */
-  final def getAs[T](
-                      key: String,
-                      conversion: PropertyConversion[T]
-                    ): Option[T] = {
+  protected[config] final def getAs[T](
+                                        key: String,
+                                        conversion: PropertyConversion[T]
+                                      ): Option[T] = {
 
     get(key).map {
       v => convertPropertyValue(
@@ -82,27 +92,30 @@ class ParentConfig(
    * @tparam T
    * @return
    */
-  final def unsafelyGetAs[T](
-                              key: String,
-                              conversion: PropertyConversion[T]
-                            ): T = {
+  protected[config] final def unsafelyGetAs[T](
+                                                key: String,
+                                                conversion: PropertyConversion[T]
+                                              ): T = {
 
     convertPropertyValue(
       key, unsafelyGet(key), conversion
     )
   }
 
-  final def configWithAllPropertiesStartingWithPrefix(prefix: String): ParentConfig = {
+  /**
+   * TODO
+   * @param prefix
+   * @return
+   */
+  protected[config] final def propertiesStartingWithPrefix(prefix: String): util.Map[String, String] = {
 
-    new ParentConfig(
-      JavaCollectionsUtils.filterMapByPrefix(
-        properties, prefix
-      )
+    JavaCollectionsUtils.filterMapByPrefix(
+      properties, prefix
     )
   }
 }
 
-object ParentConfig {
+object BaseConfig {
 
   /**
    * TODO
@@ -123,7 +136,7 @@ object ParentConfig {
     }.toEither match {
       case Right(value) => value
       case Left(cause) => throw new PropertyConversionException(
-        s"Failed to convert property value for key '$key'", cause
+        key, conversion, cause
       )
     }
   }
