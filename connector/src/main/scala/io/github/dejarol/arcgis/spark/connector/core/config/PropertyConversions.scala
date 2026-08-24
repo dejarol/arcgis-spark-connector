@@ -1,5 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.config
 
+import sttp.model.Uri
+
 /**
  * TODO
  */
@@ -10,5 +12,12 @@ object PropertyConversions {
    */
   object ToInteger extends PropertyConversion[Int] {
     override def apply(value: String): Int = Integer.parseInt(value)
+  }
+
+  /**
+   * TODO
+   */
+  object ToUri extends PropertyConversion[Uri] {
+    override def apply(value: String): Uri = Uri.unsafeParse(value)
   }
 }

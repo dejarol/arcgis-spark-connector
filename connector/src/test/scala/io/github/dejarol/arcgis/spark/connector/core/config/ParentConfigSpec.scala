@@ -1,18 +1,18 @@
 package io.github.dejarol.arcgis.spark.connector.core.config
 
-import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JavaMapMixins}
 
 import java.util
 
-class IOConfigSpec
+class ParentConfigSpec
   extends BasicSpec {
 
-  import IOConfigSpec._
+  import ParentConfigSpec._
 
-  private lazy val emptyConfig: IOConfig = createIOConfig(util.Collections.emptyMap())
-  private lazy val singleEntryConfig: IOConfig = createIOConfig("key", "value")
+  private lazy val emptyConfig: ParentConfig = createIOConfig(util.Collections.emptyMap())
+  private lazy val singleEntryConfig: ParentConfig = createIOConfig("key", "value")
 
-  describe(anInstanceOf[IOConfig]) {
+  describe(anInstanceOf[ParentConfig]) {
     describe(SHOULD) {
       describe("get a value") {
         it("as an optional") {
@@ -56,7 +56,8 @@ class IOConfigSpec
   }
 }
 
-object IOConfigSpec {
+object ParentConfigSpec
+  extends JavaMapMixins {
 
   /**
    * TODO
@@ -65,9 +66,9 @@ object IOConfigSpec {
    */
   private def createIOConfig(
                               initial: util.Map[String, String]
-                            ): IOConfig = {
+                            ): ParentConfig = {
 
-    new IOConfig(initial)
+    new ParentConfig(initial)
   }
 
   /**
@@ -79,10 +80,10 @@ object IOConfigSpec {
   private def createIOConfig(
                               key: String,
                               value: String
-                            ): IOConfig = {
+                            ): ParentConfig = {
 
    createIOConfig(
-     util.Collections.singletonMap(key, value)
+     createSimpleMap(key, value)
    )
   }
 }

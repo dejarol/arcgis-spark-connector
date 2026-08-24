@@ -24,7 +24,7 @@ class ArcgisTableProvider
   override def getTable(structType: StructType, transforms: Array[Transform], map: util.Map[String, String]): Table = {
 
     new ArcgisTable(
-      structType, map
+      structType, new CaseInsensitiveStringMap(map)
     )
   }
 
