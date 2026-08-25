@@ -8,6 +8,6 @@ class ArcgisScanBuilder(private val readConfig: ReadConfig)
 
   override def build(): Scan = {
 
-    new ArcgisScan()
+    new ArcgisScan(readConfig)
   }
 }

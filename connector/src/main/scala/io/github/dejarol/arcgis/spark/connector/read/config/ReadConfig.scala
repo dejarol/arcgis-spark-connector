@@ -40,6 +40,23 @@ case class ReadConfig(override protected val properties: util.Map[String, String
   }
 
   /**
+   * TODO
+   * @return
+   */
+  def partitioningConfig: PartitioningConfig = {
+
+    PartitioningConfig(
+      propertiesStartingWithPrefix(PARTITIONING_PREFIX)
+    )
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  def partitioningIsConfigured: Boolean = !partitioningConfig.isEmpty
+
+  /**
    * Reports whether the query should include geometry.
    *
    * @return the `returnGeometry` query option, or `false` when it is unset
@@ -76,6 +93,19 @@ case class ReadConfig(override protected val properties: util.Map[String, String
       )
     }
   }
+
+  /**
+   * TODO
+   * @return
+   */
+  def returnCountOnly: Int = {
+
+    withRequestHandlerDo {
+      _.returnCountOnly(
+        layerUri, queryLayerConfig.where
+      ).count
+    }
+  }
 }
 
 /**
@@ -98,4 +128,6 @@ object ReadConfig {
    * @since 0.1.0
    */
   final val QUERY_PREFIX = "query."
+
+  final val PARTITIONING_PREFIX = "partitioning."
 }

@@ -3,8 +3,8 @@ package io.github.dejarol.arcgis.spark.connector.read.http
 import io.github.dejarol.arcgis.spark.connector.core.http.BaseRequestHandler
 import io.github.dejarol.arcgis.spark.connector.core.http.item.GetFeatureLayerDefinitionRequestBuilder
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
-import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
-import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, QueryParameters}
+import io.github.dejarol.arcgis.spark.connector.read.models.{QueryResponse, ReturnCountOnlyResponse}
+import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, FeatureLayerQueryParameters}
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 
@@ -58,13 +58,31 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
    */
   def queryUsingPost(
                       layerUri: Uri,
-                      queryParameters: QueryParameters,
+                      queryParameters: FeatureLayerQueryParameters,
                       token: Option[String]
                     ): QueryResponse = {
 
     unsafelySend(
       QueryFeatureLayerUsingPostRequestBuilder(
         layerUri, queryParameters, token
+      )
+    )
+  }
+
+  /**
+   * TODO
+   * @param layerUri
+   * @param where
+   * @return
+   */
+  def returnCountOnly(
+                       layerUri: Uri,
+                       where: Option[String]
+                     ): ReturnCountOnlyResponse = {
+
+    unsafelySend(
+      ReturnCountOnlyRequestBuilder(
+        layerUri, FeatureLayerQueryParameters.returnCountOnly(where)
       )
     )
   }

@@ -47,6 +47,15 @@ class BaseConfigSpec
           valid.getAs[Int]("key", PropertyConversions.ToInteger) shouldBe Some(8)
           valid.unsafelyGetAs[Int]("key", PropertyConversions.ToInteger) shouldBe 8
         }
+
+        it("as a typed optional with a default") {
+
+          emptyConfig.getAs[Int]("k", PropertyConversions.ToInteger, -1) shouldBe -1
+
+          val valid = createConfig("k", "27")
+          valid.getAs[Int]("k", PropertyConversions.ToInteger, -1) shouldBe 27
+          valid.unsafelyGetAs[Int]("k", PropertyConversions.ToInteger) shouldBe 27
+        }
       }
 
       describe("raise an exception") {

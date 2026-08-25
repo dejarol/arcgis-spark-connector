@@ -101,6 +101,23 @@ class BaseConfig(protected val properties: util.Map[String, String]) {
   }
 
   /**
+   * TODO
+   * @param key
+   * @param conversion
+   * @param default
+   * @tparam T
+   * @return
+   */
+  protected[config] final def getAs[T](
+                                        key: String,
+                                        conversion: PropertyConversion[T],
+                                        default: T
+                                      ): T = {
+
+    getAs(key, conversion).getOrElse(default)
+  }
+
+  /**
    * Looks up a required property and converts it to type `T`.
    *
    * @param key        property name to look up

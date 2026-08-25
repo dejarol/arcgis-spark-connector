@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.http
 
 import io.github.dejarol.arcgis.spark.connector.ArcgisIntegrationSpec
 import io.github.dejarol.arcgis.spark.connector.core.models.EsriGeometryType
-import io.github.dejarol.arcgis.spark.connector.read.QueryParameters
+import io.github.dejarol.arcgis.spark.connector.read.FeatureLayerQueryParameters
 import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
 import org.scalatest.{Inspectors, OptionValues}
 
@@ -100,7 +100,7 @@ class ReadRequestHandlerIntegrationSpec
         it("applying a where condition, without returning the geometry") {
 
           val response = handler.queryUsingPost(
-            polygonLayerUri, QueryParameters(
+            polygonLayerUri, FeatureLayerQueryParameters(
               where = Some("GEOID = '01'")
             ), None
           )
@@ -113,7 +113,7 @@ class ReadRequestHandlerIntegrationSpec
         it("applying a where condition, returning the geometry") {
 
           val response = handler.queryUsingPost(
-            polygonLayerUri, QueryParameters(
+            polygonLayerUri, FeatureLayerQueryParameters(
               where = Some("GEOID = '01'"), returnGeometry = Some(true)
             ), None
           )
@@ -127,7 +127,7 @@ class ReadRequestHandlerIntegrationSpec
 
           val outFields = Seq("GEOID", "NAME")
           val response = handler.queryUsingPost(
-            polygonLayerUri, QueryParameters(
+            polygonLayerUri, FeatureLayerQueryParameters(
               where = Some("GEOID = '01'"), outFields = Some(outFields)
             ), None
           )
@@ -142,7 +142,7 @@ class ReadRequestHandlerIntegrationSpec
         it("returning geometries with a different SR") {
 
           val response = handler.queryUsingPost(
-            polygonLayerUri, QueryParameters(
+            polygonLayerUri, FeatureLayerQueryParameters(
               where = Some("GEOID = '01'"), returnGeometry = Some(true), outSR = Some(4326)
             ), None
           )
@@ -158,7 +158,7 @@ class ReadRequestHandlerIntegrationSpec
 
           val (offset, featureCount) = (0, 10)
           val response = handler.queryUsingPost(
-            polygonLayerUri, QueryParameters(
+            polygonLayerUri, FeatureLayerQueryParameters(
               outFields = Some(Seq("GEOID", "NAME")),
               resultOffset = Some(offset),
               resultRecordCount = Some(featureCount)
@@ -171,6 +171,20 @@ class ReadRequestHandlerIntegrationSpec
             featuresShouldHaveGeometry = false,
             expectedFieldNames = Some(Seq("GEOID", "NAME"))
           )
+        }
+
+        describe("returning count only") {
+          it("with a where") {
+
+            val response = handler.returnCountOnly(polygonLayerUri, Some("GEOID = '01'"))
+            response.count shouldBe 1
+          }
+
+          it("without a where") {
+
+            val response = handler.returnCountOnly(polygonLayerUri, None)
+            response.count shouldBe 52
+          }
         }
       }
     }

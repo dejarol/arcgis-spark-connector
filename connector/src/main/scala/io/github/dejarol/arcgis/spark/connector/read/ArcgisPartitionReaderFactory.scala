@@ -1,5 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read
 
+import io.github.dejarol.arcgis.spark.connector.read.partitioning.ArcgisPartition
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.read.{InputPartition, PartitionReader, PartitionReaderFactory}
 
