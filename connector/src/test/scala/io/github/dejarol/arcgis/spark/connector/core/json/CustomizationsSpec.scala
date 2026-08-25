@@ -1,19 +1,21 @@
 package io.github.dejarol.arcgis.spark.connector.core.json
 
+import io.github.dejarol.arcgis.spark.connector.core.models._
 import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, EnumWithAPIName}
-import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType}
-import org.json4s.{DefaultFormats, Formats}
 import org.json4s.native.JsonMethods
+import org.json4s.{DefaultFormats, Formats}
 
 class CustomizationsSpec
   extends BasicSpec {
 
   /**
-   * TODO
-   * @param rawJson
-   * @param formats
-   * @tparam T
-   * @return
+   * Parses a JSON string into a value of type `T`.
+   *
+   * @param rawJson JSON document to parse
+   * @param formats JSON4s formats used for extraction
+   * @tparam T expected value type
+   * @return the extracted value
+   * @since 0.1.0
    */
   private def jsonStringAS[T: Manifest](rawJson: String, formats: Formats): T = {
 
@@ -22,9 +24,11 @@ class CustomizationsSpec
   }
 
   /**
-   * TODO
-   * @param v
-   * @tparam E
+   * Asserts that an enum with an ArcGIS API name can be deserialized from JSON.
+   *
+   * @param v enum constant expected after deserialization
+   * @tparam E enum type exposing an ArcGIS API name
+   * @since 0.1.0
    */
   private def assertDeserializationOfEnumWithAPIName[E <: Enum[E] with EnumWithAPIName: Manifest](v: E): Unit = {
 
@@ -45,6 +49,20 @@ class CustomizationsSpec
     model.`type` shouldEqual v
   }
 
+  /**
+   * Asserts that a JSON document deserializes to the expected geometry.
+   *
+   * @param rawJson  JSON document to parse
+   * @param expected geometry expected after deserialization
+   * @since 0.1.0
+   */
+  private def assertDeserializationOfGeometry(rawJson: String, expected: Geometry): Unit = {
+
+    jsonStringAS[Geometry](
+      rawJson, DefaultFormats + Customizations.serializerForGeometry()
+    ) shouldEqual expected
+  }
+
   describe(`object`[Customizations.type ]) {
     describe(SHOULD) {
       describe("provide JSON4S customizations for managing") {
@@ -59,9 +77,51 @@ class CustomizationsSpec
           assertDeserializationOfEnumWithAPIName[EsriFieldType](EsriFieldType.STRING)
         }
 
-        it("geometries") {
+        describe("the deserialization of geometries like") {
+          it("points") {
 
+            val (x, y, wkid) = (1.23, 4.56, 4326)
+            val json =
+              f"""
+                 |{
+                 | "x": $x,
+                 | "y": $y,
+                 | "spatialReference": {
+                 |   "wkid": $wkid
+                 | }
+                 |}""".stripMargin
 
+            assertDeserializationOfGeometry(
+              json, PointGeometry(
+                x, y, Some(SpatialReference(Some(wkid), None))
+              )
+            )
+          }
+
+          it("polygons") {
+
+            val (x, y, wkid) = (1.23, 4.56, 4326)
+            val json =
+              f"""
+                 |{
+                 |  "rings": [
+                 |    [
+                 |      [$x, $y]
+                 |    ]
+                 |   ],
+                 |   "spatialReference": {
+                 |     "wkid": $wkid
+                 |   }
+                 |}
+                 |""".stripMargin
+
+            assertDeserializationOfGeometry(
+              json, PolygonGeometry(
+                Seq(Seq(Seq(x, y))),
+                Some(SpatialReference(Some(wkid), None))
+              )
+            )
+          }
         }
       }
     }

@@ -3,7 +3,8 @@ package io.github.dejarol.arcgis.spark.connector.read.http
 import io.github.dejarol.arcgis.spark.connector.core.http.BaseRequestHandler
 import io.github.dejarol.arcgis.spark.connector.core.http.item.GetFeatureLayerDefinitionRequestBuilder
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
-import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, QueryParameters, QueryResponse}
+import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
+import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, QueryParameters}
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 

@@ -57,10 +57,10 @@ case class QueryLayerConfig(override protected val properties: util.Map[String, 
   def asQueryParameters: QueryParameters = {
 
     QueryParameters(
-      where,
-      outFields,
-      returnGeometry,
-      outSR
+      where = where,
+      outFields = outFields,
+      returnGeometry = returnGeometry,
+      outSR = outSR
     )
   }
 }

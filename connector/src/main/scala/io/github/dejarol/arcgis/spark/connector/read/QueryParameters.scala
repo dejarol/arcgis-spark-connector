@@ -10,12 +10,16 @@ import sttp.model.Part
  * @param outFields
  * @param returnGeometry
  * @param outSR
+ * @param resultOffset
+ * @param resultRecordCount
  */
 case class QueryParameters(
                             where: Option[String] = None,
                             outFields: Option[Seq[String]] = None,
                             returnGeometry: Option[Boolean] = None,
-                            outSR: Option[Int] = None
+                            outSR: Option[Int] = None,
+                            resultOffset: Option[Int] = None,
+                            resultRecordCount: Option[Int] = None
                           )
   extends AsMultiParts {
 
@@ -49,7 +53,9 @@ case class QueryParameters(
   private def optionalParts(): Seq[Option[Part[BasicBodyPart]]] = {
 
     Seq(
-     outSR.map(sr => multipart("outSR", String.valueOf(sr)))
+     outSR.map(sr => multipart("outSR", String.valueOf(sr))),
+     resultOffset.map(offset => multipart("resultOffset", String.valueOf(offset))),
+     resultRecordCount.map(count => multipart("resultRecordCount", String.valueOf(count)))
     )
   }
 }

@@ -9,6 +9,13 @@ package io.github.dejarol.arcgis.spark.connector.core.models
 case class PointGeometry(
                          x: Double,
                          y: Double,
-                         override val spatialReference: SpatialReference
+                         spatialReference: Option[SpatialReference]
                        )
-  extends Geometry(spatialReference)
+  extends Geometry {
+
+  override def `type`(): EsriGeometryType = EsriGeometryType.POINT
+
+  override def isAPoint: Boolean = true
+
+  override def isAPolygon: Boolean = false
+}
