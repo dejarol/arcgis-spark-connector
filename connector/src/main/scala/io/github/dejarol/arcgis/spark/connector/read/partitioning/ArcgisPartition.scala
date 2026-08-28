@@ -4,20 +4,26 @@ import io.github.dejarol.arcgis.spark.connector.read.FeatureLayerQueryParameters
 import org.apache.spark.sql.connector.read.InputPartition
 
 /**
- * TODO
+ * Concrete implementation of Spark's connector [[InputPartition]] for ARCGIS datasource
+ *
+ * @since 0.1.0
  */
 trait ArcgisPartition
   extends InputPartition {
 
   /**
-   * TODO
-   * @return
+   * Returns the identifier of this partition.
+   *
+   * @return the partition id
+   * @since 0.1.0
    */
   def partitionId: Int
 
   /**
-   * TODO
-   * @return
+   * Returns the query parameters used to fetch this partition's features.
+   *
+   * @return one query parameter set per request required to read the partition
+   * @since 0.1.0
    */
   def parametersForPartitionQueries: Seq[FeatureLayerQueryParameters]
 }

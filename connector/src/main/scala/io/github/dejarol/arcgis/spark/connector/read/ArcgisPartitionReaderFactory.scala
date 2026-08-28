@@ -6,9 +6,23 @@ import io.github.dejarol.arcgis.spark.connector.read.partitioning.ArcgisPartitio
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.read.{InputPartition, PartitionReader, PartitionReaderFactory}
 
+/**
+ * Concrete implementation of Spark's connector [[PartitionReaderFactory]] for ARCGIS datasource
+ *
+ * @param readConfig options that control how the feature layer is queried
+ * @since 0.1.0
+ */
 class ArcgisPartitionReaderFactory(private val readConfig: ReadConfig)
   extends PartitionReaderFactory {
 
+  /**
+   * Creates a partition reader for an ArcGIS input partition.
+   *
+   * @param inputPartition partition to read; must be an [[ArcgisPartition]]
+   * @return a reader that yields InternalRows for the partition
+   * @throws IllegalArgumentException if `inputPartition` is not an [[ArcgisPartition]]
+   * @since 0.1.0
+   */
   override def createReader(inputPartition: InputPartition): PartitionReader[InternalRow] = {
 
     inputPartition match {
@@ -19,6 +33,13 @@ class ArcgisPartitionReaderFactory(private val readConfig: ReadConfig)
     }
   }
 
+  /**
+   * Builds a partition reader with an encoder for the layer's fields and geometry.
+   *
+   * @param partition ArcGIS partition to read
+   * @return a partition reader for `partition`
+   * @since 0.1.0
+   */
   private def setupPartitionReader(partition: ArcgisPartition): PartitionReader[InternalRow] = {
 
     val (layerFields, layerGeometry) = readConfig.getFeatureLayerFieldsAndGeometry

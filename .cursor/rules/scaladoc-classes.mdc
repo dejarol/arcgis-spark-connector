@@ -8,6 +8,8 @@ alwaysApply: false
 
 When writing or completing **class-level** Scaladoc on classes (including `case class`) and **standalone objects**, follow this format. Do **not** write class-level Scaladoc on companion objects (see `scaladoc-companions`). Methods are always documented separately (see `scaladoc-methods`).
 
+If the type extends a Spark Data Source V2 connector SPI class (`Table`, `ScanBuilder`, `Scan`, `Batch`, and similar), start the class comment with the opening line defined in `scaladoc-spark-connector`, then continue with this template.
+
 ## Required structure
 
 1. **Description** — at most **10 lines** summarizing the overall meaning and responsibility of the class (not implementation detail). No empty `TODO` stubs. This limit applies only to the descriptive prose, **not** to the full Scaladoc block (tags may make the comment longer).
@@ -166,3 +168,4 @@ class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
 - Do not add class-level Scaladoc to a concrete test suite; if one is already there, leave it alone unless the user asks to remove it.
 - This rule targets **classes** and **standalone objects**. Companion objects get no class-level Scaladoc; see `scaladoc-companions`.
 - Method Scaladoc is always required, including inside standalone objects; see `scaladoc-methods`.
+- Spark connector SPI types (`Table`, `ScanBuilder`, `Scan`, `Batch`, …) use a required opening line before this template; see `scaladoc-spark-connector`.
