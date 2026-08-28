@@ -1,10 +1,12 @@
 package io.github.dejarol.arcgis.spark.connector.core.models
 
 /**
- * TODO
- * @param x
- * @param y
- * @param spatialReference
+ * ArcGIS point geometry with optional spatial reference.
+ *
+ * @param x                x coordinate
+ * @param y                y coordinate
+ * @param spatialReference optional spatial reference of the point
+ * @since 0.1.0
  */
 case class PointGeometry(
                          x: Double,

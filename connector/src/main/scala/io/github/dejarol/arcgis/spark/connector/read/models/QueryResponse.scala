@@ -4,11 +4,13 @@ import io.github.dejarol.arcgis.spark.connector.core.EmptyOrNonEmpty
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField, SpatialReference}
 
 /**
- * TODO
- * @param geometryType
- * @param spatialReference
- * @param fields
- * @param features
+ * Body of an ArcGIS feature layer query response.
+ *
+ * @param geometryType     geometry type of the returned features
+ * @param spatialReference spatial reference of the returned geometries
+ * @param fields           optional field definitions included with the response
+ * @param features         features returned by the query
+ * @since 0.1.0
  */
 case class QueryResponse(
                           geometryType: EsriGeometryType,
@@ -19,14 +21,18 @@ case class QueryResponse(
   extends EmptyOrNonEmpty {
 
   /**
-   * TODO
-   * @return
+   * Reports whether this response contains no features and no fields.
+   *
+   * @return `true` if both `features` and `fields` are empty
+   * @since 0.1.0
    */
   def isEmpty: Boolean = features.isEmpty && fields.isEmpty
 
   /**
-   * TODO
-   * @return
+   * Returns the names of the fields included with this response.
+   *
+   * @return field names, or an empty sequence when `fields` is absent
+   * @since 0.1.0
    */
   def fieldNames: Seq[String] = {
 

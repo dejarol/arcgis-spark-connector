@@ -1,10 +1,11 @@
 package io.github.dejarol.arcgis.spark.connector.core.models
 
 /**
- * TODO
+ * ArcGIS polygon geometry defined by nested rings and an optional spatial reference.
  *
- * @param rings
- * @param spatialReference
+ * @param rings            nested ring coordinates (polygons of points of x/y values)
+ * @param spatialReference optional spatial reference of the polygon
+ * @since 0.1.0
  */
 case class PolygonGeometry(
                             rings: Seq[Seq[Seq[Double]]],
@@ -19,16 +20,27 @@ case class PolygonGeometry(
   override def isAPolygon: Boolean = true
 
   /**
-   * TODO
-   * @return
+   * Returns the number of polygons in this geometry.
+   *
+   * @return the size of `rings`
+   * @since 0.1.0
    */
   def numberOfPolygons: Int = rings.size
 
+  /**
+   * Returns the number of vertices in the polygon at the given index.
+   *
+   * @param index zero-based polygon index into `rings`
+   * @return the number of vertices in that polygon
+   * @since 0.1.0
+   */
   def numberOfVerticesInPolygon(index: Int): Int = rings(index).size
 
   /**
-   * TODO
-   * @return
+   * Returns the total number of vertices across all polygons.
+   *
+   * @return the flattened size of `rings`
+   * @since 0.1.0
    */
   def numberOfVertices: Int = rings.flatten.size
 }

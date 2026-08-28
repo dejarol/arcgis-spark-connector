@@ -3,9 +3,11 @@ package io.github.dejarol.arcgis.spark.connector.read.models
 import io.github.dejarol.arcgis.spark.connector.core.models.Geometry
 
 /**
- * TODO
- * @param attributes
- * @param geometry
+ * A single feature from an ArcGIS feature layer query.
+ *
+ * @param attributes attribute values keyed by field name
+ * @param geometry   optional geometry of the feature
+ * @since 0.1.0
  */
 case class ArcgisFeature(
                           attributes: Map[String, Option[Any]],
@@ -13,9 +15,11 @@ case class ArcgisFeature(
                         ) {
 
   /**
-   * TODO
-   * @param key
-   * @return
+   * Looks up an attribute by field name.
+   *
+   * @param key attribute field name
+   * @return `Some` wrapping the optional attribute value when `key` exists, `None` otherwise
+   * @since 0.1.0
    */
-  def containsAttribute(key: String): Boolean = attributes.contains(key)
+  def getAttribute(key: String): Option[Option[Any]] = attributes.get(key)
 }

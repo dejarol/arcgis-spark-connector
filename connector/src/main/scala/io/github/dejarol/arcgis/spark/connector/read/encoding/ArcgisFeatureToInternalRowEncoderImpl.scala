@@ -55,19 +55,33 @@ class ArcgisFeatureToInternalRowEncoderImpl(
                                              field: FeatureLayerField
                                            ): Any = {
 
-    if (feature.containsAttribute(field.name)) {
-
-      val attributeValue: Option[Any] = feature.attributes.get(field.name)
-      field.`type` match {
-        case EsriFieldType.DOUBLE => AttributeValueEncoders.forDouble().apply(attributeValue)
-        case EsriFieldType.INTEGER | EsriFieldType.OID => AttributeValueEncoders.forInteger().apply(attributeValue)
-        case EsriFieldType.STRING => AttributeValueEncoders.forString().apply(attributeValue)
-        case _ => throw new UnsupportedEsriFieldTypeException(field.`type`)
-      }
-    } else {
-      throw new IllegalStateException(
+    feature.getAttribute(field.name) match {
+      case Some(value) => parseAttributeValue(value, field.`type`)
+      case None => throw new IllegalStateException(
         s"Feature does not contain attribute ${field.name}"
       )
+    }
+  }
+
+  /**
+   * Encodes an optional attribute value according to its ArcGIS field type.
+   *
+   * @param value  optional raw attribute value
+   * @param `type` ArcGIS field type used to select the encoder
+   * @return the Spark representation of the attribute
+   * @throws UnsupportedEsriFieldTypeException if the field type has no attribute encoder
+   * @since 0.1.0
+   */
+  private def parseAttributeValue(
+                                   value: Option[Any],
+                                   `type`: EsriFieldType
+                                 ): Any = {
+
+    `type` match {
+      case EsriFieldType.DOUBLE => AttributeValueEncoders.forDouble().apply(value)
+      case EsriFieldType.INTEGER | EsriFieldType.OID => AttributeValueEncoders.forInteger().apply(value)
+      case EsriFieldType.STRING => AttributeValueEncoders.forString().apply(value)
+      case _ => throw new UnsupportedEsriFieldTypeException(`type`)
     }
   }
 
