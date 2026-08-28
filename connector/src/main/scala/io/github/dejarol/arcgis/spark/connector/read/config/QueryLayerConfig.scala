@@ -1,9 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
-import io.github.dejarol.arcgis.spark.connector.read.LayerQueryParameters
-
-import java.util
+import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
 /**
  * Query options sent to an ArcGIS feature layer query endpoint.
@@ -11,7 +10,7 @@ import java.util
  * @param properties configuration entries keyed by property name
  * @since 0.1.0
  */
-case class QueryLayerConfig(override protected val properties: util.Map[String, String])
+case class QueryLayerConfig(override protected val properties: CaseInsensitiveMap[String])
   extends BaseConfig(properties) {
 
   import QueryLayerConfig._
@@ -54,9 +53,9 @@ case class QueryLayerConfig(override protected val properties: util.Map[String, 
    * @return query parameters ready to be sent to ArcGIS
    * @since 0.1.0
    */
-  def asQueryParameters: LayerQueryParameters = {
+  def asQueryParameters: QueryLayerParameters = {
 
-    LayerQueryParameters(
+    QueryLayerParameters(
       where = where,
       outFields = outFields,
       returnGeometry = returnGeometry,

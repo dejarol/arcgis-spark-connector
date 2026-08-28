@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core.http
 
-import sttp.client4.{DefaultSyncBackend, SyncBackend}
+import sttp.client4.SyncBackend
 
 /**
  * TODO

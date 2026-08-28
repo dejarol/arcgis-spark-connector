@@ -3,7 +3,7 @@ package io.github.dejarol.arcgis.spark.connector.read
 import io.github.dejarol.arcgis.spark.connector.core.http.AsMultiPartSpec
 import org.scalatest.OptionValues
 
-class LayerQueryParametersSpec
+class QueryLayerParametersSpec
   extends AsMultiPartSpec
     with OptionValues {
 
@@ -12,11 +12,11 @@ class LayerQueryParametersSpec
   private val where = "name = 'john'"
   private val outFields = Seq("name", "age")
 
-  describe(anInstanceOf[LayerQueryParameters]) {
+  describe(anInstanceOf[QueryLayerParameters]) {
     describe(SHOULD) {
       it("create a copy with offset and count set") {
 
-        val original = LayerQueryParameters()
+        val original = QueryLayerParameters()
         original.resultOffset shouldBe empty
         original.resultRecordCount shouldBe empty
 
@@ -31,7 +31,7 @@ class LayerQueryParametersSpec
         it("with a where") {
 
           val parts = convertPartsToMap(
-            LayerQueryParameters.returnCountOnly(
+            QueryLayerParameters.returnCountOnly(
               Some(where)
             )
           )
@@ -46,14 +46,14 @@ class LayerQueryParametersSpec
         it("without a where") {
 
           val parts = convertPartsToMap(
-            LayerQueryParameters.returnCountOnly(None)
+            QueryLayerParameters.returnCountOnly(None)
           )
 
           parts should have size 2
           parts should contain key "returnCountOnly"
           parts("returnCountOnly") should contain value "true"
           parts should contain key "where"
-          parts("where") should contain value LayerQueryParameters.DEFAULT_WHERE
+          parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
         }
       }
 
@@ -62,7 +62,7 @@ class LayerQueryParametersSpec
 
           // [1] With a where
           val partsWithWhere = convertPartsToMap(
-            LayerQueryParameters(where = Some(where))
+            QueryLayerParameters(where = Some(where))
           )
 
           partsWithWhere should contain key "where"
@@ -70,18 +70,18 @@ class LayerQueryParametersSpec
 
           // [2] Without a where
           val partsWithoutWhere = convertPartsToMap(
-            LayerQueryParameters()
+            QueryLayerParameters()
           )
 
           partsWithoutWhere should contain key "where"
-          partsWithoutWhere("where") should contain value LayerQueryParameters.DEFAULT_WHERE
+          partsWithoutWhere("where") should contain value QueryLayerParameters.DEFAULT_WHERE
         }
 
         it("settings outFields") {
 
           // [1] With outFields
           val partsWithFields = convertPartsToMap(
-            LayerQueryParameters(outFields = Some(outFields))
+            QueryLayerParameters(outFields = Some(outFields))
           )
 
           partsWithFields should contain key "outFields"
@@ -89,26 +89,26 @@ class LayerQueryParametersSpec
 
           // [2] Without outFields
           val partWithoutFields = convertPartsToMap(
-            LayerQueryParameters()
+            QueryLayerParameters()
           )
 
           partWithoutFields should contain key "outFields"
-          partWithoutFields("outFields") should contain value LayerQueryParameters.DEFAULT_OUT_FIELDS
+          partWithoutFields("outFields") should contain value QueryLayerParameters.DEFAULT_OUT_FIELDS
         }
 
         it("settings returnGeometry") {
 
           // [1] ReturnGeometry unset
           val partsUnset = convertPartsToMap(
-            LayerQueryParameters()
+            QueryLayerParameters()
           )
 
           partsUnset should contain key "returnGeometry"
-          partsUnset("returnGeometry") should contain value LayerQueryParameters.DEFAULT_RETURN_GEOMETRY
+          partsUnset("returnGeometry") should contain value QueryLayerParameters.DEFAULT_RETURN_GEOMETRY
 
           // [2] ReturnGeometry is set
           val partsSet = convertPartsToMap(
-            LayerQueryParameters(returnGeometry = Some(true))
+            QueryLayerParameters(returnGeometry = Some(true))
           )
 
           partsSet should contain key "returnGeometry"
@@ -119,14 +119,14 @@ class LayerQueryParametersSpec
 
           // [1] OutSR unset
           val partsUnset = convertPartsToMap(
-            LayerQueryParameters()
+            QueryLayerParameters()
           )
 
           partsUnset shouldNot contain key "outSR"
 
           // [2] OutSR is set
           val partsSet = convertPartsToMap(
-            LayerQueryParameters(outSR = Some(4326))
+            QueryLayerParameters(outSR = Some(4326))
           )
 
           partsSet should contain key "outSR"
@@ -137,7 +137,7 @@ class LayerQueryParametersSpec
 
           // [1] Unset
           val partsUnset = convertPartsToMap(
-            LayerQueryParameters()
+            QueryLayerParameters()
           )
 
           partsUnset shouldNot contain key "resultOffset"
@@ -145,7 +145,7 @@ class LayerQueryParametersSpec
 
           // [2] Set
           val partsSet = convertPartsToMap(
-            LayerQueryParameters(
+            QueryLayerParameters(
               resultOffset = Some(10),
               resultRecordCount = Some(20)
             )

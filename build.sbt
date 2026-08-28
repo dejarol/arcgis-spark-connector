@@ -44,6 +44,8 @@ lazy val connector = (project in file("connector"))
 
 lazy val integration = (project in file("integration")).settings(
   libraryDependencies ++= Seq(
+    sparkCore % Provided,
+    sparkSql % Provided,
     scalactic,
     scalaTest
   )

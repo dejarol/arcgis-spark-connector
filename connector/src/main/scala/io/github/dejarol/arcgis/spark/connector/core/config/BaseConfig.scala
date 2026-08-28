@@ -1,8 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.core.config
 
-import io.github.dejarol.arcgis.spark.connector.core.{EmptyOrNonEmpty, JavaCollectionsUtils}
+import io.github.dejarol.arcgis.spark.connector.core.EmptyOrNonEmpty
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
-import java.util
 import scala.util.Try
 
 /**
@@ -11,10 +11,18 @@ import scala.util.Try
  * @param properties configuration entries keyed by property name
  * @since 0.1.0
  */
-class BaseConfig(protected val properties: util.Map[String, String])
-  extends EmptyOrNonEmpty {
+class BaseConfig(protected val properties: CaseInsensitiveMap[String])
+  extends EmptyOrNonEmpty
+    with Serializable {
 
   import BaseConfig._
+
+  /**
+   * TODO
+   * @param key
+   * @return
+   */
+  final def apply(key: String): String = properties(key)
 
   /**
    * Reports whether this configuration contains no properties.
@@ -25,13 +33,11 @@ class BaseConfig(protected val properties: util.Map[String, String])
   final def isEmpty: Boolean = properties.isEmpty
 
   /**
-   * Reports whether a property with the given key is present.
-   *
-   * @param key property name to look up
-   * @return `true` if this configuration contains `key`
-   * @since 0.1.0
+   * TODO
+   * @param key
+   * @return
    */
-  final def containsKey(key: String): Boolean = properties.containsKey(key)
+  final def contains(key: String): Boolean = properties.contains(key)
 
   /**
    * Looks up a property as an optional string.
@@ -40,14 +46,7 @@ class BaseConfig(protected val properties: util.Map[String, String])
    * @return the property value, or `None` if `key` is missing
    * @since 0.1.0
    */
-  protected[config] final def get(key: String): Option[String] = {
-
-    if (containsKey(key)) {
-      Some(properties.get(key))
-    } else {
-      None
-    }
-  }
+  protected[config] final def get(key: String): Option[String] = properties.get(key)
 
   /**
    * Looks up a property, falling back to a default when the key is missing.
@@ -144,10 +143,14 @@ class BaseConfig(protected val properties: util.Map[String, String])
    * @return a map of matching entries keyed without `prefix`
    * @since 0.1.0
    */
-  protected[config] final def propertiesStartingWithPrefix(prefix: String): util.Map[String, String] = {
+  protected[config] final def propertiesStartingWithPrefix(prefix: String): CaseInsensitiveMap[String] = {
 
-    JavaCollectionsUtils.filterMapByPrefix(
-      properties, prefix
+    CaseInsensitiveMap(
+      properties.collect {
+        case (k, v) if k.startsWith(prefix) => (
+          k.stripPrefix(prefix), v
+        )
+      }
     )
   }
 }

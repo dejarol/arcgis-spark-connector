@@ -21,7 +21,7 @@ object Customizations {
    */
   def serializerForEnumWithAPIName[E <: Enum[E] with EnumWithAPIName: ClassTag](): CustomSerializer[E] = {
 
-    new CustomSerializer[E](format => (
+    new CustomSerializer[E](_ => (
       {
         case JString(s) if Enums.exists[E](s, (v: E, n: String) => v.matchesAPIName(n)) =>
           Enums.unsafeValueOfEnum[E](s, (v: E, n: String) => v.matchesAPIName(n))

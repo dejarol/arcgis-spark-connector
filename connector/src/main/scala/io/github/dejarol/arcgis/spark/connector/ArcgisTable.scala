@@ -1,6 +1,5 @@
 package io.github.dejarol.arcgis.spark.connector
 
-import io.github.dejarol.arcgis.spark.connector.core.JavaCollectionsUtils
 import io.github.dejarol.arcgis.spark.connector.read.ArcgisScanBuilder
 import io.github.dejarol.arcgis.spark.connector.read.config.ReadConfig
 import org.apache.spark.sql.connector.catalog.{SupportsRead, Table, TableCapability}
@@ -62,12 +61,9 @@ class ArcgisTable(
    */
   override def newScanBuilder(caseInsensitiveStringMap: CaseInsensitiveStringMap): ScanBuilder = {
 
-    val readConfig = ReadConfig(
-      JavaCollectionsUtils.mergeCaseInsensitiveMaps(
-        tableProperties, caseInsensitiveStringMap
-      )
+    new ArcgisScanBuilder(
+      ReadConfig.fromUnionOf(tableProperties, caseInsensitiveStringMap),
+      schema()
     )
-
-    new ArcgisScanBuilder(readConfig, schema())
   }
 }

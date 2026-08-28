@@ -1,6 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
-import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JavaMapMixins}
+import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 import org.scalatest.OptionValues
 
 class QueryLayerConfigSpec
@@ -61,19 +62,18 @@ class QueryLayerConfigSpec
   }
 }
 
-object QueryLayerConfigSpec
-  extends JavaMapMixins {
+object QueryLayerConfigSpec {
 
   /**
-   * Creates an empty query-layer configuration for the tests in this suite.
-   *
-   * @return a query-layer configuration with no properties
-   * @since 0.1.0
+   * TODO
+   * @return
    */
   private def createEmptyConfig(): QueryLayerConfig = {
 
     QueryLayerConfig(
-      createEmptyMap()
+      CaseInsensitiveMap(
+        Map.empty
+      )
     )
   }
 
@@ -88,7 +88,9 @@ object QueryLayerConfigSpec
   private def createSingletonConfig(key: String, value: String): QueryLayerConfig = {
 
     QueryLayerConfig(
-      createSingletonMap(key, value)
+      CaseInsensitiveMap(
+        Map(key -> value)
+      )
     )
   }
 }

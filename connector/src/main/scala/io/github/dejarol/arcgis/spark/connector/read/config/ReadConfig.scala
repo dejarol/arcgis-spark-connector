@@ -1,13 +1,14 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
+import io.github.dejarol.arcgis.spark.connector.core.JavaScalaConverters
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
-import io.github.dejarol.arcgis.spark.connector.read.LayerQueryParameters
+import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
 import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
+import org.apache.spark.sql.util.CaseInsensitiveStringMap
 import sttp.model.Uri
-
-import java.util
 
 /**
  * Spark DataSource read options for querying an ArcGIS feature layer.
@@ -15,7 +16,7 @@ import java.util
  * @param properties configuration entries keyed by property name
  * @since 0.1.0
  */
-case class ReadConfig(override protected val properties: util.Map[String, String])
+case class ReadConfig(override protected val properties: CaseInsensitiveMap[String])
   extends BaseConfig(properties) {
 
   import ReadConfig._
@@ -122,7 +123,7 @@ case class ReadConfig(override protected val properties: util.Map[String, String
    * @return the query response body
    * @since 0.1.0
    */
-  def queryUsingPost(queryParameters: LayerQueryParameters): QueryResponse = {
+  def queryUsingPost(queryParameters: QueryLayerParameters): QueryResponse = {
 
     withRequestHandlerDo {
       _.queryUsingPost(
@@ -132,12 +133,40 @@ case class ReadConfig(override protected val properties: util.Map[String, String
   }
 }
 
-/**
- * Property keys used by [[ReadConfig]].
- *
- * @since 0.1.0
- */
 object ReadConfig {
+
+  /**
+   * TODO
+   * @param map
+   * @return
+   */
+  def fromCIMap(map: CaseInsensitiveStringMap): ReadConfig = {
+
+    ReadConfig(
+      CaseInsensitiveMap(
+        JavaScalaConverters.javaMapToScalaMap(map)
+      )
+    )
+  }
+
+  /**
+   * TODO
+   * @param first
+   * @param second
+   * @return
+   */
+  def fromUnionOf(
+                   first: CaseInsensitiveStringMap,
+                   second: CaseInsensitiveStringMap
+                 ): ReadConfig = {
+
+    ReadConfig(
+      CaseInsensitiveMap(
+        JavaScalaConverters.javaMapToScalaMap(first) ++
+          JavaScalaConverters.javaMapToScalaMap(second)
+      )
+    )
+  }
 
   /**
    * Property key for the feature layer URI.

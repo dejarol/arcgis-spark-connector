@@ -16,7 +16,7 @@ import sttp.model.Part
  * @param returnCountOnly   whether the query should return only the feature count
  * @since 0.1.0
  */
-case class LayerQueryParameters(
+case class QueryLayerParameters(
                                  where: Option[String] = None,
                                  outFields: Option[Seq[String]] = None,
                                  returnGeometry: Option[Boolean] = None,
@@ -27,7 +27,7 @@ case class LayerQueryParameters(
                                )
   extends AsMultiParts {
 
-  import LayerQueryParameters._
+  import QueryLayerParameters._
 
   override def parts(): Seq[Part[BasicBodyPart]] = {
 
@@ -53,7 +53,7 @@ case class LayerQueryParameters(
   def withResultOffsetAndRecordCount(
                                       offset: Int,
                                       count: Int
-                                    ): LayerQueryParameters =
+                                    ): QueryLayerParameters =
     {
       this.copy(
         resultOffset = Some(offset),
@@ -64,7 +64,7 @@ case class LayerQueryParameters(
   /**
    * Builds the multipart part for the `where` clause.
    *
-   * @return a part named `where`, using [[LayerQueryParameters.DEFAULT_WHERE]] when unset
+   * @return a part named `where`, using [[QueryLayerParameters.DEFAULT_WHERE]] when unset
    * @since 0.1.0
    */
   private def whereMultiPart: Part[BasicBodyPart] = multipart("where", where.getOrElse(DEFAULT_WHERE))
@@ -114,7 +114,7 @@ case class LayerQueryParameters(
   }
 }
 
-object LayerQueryParameters {
+object QueryLayerParameters {
 
   /**
    * Default ArcGIS `where` clause used when none is provided.
@@ -144,9 +144,9 @@ object LayerQueryParameters {
    * @return parameters with `returnCountOnly` set to `true`
    * @since 0.1.0
    */
-  def returnCountOnly(where: Option[String]): LayerQueryParameters = {
+  def returnCountOnly(where: Option[String]): QueryLayerParameters = {
 
-    LayerQueryParameters(
+    QueryLayerParameters(
       where = where,
       returnCountOnly = Some(true)
     )

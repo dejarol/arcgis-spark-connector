@@ -1,14 +1,13 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
-
-import java.util
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
 /**
  * TODO
  * @param properties configuration entries keyed by property name
  */
-case class PartitioningConfig(override protected val properties: util.Map[String, String])
+case class PartitioningConfig(override protected val properties: CaseInsensitiveMap[String])
   extends BaseConfig(properties) {
 
   import PartitioningConfig._

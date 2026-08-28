@@ -31,7 +31,7 @@ class ArcgisTableProvider
   override def inferSchema(caseInsensitiveStringMap: CaseInsensitiveStringMap): StructType = {
 
     // [1.1] Extract feature layer fields and geometry
-    val readConfig = ReadConfig(caseInsensitiveStringMap)
+    val readConfig = ReadConfig.fromCIMap(caseInsensitiveStringMap)
     val (featureLayerFields, geometry) = readConfig.getFeatureLayerFieldsAndGeometry
     val maybeGeometry = if (readConfig.shouldReturnGeometry) {
       Some(geometry)

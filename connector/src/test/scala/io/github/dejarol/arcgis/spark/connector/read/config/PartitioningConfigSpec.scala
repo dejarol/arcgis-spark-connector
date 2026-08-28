@@ -1,12 +1,14 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
-import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JavaMapMixins}
+import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
 class PartitioningConfigSpec
-  extends BasicSpec
-    with JavaMapMixins {
+  extends BasicSpec {
 
-  private lazy val emptyConfig = PartitioningConfig(createEmptyMap())
+  import PartitioningConfigSpec._
+
+  private lazy val emptyConfig = createEmptyConfig()
 
   describe(anInstanceOf[PartitioningConfig]) {
     describe(SHOULD) {
@@ -16,10 +18,38 @@ class PartitioningConfigSpec
         emptyConfig.fetchSize shouldBe PartitioningConfig.FETCH_SIZE_DEFAULT
 
         // [1.2] Config with a custom value
-        PartitioningConfig(
-          createSingletonMap(PartitioningConfig.FETCH_SIZE_KEY, "5")
+        createConfig(
+          Map(PartitioningConfig.FETCH_SIZE_KEY -> "5")
         ).fetchSize shouldBe 5
       }
     }
+  }
+}
+
+object PartitioningConfigSpec {
+
+  /**
+   * TODO
+   * @return
+   */
+  private def createEmptyConfig(): PartitioningConfig = {
+
+    PartitioningConfig(
+      CaseInsensitiveMap(
+        Map.empty
+      )
+    )
+  }
+
+  /**
+   * TODO
+   * @param map
+   * @return
+   */
+  private def createConfig(map: Map[String, String]): PartitioningConfig = {
+
+    PartitioningConfig(
+      CaseInsensitiveMap(map)
+    )
   }
 }

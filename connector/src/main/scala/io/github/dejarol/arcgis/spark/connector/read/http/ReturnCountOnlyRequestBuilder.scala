@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.http
 
 import io.github.dejarol.arcgis.spark.connector.core.http.{EitherReq, PReqType, ResponseAsSuppliers, SttpEitherThrowableOrValueBuilder}
-import io.github.dejarol.arcgis.spark.connector.read.LayerQueryParameters
+import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.models.ReturnCountOnlyResponse
 import sttp.client4.multipart
 import sttp.model.Uri
@@ -13,7 +13,7 @@ import sttp.model.Uri
  */
 case class ReturnCountOnlyRequestBuilder(
                                           private val layerUri: Uri,
-                                          private val queryParams: LayerQueryParameters
+                                          private val queryParams: QueryLayerParameters
                                         )
   extends SttpEitherThrowableOrValueBuilder[ReturnCountOnlyResponse] {
 

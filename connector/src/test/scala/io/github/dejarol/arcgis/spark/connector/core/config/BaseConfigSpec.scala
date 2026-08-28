@@ -1,6 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.core.config
 
-import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JavaMapMixins}
+import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
 class BaseConfigSpec
   extends BasicSpec {
@@ -17,12 +18,6 @@ class BaseConfigSpec
 
           emptyConfig.isEmpty shouldBe true
           singleEntryConfig.isEmpty shouldBe false
-        }
-
-        it("it contains a key") {
-
-          emptyConfig.containsKey("k") shouldBe false
-          singleEntryConfig.containsKey("key") shouldBe true
         }
       }
 
@@ -81,7 +76,12 @@ class BaseConfigSpec
           emptyConfig.propertiesStartingWithPrefix(prefix) shouldBe empty
           singleEntryConfig.propertiesStartingWithPrefix(prefix) shouldBe empty
 
-          val properties = createConfig(("k1", "v1"), (prefix + "k2", "v2")).propertiesStartingWithPrefix(prefix)
+          val properties = createConfig(
+            Map(
+              "k1" -> "v1",
+              prefix + "k2" -> "v2"
+            )
+          ).propertiesStartingWithPrefix(prefix)
           properties shouldNot be (empty)
           properties should contain key "k2"
         }
@@ -90,19 +90,18 @@ class BaseConfigSpec
   }
 }
 
-object BaseConfigSpec
-  extends JavaMapMixins {
+object BaseConfigSpec {
 
   /**
-   * Creates an empty configuration for the tests in this suite.
-   *
-   * @return a configuration with no properties
-   * @since 0.1.0
+   * TODO
+   * @return
    */
   private def createEmptyConfig(): BaseConfig = {
 
     new BaseConfig(
-      createEmptyMap()
+      CaseInsensitiveMap(
+        Map.empty
+      )
     )
   }
 
@@ -116,30 +115,28 @@ object BaseConfigSpec
    */
   //noinspection SameParameterValue
   private def createConfig(
-                              key: String,
-                              value: String
-                            ): BaseConfig = {
+                            key: String,
+                            value: String
+                          ): BaseConfig = {
 
    new BaseConfig(
-     createSingletonMap(key, value)
+     CaseInsensitiveMap(
+       Map(key -> value)
+     )
    )
   }
 
   /**
    * Creates a configuration from one or more entries for the tests in this suite.
    *
-   * @param first  first property entry
-   * @param others additional property entries
+   * @param map map of property entries
    * @return a configuration containing the given entries
    * @since 0.1.0
    */
-  private def createConfig(
-                          first: (String, String),
-                          others: (String, String)*
-                          ): BaseConfig = {
+  private def createConfig(map: Map[String, String]): BaseConfig = {
 
     new BaseConfig(
-      createSimpleMap(first, others: _*)
+      CaseInsensitiveMap(map)
     )
   }
 }
