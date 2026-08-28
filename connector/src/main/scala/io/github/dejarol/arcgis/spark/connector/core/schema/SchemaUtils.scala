@@ -1,5 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core.schema
 
+import io.github.dejarol.arcgis.spark.connector.core.{UnsupportedArcgisGeometryTypeException, UnsupportedEsriFieldTypeException}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerField}
 import org.apache.spark.sql.types._
 
@@ -44,7 +45,7 @@ object SchemaUtils {
    *
    * @param field feature layer field to convert
    * @return a Spark struct field with the mapped data type
-   * @throws UnsupportedArcgisDataTypeException if the field type has no Spark mapping
+   * @throws UnsupportedEsriFieldTypeException if the field type has no Spark mapping
    * @since 0.1.0
    */
   protected[schema] def featureLayerFieldToStructField(field: FeatureLayerField): StructField = {
@@ -53,7 +54,7 @@ object SchemaUtils {
       case EsriFieldType.DOUBLE => DoubleType
       case EsriFieldType.INTEGER | EsriFieldType.OID => IntegerType
       case EsriFieldType.STRING => StringType
-      case _ => throw new UnsupportedArcgisDataTypeException(field.`type`)
+      case _ => throw new UnsupportedEsriFieldTypeException(field.`type`)
     }
 
     StructField(field.name, sparkType)

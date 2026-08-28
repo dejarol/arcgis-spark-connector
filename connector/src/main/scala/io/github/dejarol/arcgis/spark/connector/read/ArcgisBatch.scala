@@ -12,10 +12,10 @@ class ArcgisBatch(private val readConfig: ReadConfig)
   override def planInputPartitions(): Array[InputPartition] = {
 
     val featuresCount = readConfig.returnCountOnly
-    val partitions: Seq[InputPartition] = if (!readConfig.partitioningIsConfigured) {
-      planSinglePartition(featuresCount)
-    } else {
+    val partitions: Seq[InputPartition] = if (readConfig.partitioningIsConfigured) {
       planMultiplePartitions()
+    } else {
+      planSinglePartition(featuresCount)
     }
 
     partitions.toArray
@@ -31,7 +31,7 @@ class ArcgisBatch(private val readConfig: ReadConfig)
     Seq(
       SingleArcgisPartition(
         featuresCount,
-        readConfig.partitioningConfig.maxRecordsPerQuery,
+        readConfig.partitioningConfig.fetchSize,
         readConfig.queryLayerConfig
       )
     )
@@ -39,11 +39,11 @@ class ArcgisBatch(private val readConfig: ReadConfig)
 
   private def planMultiplePartitions(): Seq[ArcgisPartition] = {
 
-   Seq.empty
+   throw new UnsupportedOperationException("TODO")
   }
 
   override def createReaderFactory(): PartitionReaderFactory = {
 
-    new ArcgisPartitionReaderFactory()
+    new ArcgisPartitionReaderFactory(readConfig)
   }
 }

@@ -1,5 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read.models
 
+import io.github.dejarol.arcgis.spark.connector.core.EmptyOrNonEmpty
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField, SpatialReference}
 
 /**
@@ -12,13 +13,25 @@ import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, F
 case class QueryResponse(
                           geometryType: EsriGeometryType,
                           spatialReference: SpatialReference,
-                          fields: Seq[FeatureLayerField],
-                          features: Seq[Feature]
-                        ) {
+                          fields: Option[Seq[FeatureLayerField]],
+                          features: Seq[ArcgisFeature]
+                        )
+  extends EmptyOrNonEmpty {
 
   /**
    * TODO
    * @return
    */
-  def fieldNames: Seq[String] = fields.map(_.name)
+  def isEmpty: Boolean = features.isEmpty && fields.isEmpty
+
+  /**
+   * TODO
+   * @return
+   */
+  def fieldNames: Seq[String] = {
+
+    fields.map {
+      elements => elements.map(_.name)
+    }.getOrElse(Seq.empty)
+  }
 }

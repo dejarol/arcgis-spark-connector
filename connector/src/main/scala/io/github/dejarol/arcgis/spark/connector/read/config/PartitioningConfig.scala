@@ -17,18 +17,18 @@ case class PartitioningConfig(override protected val properties: util.Map[String
    * TODO
    * @return
    */
-  def maxRecordsPerQuery: Int = {
+  def fetchSize: Int = {
 
     getAs[Int](
-      MAX_RECORDS_PER_QUERY_KEY,
+      FETCH_SIZE_KEY,
       PropertyConversions.ToInteger,
-      MAX_RECORDS_PER_QUERY_DEFAULT
+      FETCH_SIZE_DEFAULT
     )
   }
 }
 
 object PartitioningConfig {
 
-  final val MAX_RECORDS_PER_QUERY_KEY: String = "maxRecordsPerQuery"
-  final val MAX_RECORDS_PER_QUERY_DEFAULT: Int = 50
+  final val FETCH_SIZE_KEY: String = "fetchSize"
+  final val FETCH_SIZE_DEFAULT: Int = 50
 }

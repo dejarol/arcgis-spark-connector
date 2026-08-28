@@ -2,7 +2,9 @@ package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
+import io.github.dejarol.arcgis.spark.connector.read.FeatureLayerQueryParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
+import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
 import sttp.model.Uri
 
 import java.util
@@ -54,7 +56,7 @@ case class ReadConfig(override protected val properties: util.Map[String, String
    * TODO
    * @return
    */
-  def partitioningIsConfigured: Boolean = !partitioningConfig.isEmpty
+  def partitioningIsConfigured: Boolean = partitioningConfig.nonEmpty
 
   /**
    * Reports whether the query should include geometry.
@@ -104,6 +106,20 @@ case class ReadConfig(override protected val properties: util.Map[String, String
       _.returnCountOnly(
         layerUri, queryLayerConfig.where
       ).count
+    }
+  }
+
+  /**
+   * TODO
+   * @param queryParameters
+   * @return
+   */
+  def queryUsingPost(queryParameters: FeatureLayerQueryParameters): QueryResponse = {
+
+    withRequestHandlerDo {
+      _.queryUsingPost(
+        layerUri, queryParameters, None
+      )
     }
   }
 }

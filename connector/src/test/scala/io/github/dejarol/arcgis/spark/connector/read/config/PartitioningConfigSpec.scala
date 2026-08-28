@@ -13,12 +13,12 @@ class PartitioningConfigSpec
       it("retrieve the maximum number of records per query") {
 
         // [1.1] Empty config
-        emptyConfig.maxRecordsPerQuery shouldBe PartitioningConfig.MAX_RECORDS_PER_QUERY_DEFAULT
+        emptyConfig.fetchSize shouldBe PartitioningConfig.FETCH_SIZE_DEFAULT
 
         // [1.2] Config with a custom value
         PartitioningConfig(
-          createSingletonMap(PartitioningConfig.MAX_RECORDS_PER_QUERY_KEY, "5")
-        ).maxRecordsPerQuery shouldBe 5
+          createSingletonMap(PartitioningConfig.FETCH_SIZE_KEY, "5")
+        ).fetchSize shouldBe 5
       }
     }
   }

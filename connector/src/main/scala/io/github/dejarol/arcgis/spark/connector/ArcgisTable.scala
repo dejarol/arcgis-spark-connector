@@ -1,6 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector
 
 import io.github.dejarol.arcgis.spark.connector.core.JavaCollectionsUtils
+import io.github.dejarol.arcgis.spark.connector.read.ArcgisScanBuilder
 import io.github.dejarol.arcgis.spark.connector.read.config.ReadConfig
 import org.apache.spark.sql.connector.catalog.{SupportsRead, Table, TableCapability}
 import org.apache.spark.sql.connector.read.ScanBuilder
@@ -39,6 +40,7 @@ class ArcgisTable(
         tableProperties, caseInsensitiveStringMap
       )
     )
-    null
+
+    new ArcgisScanBuilder(readConfig, schema())
   }
 }

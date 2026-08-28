@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core.config
 
-import io.github.dejarol.arcgis.spark.connector.core.JavaCollectionsUtils
+import io.github.dejarol.arcgis.spark.connector.core.{EmptyOrNonEmpty, JavaCollectionsUtils}
 
 import java.util
 import scala.util.Try
@@ -11,7 +11,8 @@ import scala.util.Try
  * @param properties configuration entries keyed by property name
  * @since 0.1.0
  */
-class BaseConfig(protected val properties: util.Map[String, String]) {
+class BaseConfig(protected val properties: util.Map[String, String])
+  extends EmptyOrNonEmpty {
 
   import BaseConfig._
 

@@ -1,4 +1,4 @@
-package io.github.dejarol.arcgis.spark.connector.core.schema;
+package io.github.dejarol.arcgis.spark.connector.core;
 
 import io.github.dejarol.arcgis.spark.connector.core.models.EsriFieldType;
 import org.jetbrains.annotations.NotNull;
@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
  *
  * @since 0.1.0
  */
-public class UnsupportedArcgisDataTypeException
+public class UnsupportedEsriFieldTypeException
         extends IllegalArgumentException {
 
     /**
@@ -17,7 +17,7 @@ public class UnsupportedArcgisDataTypeException
      * @param fieldType ArcGIS field type that has no Spark mapping
      * @since 0.1.0
      */
-    public UnsupportedArcgisDataTypeException(
+    public UnsupportedEsriFieldTypeException(
             @NotNull EsriFieldType fieldType
     ) {
         super("Unsupported ArcGIS data type: " + fieldType.getAPIName());

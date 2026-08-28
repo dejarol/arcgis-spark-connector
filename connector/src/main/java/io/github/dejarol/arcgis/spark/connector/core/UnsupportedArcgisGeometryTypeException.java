@@ -1,4 +1,4 @@
-package io.github.dejarol.arcgis.spark.connector.core.schema;
+package io.github.dejarol.arcgis.spark.connector.core;
 
 import io.github.dejarol.arcgis.spark.connector.core.models.EsriGeometryType;
 import org.jetbrains.annotations.NotNull;

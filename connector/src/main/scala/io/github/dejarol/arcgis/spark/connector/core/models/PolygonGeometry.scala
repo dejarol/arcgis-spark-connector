@@ -24,6 +24,8 @@ case class PolygonGeometry(
    */
   def numberOfPolygons: Int = rings.size
 
+  def numberOfVerticesInPolygon(index: Int): Int = rings(index).size
+
   /**
    * TODO
    * @return
