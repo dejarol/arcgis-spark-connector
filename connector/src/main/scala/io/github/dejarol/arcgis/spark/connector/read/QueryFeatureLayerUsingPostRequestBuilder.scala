@@ -16,7 +16,7 @@ import sttp.model.Uri
  */
 case class QueryFeatureLayerUsingPostRequestBuilder(
                                                      private val layerUri: Uri,
-                                                     private val queryParameters: FeatureLayerQueryParameters,
+                                                     private val queryParameters: LayerQueryParameters,
                                                      private val token: Option[String]
                                                    )
   extends SttpEitherThrowableOrValueBuilder[QueryResponse] {

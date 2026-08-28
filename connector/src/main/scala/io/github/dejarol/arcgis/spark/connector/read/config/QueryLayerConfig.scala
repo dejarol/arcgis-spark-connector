@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
-import io.github.dejarol.arcgis.spark.connector.read.FeatureLayerQueryParameters
+import io.github.dejarol.arcgis.spark.connector.read.LayerQueryParameters
 
 import java.util
 
@@ -54,9 +54,9 @@ case class QueryLayerConfig(override protected val properties: util.Map[String, 
    * @return query parameters ready to be sent to ArcGIS
    * @since 0.1.0
    */
-  def asQueryParameters: FeatureLayerQueryParameters = {
+  def asQueryParameters: LayerQueryParameters = {
 
-    FeatureLayerQueryParameters(
+    LayerQueryParameters(
       where = where,
       outFields = outFields,
       returnGeometry = returnGeometry,

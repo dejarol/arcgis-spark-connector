@@ -4,7 +4,7 @@ import io.github.dejarol.arcgis.spark.connector.core.http.BaseRequestHandler
 import io.github.dejarol.arcgis.spark.connector.core.http.item.GetFeatureLayerDefinitionRequestBuilder
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.read.models.{QueryResponse, ReturnCountOnlyResponse}
-import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, FeatureLayerQueryParameters}
+import io.github.dejarol.arcgis.spark.connector.read.{QueryFeatureLayerUsingPostRequestBuilder, LayerQueryParameters}
 import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 
@@ -58,7 +58,7 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
    */
   def queryUsingPost(
                       layerUri: Uri,
-                      queryParameters: FeatureLayerQueryParameters,
+                      queryParameters: LayerQueryParameters,
                       token: Option[String]
                     ): QueryResponse = {
 
@@ -82,7 +82,7 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
 
     unsafelySend(
       ReturnCountOnlyRequestBuilder(
-        layerUri, FeatureLayerQueryParameters.returnCountOnly(where)
+        layerUri, LayerQueryParameters.returnCountOnly(where)
       )
     )
   }

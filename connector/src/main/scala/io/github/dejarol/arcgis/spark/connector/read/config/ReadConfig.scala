@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
-import io.github.dejarol.arcgis.spark.connector.read.FeatureLayerQueryParameters
+import io.github.dejarol.arcgis.spark.connector.read.LayerQueryParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
 import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
 import sttp.model.Uri
@@ -42,8 +42,10 @@ case class ReadConfig(override protected val properties: util.Map[String, String
   }
 
   /**
-   * TODO
-   * @return
+   * Returns partitioning options taken from properties prefixed with [[PARTITIONING_PREFIX]].
+   *
+   * @return a partitioning configuration with the prefix stripped from each key
+   * @since 0.1.0
    */
   def partitioningConfig: PartitioningConfig = {
 
@@ -53,8 +55,10 @@ case class ReadConfig(override protected val properties: util.Map[String, String
   }
 
   /**
-   * TODO
-   * @return
+   * Reports whether partitioning options are present.
+   *
+   * @return `true` if [[partitioningConfig]] is non-empty, `false` otherwise
+   * @since 0.1.0
    */
   def partitioningIsConfigured: Boolean = partitioningConfig.nonEmpty
 
@@ -97,8 +101,10 @@ case class ReadConfig(override protected val properties: util.Map[String, String
   }
 
   /**
-   * TODO
-   * @return
+   * Queries the feature layer for the number of matching features.
+   *
+   * @return the feature count for the configured `where` clause
+   * @since 0.1.0
    */
   def returnCountOnly: Int = {
 
@@ -110,11 +116,13 @@ case class ReadConfig(override protected val properties: util.Map[String, String
   }
 
   /**
-   * TODO
-   * @param queryParameters
-   * @return
+   * Queries the feature layer using an HTTP POST.
+   *
+   * @param queryParameters multipart query parameters sent with the request
+   * @return the query response body
+   * @since 0.1.0
    */
-  def queryUsingPost(queryParameters: FeatureLayerQueryParameters): QueryResponse = {
+  def queryUsingPost(queryParameters: LayerQueryParameters): QueryResponse = {
 
     withRequestHandlerDo {
       _.queryUsingPost(
@@ -145,5 +153,10 @@ object ReadConfig {
    */
   final val QUERY_PREFIX = "query."
 
+  /**
+   * Prefix of properties forwarded to [[PartitioningConfig]].
+   *
+   * @since 0.1.0
+   */
   final val PARTITIONING_PREFIX = "partitioning."
 }

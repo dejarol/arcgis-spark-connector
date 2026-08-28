@@ -38,6 +38,20 @@ class ReadConfigSpec
         queryConfig should contain key "k1"
         queryConfig shouldNot contain key "k2"
       }
+
+      it("retrieve partitioning options") {
+
+        emptyReadConfig.partitioningConfig shouldBe empty
+
+        val partitioningConfig = createReadConfig(
+          (ReadConfig.PARTITIONING_PREFIX + "k1", "v1"),
+          ("k2", "v2")
+        ).partitioningConfig
+
+        partitioningConfig shouldNot be (empty)
+        partitioningConfig should contain key "k1"
+        partitioningConfig shouldNot contain key "k2"
+      }
     }
   }
 }

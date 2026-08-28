@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read.partitioning
 
-import io.github.dejarol.arcgis.spark.connector.read.FeatureLayerQueryParameters
+import io.github.dejarol.arcgis.spark.connector.read.LayerQueryParameters
 import io.github.dejarol.arcgis.spark.connector.read.config.QueryLayerConfig
 
 /**
@@ -18,7 +18,7 @@ case class SingleArcgisPartition(
 
   override def partitionId: Int = 0
 
-  override def parametersForPartitionQueries: Seq[FeatureLayerQueryParameters] = {
+  override def parametersForPartitionQueries: Seq[LayerQueryParameters] = {
 
     Range.inclusive(
       0, featuresCount, maxRecordsPerQuery
