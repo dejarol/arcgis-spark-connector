@@ -12,12 +12,12 @@ import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, F
  * @param features         features returned by the query
  * @since 0.1.0
  */
-case class QueryResponse(
-                          geometryType: EsriGeometryType,
-                          spatialReference: SpatialReference,
-                          fields: Option[Seq[FeatureLayerField]],
-                          features: Seq[ArcgisFeature]
-                        )
+case class QueryLayerResponse(
+                               geometryType: EsriGeometryType,
+                               spatialReference: SpatialReference,
+                               fields: Option[Seq[FeatureLayerField]],
+                               features: Seq[ArcgisFeature]
+                             )
   extends EmptyOrNonEmpty {
 
   /**

@@ -2,6 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.encoding
 
 import io.github.dejarol.arcgis.spark.connector.core.models.Geometry
 import org.apache.spark.sql.catalyst.InternalRow
+import org.json4s.JsonAST.JValue
 
 /**
  * Converts a value from an ArcGIS REST API representation into a Spark-compatible type.
@@ -21,12 +22,12 @@ trait ArcgisAPIValueEncoder[Input, Output] {
 }
 
 /**
- * Encoder for optional ArcGIS feature attribute values.
+ * Encoder for ArcGIS feature attribute values.
  *
  * @since 0.1.0
  */
 trait AttributeValueEncoder[Output]
-  extends ArcgisAPIValueEncoder[Option[Any], Output]
+  extends ArcgisAPIValueEncoder[JValue, Output]
 
 /**
  * Encoder for ArcGIS geometry values, producing Spark InternalRows.

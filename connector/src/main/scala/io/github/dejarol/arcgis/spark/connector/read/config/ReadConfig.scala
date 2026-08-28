@@ -5,7 +5,7 @@ import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, Propert
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
-import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
+import io.github.dejarol.arcgis.spark.connector.read.models.QueryLayerResponse
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 import org.apache.spark.sql.util.CaseInsensitiveStringMap
 import sttp.model.Uri
@@ -123,7 +123,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
    * @return the query response body
    * @since 0.1.0
    */
-  def queryUsingPost(queryParameters: QueryLayerParameters): QueryResponse = {
+  def queryUsingPost(queryParameters: QueryLayerParameters): QueryLayerResponse = {
 
     withRequestHandlerDo {
       _.queryUsingPost(

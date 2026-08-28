@@ -4,6 +4,7 @@ import io.github.dejarol.arcgis.spark.connector.core.{UnsupportedArcgisGeometryT
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerField, PointGeometry, PolygonGeometry}
 import io.github.dejarol.arcgis.spark.connector.read.models.ArcgisFeature
 import org.apache.spark.sql.catalyst.InternalRow
+import org.json4s.JsonAST.JValue
 
 /**
  * Encodes an ArcGIS feature into a Spark InternalRow using layer fields and geometry type.
@@ -30,7 +31,10 @@ class ArcgisFeatureToInternalRowEncoderImpl(
   override def apply(feature: ArcgisFeature): InternalRow = {
 
     val attributeValues: Seq[Any] = fields.map {
-      field => extractAttributeValueForField(feature, field)
+      field => extractAttributeValue(
+        feature.unsafelyGetAttributes(field.name),
+        field.`type`
+      )
     }
 
     val attributesAndGeometryValues: Seq[Any] = if (shouldIncludeGeometry) {
@@ -38,29 +42,6 @@ class ArcgisFeatureToInternalRowEncoderImpl(
     } else attributeValues
 
     InternalRow(attributesAndGeometryValues: _*)
-  }
-
-  /**
-   * Encodes a single feature attribute for a layer field.
-   *
-   * @param feature feature whose attributes are read
-   * @param field   layer field that determines the attribute name and encoder
-   * @return the Spark representation of the attribute
-   * @throws UnsupportedEsriFieldTypeException if the field type has no attribute encoder
-   * @throws java.lang.IllegalStateException   if the feature does not contain the field
-   * @since 0.1.0
-   */
-  private def extractAttributeValueForField(
-                                             feature: ArcgisFeature,
-                                             field: FeatureLayerField
-                                           ): Any = {
-
-    feature.getAttribute(field.name) match {
-      case Some(value) => parseAttributeValue(value, field.`type`)
-      case None => throw new IllegalStateException(
-        s"Feature does not contain attribute ${field.name}"
-      )
-    }
   }
 
   /**
@@ -72,10 +53,10 @@ class ArcgisFeatureToInternalRowEncoderImpl(
    * @throws UnsupportedEsriFieldTypeException if the field type has no attribute encoder
    * @since 0.1.0
    */
-  private def parseAttributeValue(
-                                   value: Option[Any],
-                                   `type`: EsriFieldType
-                                 ): Any = {
+  private def extractAttributeValue(
+                                     value: JValue,
+                                     `type`: EsriFieldType
+                                   ): Any = {
 
     `type` match {
       case EsriFieldType.DOUBLE => AttributeValueEncoders.forDouble().apply(value)

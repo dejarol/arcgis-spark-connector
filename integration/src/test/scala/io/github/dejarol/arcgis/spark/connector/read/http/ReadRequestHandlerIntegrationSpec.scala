@@ -3,7 +3,7 @@ package io.github.dejarol.arcgis.spark.connector.read.http
 import io.github.dejarol.arcgis.spark.connector.ArcgisIntegrationSpec
 import io.github.dejarol.arcgis.spark.connector.core.models.EsriGeometryType
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
-import io.github.dejarol.arcgis.spark.connector.read.models.QueryResponse
+import io.github.dejarol.arcgis.spark.connector.read.models.QueryLayerResponse
 import org.scalatest.{Inspectors, OptionValues}
 
 class ReadRequestHandlerIntegrationSpec
@@ -26,7 +26,7 @@ class ReadRequestHandlerIntegrationSpec
    * @param expectedSR
    */
   private def assertQueryResponse(
-                                   response: QueryResponse,
+                                   response: QueryLayerResponse,
                                    expectedGeometryType: EsriGeometryType,
                                    expectedNumberOfFeatures: Int,
                                    featuresShouldHaveGeometry: Boolean,

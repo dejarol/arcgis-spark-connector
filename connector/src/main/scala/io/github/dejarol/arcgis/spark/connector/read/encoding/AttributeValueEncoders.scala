@@ -1,9 +1,9 @@
 package io.github.dejarol.arcgis.spark.connector.read.encoding
 
 import org.apache.spark.unsafe.types.UTF8String
+import org.json4s.JsonAST._
 
 import java.lang
-import scala.reflect.ClassTag
 
 /**
  * Factory for encoders that convert optional ArcGIS feature attributes into Spark SQL types.
@@ -13,41 +13,60 @@ import scala.reflect.ClassTag
 object AttributeValueEncoders {
 
   /**
-   * Encoder for a single atomic ArcGIS attribute type.
-   *
-   * Maps a missing attribute to a default and converts a present value of the expected Scala type
-   * into Spark's internal representation.
-   *
-   * @param default            value returned when the attribute is absent
-   * @param internalConversion conversion from the expected Scala type to the Spark representation
-   * @since 0.1.0
+   * TODO
    */
-  private class AtomicAttributeValueEncoder[I: ClassTag, T](
-                                                            private val default: T,
-                                                            private val internalConversion: I => T
-                                                          )
-    extends AttributeValueEncoder[T] {
+  private object DoubleEncoder
+    extends AttributeValueEncoder[lang.Double] {
 
-    /**
-     * Encodes an optional ArcGIS attribute into a Spark value.
-     *
-     * @param value optional REST attribute; `None` maps to the encoder default
-     * @return the Spark representation of the attribute, or the default if absent
-     * @throws IllegalArgumentException if `value` is present but not of the expected type
-     * @since 0.1.0
-     */
-    override def apply(value: Option[Any]): T = {
+    override def apply(value: JValue): lang.Double = {
 
       value match {
-        case None => default
-        case Some(v: I) => internalConversion(v)
-        case Some(other) =>
+        case JDouble(num) => num
+        case JInt(num) => num.doubleValue()
+        case JLong(num) => num.doubleValue()
+        case JDecimal(num) => num.doubleValue()
+        case JNull => null
+        case _ => throw new IllegalArgumentException(
+          s"Input value was supposed to be a ${classOf[JNumber].getName}, but was ${value.getClass.getName}"
+        )
+      }
+    }
+  }
 
-          val internalTypeDescription = implicitly[ClassTag[I]].runtimeClass.getName
-          throw new IllegalArgumentException(
-            s"Input value was supposed to be a $internalTypeDescription, " +
-              s"but was ${other.getClass.getName}"
-          )
+  /**
+   * TODO
+   */
+  private object IntegerEncoder
+    extends AttributeValueEncoder[lang.Integer] {
+
+    override def apply(value: JValue): Integer = {
+
+      value match {
+        case JInt(num) => num.intValue()
+        case JLong(num) => num.intValue()
+        case JDecimal(num) => num.intValue()
+        case JNull => null
+        case _ => throw new IllegalArgumentException(
+          s"Input value was supposed to be a, but was ${value.getClass.getName}"
+        )
+      }
+    }
+  }
+
+  /**
+   * TODO
+   */
+  private object StringEncoder
+    extends AttributeValueEncoder[UTF8String] {
+
+    override def apply(value: JValue): UTF8String = {
+
+      value match {
+        case JString(str) => UTF8String.fromString(str)
+        case JNull => null
+        case _ => throw new IllegalArgumentException(
+          s"Input value was supposed to be a string, but was ${value.getClass.getName}"
+        )
       }
     }
   }
@@ -58,10 +77,7 @@ object AttributeValueEncoders {
    * @return an encoder that maps missing values to `null` and present doubles unchanged
    * @since 0.1.0
    */
-  def forDouble(): AttributeValueEncoder[lang.Double] = {
-
-    new AtomicAttributeValueEncoder[Double, lang.Double](null, identity)
-  }
+  def forDouble(): AttributeValueEncoder[lang.Double] = DoubleEncoder
 
   /**
    * Creates an encoder for ArcGIS integer attributes.
@@ -69,10 +85,7 @@ object AttributeValueEncoders {
    * @return an encoder that maps missing values to `null` and present integers unchanged
    * @since 0.1.0
    */
-  def forInteger(): AttributeValueEncoder[lang.Integer] = {
-
-    new AtomicAttributeValueEncoder[Integer, lang.Integer](null, identity)
-  }
+  def forInteger(): AttributeValueEncoder[lang.Integer] = IntegerEncoder
 
   /**
    * Creates an encoder for ArcGIS string attributes.
@@ -80,8 +93,5 @@ object AttributeValueEncoders {
    * @return an encoder that maps missing values to `null` and present strings to UTF8
    * @since 0.1.0
    */
-  def forString(): AttributeValueEncoder[UTF8String] = {
-
-    new AtomicAttributeValueEncoder[String, UTF8String](null, UTF8String.fromString)
-  }
+  def forString(): AttributeValueEncoder[UTF8String] = StringEncoder
 }

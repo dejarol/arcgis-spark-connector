@@ -2,6 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.encoding
 
 import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
 import org.apache.spark.unsafe.types.UTF8String
+import org.json4s.JsonAST.{JDouble, JInt, JNull, JString}
 
 class AttributeValueEncodersSpec
   extends BasicSpec {
@@ -12,33 +13,33 @@ class AttributeValueEncodersSpec
         it("double") {
 
           val mapper = AttributeValueEncoders.forDouble()
-          mapper(None) shouldBe null
-          mapper(Some(1.23)) shouldBe 1.23
+          mapper(JNull) shouldBe null
+          mapper(JDouble(1.23)) shouldBe 1.23
 
           an [IllegalArgumentException] shouldBe thrownBy {
-            mapper(Some("1.23"))
+            mapper(JString("1.23"))
           }
         }
 
         it("integer") {
 
           val mapper = AttributeValueEncoders.forInteger()
-          mapper(None) shouldBe null
-          mapper(Some(1)) shouldBe 1
+          mapper(JNull) shouldBe null
+          mapper(JInt(BigInt(1))) shouldBe 1
 
           an [IllegalArgumentException] shouldBe thrownBy {
-            mapper(Some("hello"))
+            mapper(JString("hello"))
           }
         }
 
         it("string") {
 
           val mapper = AttributeValueEncoders.forString()
-          mapper(None) shouldBe null
-          mapper(Some("hello")) shouldBe a[UTF8String]
+          mapper(JNull) shouldBe null
+          mapper(JString("hello")) shouldBe a[UTF8String]
 
           an [IllegalArgumentException] shouldBe thrownBy {
-            mapper(Some(1))
+            mapper(JDouble(3.14))
           }
         }
       }

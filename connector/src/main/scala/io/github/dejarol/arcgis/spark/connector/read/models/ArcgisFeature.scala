@@ -1,6 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.models
 
 import io.github.dejarol.arcgis.spark.connector.core.models.Geometry
+import org.json4s.JsonAST.JValue
 
 /**
  * A single feature from an ArcGIS feature layer query.
@@ -10,7 +11,7 @@ import io.github.dejarol.arcgis.spark.connector.core.models.Geometry
  * @since 0.1.0
  */
 case class ArcgisFeature(
-                          attributes: Map[String, Option[Any]],
+                          attributes: Map[String, JValue],
                           geometry: Option[Geometry]
                         ) {
 
@@ -21,5 +22,13 @@ case class ArcgisFeature(
    * @return `Some` wrapping the optional attribute value when `key` exists, `None` otherwise
    * @since 0.1.0
    */
-  def getAttribute(key: String): Option[Option[Any]] = attributes.get(key)
+  def unsafelyGetAttributes(key: String): JValue = {
+
+    attributes.get(key) match {
+      case Some(value) => value
+      case None => throw new IllegalStateException(
+        f"Key $key does not exist within the attributes of this feature"
+      )
+    }
+  }
 }
