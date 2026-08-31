@@ -24,10 +24,24 @@ case class PartitioningConfig(override protected val properties: CaseInsensitive
       FETCH_SIZE_DEFAULT
     )
   }
+
+  /**
+   * TODO
+   * @return
+   */
+  def numPartitions: Option[Int] = {
+
+    getAs[Int](
+      NUM_PARTITIONS_KEY,
+      PropertyConversions.ToInteger
+    )
+  }
 }
 
 object PartitioningConfig {
 
   final val FETCH_SIZE_KEY: String = "fetchSize"
   final val FETCH_SIZE_DEFAULT: Int = 50
+
+  final val NUM_PARTITIONS_KEY: String = "numPartitions"
 }

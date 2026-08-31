@@ -177,7 +177,7 @@ class ReadRequestHandlerIntegrationSpec
           it("with a where") {
 
             val response = handler.returnCountOnly(
-              polygonLayerUri, Some("GEOID = '01'"), None
+              polygonLayerUri, where = Some("GEOID = '01'"), None, None
             )
             response.count shouldBe 1
           }
@@ -185,7 +185,7 @@ class ReadRequestHandlerIntegrationSpec
           it("without a where") {
 
             val response = handler.returnCountOnly(
-              polygonLayerUri, None, None
+              polygonLayerUri, None, None, None
             )
             response.count shouldBe 52
           }
@@ -193,7 +193,7 @@ class ReadRequestHandlerIntegrationSpec
           it("with some objectIDs") {
 
             val response = handler.returnCountOnly(
-              polygonLayerUri, None, Some(Seq(1, 2, 3))
+              polygonLayerUri, None, Some(Seq(1, 2, 3)), None
             )
             response.count shouldBe 3
           }
@@ -201,7 +201,7 @@ class ReadRequestHandlerIntegrationSpec
           it("with some objectIDs and a where") {
 
             val response = handler.returnCountOnly(
-              polygonLayerUri, Some("GEOID = '01'"), Some(Seq(1, 2, 3))
+              polygonLayerUri, Some("GEOID = '01'"), Some(Seq(1, 2, 3)), None
             )
             response.count shouldBe 1
           }

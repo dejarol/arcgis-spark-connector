@@ -32,7 +32,7 @@ class QueryLayerParametersSpec
 
           val parts = convertPartsToMap(
             QueryLayerParameters.returnCountOnly(
-              Some(where), None
+              Some(where), None, None
             )
           )
 
@@ -46,7 +46,7 @@ class QueryLayerParametersSpec
         it("without a where") {
 
           val parts = convertPartsToMap(
-            QueryLayerParameters.returnCountOnly(None, None)
+            QueryLayerParameters.returnCountOnly(None, None, None)
           )
 
           parts should have size 2
@@ -60,7 +60,7 @@ class QueryLayerParametersSpec
 
           val parts = convertPartsToMap(
             QueryLayerParameters.returnCountOnly(
-              None, Some(Seq(1,2))
+              None, Some(Seq(1,2)), None
             )
           )
 
@@ -77,7 +77,7 @@ class QueryLayerParametersSpec
 
           val parts = convertPartsToMap(
             QueryLayerParameters.returnCountOnly(
-              Some(where), Some(Seq(1,2))
+              Some(where), Some(Seq(1,2)), None
             )
           )
 
@@ -88,6 +88,23 @@ class QueryLayerParametersSpec
           parts("where") should contain value where
           parts should contain key "objectIds"
           parts("objectIds") should contain value "1,2"
+        }
+
+        it("with a token") {
+
+          val parts = convertPartsToMap(
+            QueryLayerParameters.returnCountOnly(
+              None, None, Some("token")
+            )
+          )
+
+          parts should have size 3
+          parts should contain key "returnCountOnly"
+          parts("returnCountOnly") should contain value "true"
+          parts should contain key "where"
+          parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
+          parts should contain key "token"
+          parts("token") should contain value "token"
         }
       }
 

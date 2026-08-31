@@ -56,14 +56,6 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
-   * Reports whether partitioning options are present.
-   *
-   * @return `true` if [[partitioningConfig]] is non-empty, `false` otherwise
-   * @since 0.1.0
-   */
-  def partitioningIsConfigured: Boolean = partitioningConfig.nonEmpty
-
-  /**
    * Reports whether the query should include geometry.
    *
    * @return the `returnGeometry` query option, or `false` when it is unset
@@ -111,7 +103,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
 
     withRequestHandlerDo {
       _.returnCountOnly(
-        layerUri, queryLayerConfig.where, queryLayerConfig.objectIDs
+        layerUri, queryLayerConfig.where, queryLayerConfig.objectIDs, None
       ).count
     }
   }

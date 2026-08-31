@@ -7,13 +7,15 @@ class ReadIntegrationSpec
   extends ArcgisIntegrationSpec
     with SparkSpec {
 
+  private lazy val polygonLayerUri = integrationProperties.getProperty("ci.arcgis.test.polygonLayer.layerUri")
+
   describe("ARCGIS datasource") {
     describe(SHOULD) {
       describe("let users query a feature layer") {
         it("setting a where condition") {
 
           val df = spark.read.format(ArcgisTableProvider.SHORT_NAME)
-            .option(ReadConfig.LAYER_URI_KEY, integrationProperties.getProperty("ci.arcgis.test.polygonLayer.layerUri"))
+            .option(ReadConfig.LAYER_URI_KEY, polygonLayerUri)
             .option(ReadConfig.QUERY_PREFIX + QueryLayerConfig.WHERE_KEY, "GEOID = '01'")
             .load()
 
@@ -23,7 +25,7 @@ class ReadIntegrationSpec
         it("setting some objectIDs") {
 
           val df = spark.read.format(ArcgisTableProvider.SHORT_NAME)
-            .option(ReadConfig.LAYER_URI_KEY, integrationProperties.getProperty("ci.arcgis.test.pointLayerWithDate.layerUri"))
+            .option(ReadConfig.LAYER_URI_KEY, polygonLayerUri)
             .option(ReadConfig.QUERY_PREFIX + QueryLayerConfig.OBJECT_IDS_KEY, "1")
             .load()
 

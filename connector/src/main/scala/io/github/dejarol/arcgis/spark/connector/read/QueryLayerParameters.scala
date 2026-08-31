@@ -15,6 +15,7 @@ import sttp.model.Part
  * @param resultOffset      optional result offset for pagination
  * @param resultRecordCount optional maximum number of records to return
  * @param returnCountOnly   whether the query should return only the feature count
+ * @param token             TODO
  * @since 0.1.0
  */
 case class QueryLayerParameters(
@@ -25,7 +26,8 @@ case class QueryLayerParameters(
                                  outSR: Option[Int] = None,
                                  resultOffset: Option[Int] = None,
                                  resultRecordCount: Option[Int] = None,
-                                 returnCountOnly: Option[Boolean] = None
+                                 returnCountOnly: Option[Boolean] = None,
+                                 token: Option[String] = None
                                )
   extends AsMultiParts {
 
@@ -83,6 +85,17 @@ case class QueryLayerParameters(
   }
 
   /**
+   * TODO
+   * @return
+   */
+  private def tokenMultiPart: Option[Part[BasicBodyPart]] = {
+
+    token.map {
+      token => multipart("token", token)
+    }
+  }
+
+  /**
    * Builds the multipart parts for a count-only query.
    *
    * @return parts for `returnCountOnly` and `where`
@@ -90,13 +103,16 @@ case class QueryLayerParameters(
    */
   private def partsForReturnCountOnly(): Seq[Part[BasicBodyPart]] = {
 
+    // [1.1] Build the default parts
     val defaults = Seq(
       multipart("returnCountOnly", "true"),
       whereMultiPart
     )
 
+    // [1.2] Build the optional parts
     val optionals = Seq(
-      objectIDsMultiPart
+      objectIDsMultiPart,
+      tokenMultiPart
     ).collect {
       case Some(value) => value
     }
@@ -129,9 +145,10 @@ case class QueryLayerParameters(
 
     Seq(
       objectIDsMultiPart,
+      tokenMultiPart,
       outSR.map(sr => multipart("outSR", String.valueOf(sr))),
       resultOffset.map(offset => multipart("resultOffset", String.valueOf(offset))),
-      resultRecordCount.map(count => multipart("resultRecordCount", String.valueOf(count)))
+      resultRecordCount.map(count => multipart("resultRecordCount", String.valueOf(count))),
     )
   }
 }
@@ -164,18 +181,21 @@ object QueryLayerParameters {
    *
    * @param where optional ArcGIS `where` clause
    * @param objectIDs TODO
+   * @param token TODO
    * @return parameters with `returnCountOnly` set to `true`
    * @since 0.1.0
    */
   def returnCountOnly(
                        where: Option[String],
-                       objectIDs: Option[Seq[Int]]
+                       objectIDs: Option[Seq[Int]],
+                       token: Option[String]
                      ): QueryLayerParameters = {
 
     QueryLayerParameters(
       where = where,
       returnCountOnly = Some(true),
-      objectIDs = objectIDs
+      objectIDs = objectIDs,
+      token = token
     )
   }
 }

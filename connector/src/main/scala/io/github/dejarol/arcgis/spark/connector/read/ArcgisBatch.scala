@@ -24,13 +24,13 @@ class ArcgisBatch(private val readConfig: ReadConfig)
   override def planInputPartitions(): Array[InputPartition] = {
 
     val featuresCount = readConfig.returnCountOnly
-    val partitions: Seq[InputPartition] = if (readConfig.partitioningIsConfigured) {
-      planMultiplePartitions()
-    } else {
-      planSinglePartition(featuresCount)
+    val numPartitions: Option[Int] = readConfig.partitioningConfig.numPartitions
+    val partitions = numPartitions match {
+      case Some(1) | None => planSinglePartition(featuresCount)
+      case Some(n) if n > 1 => planMultiplePartitions(featuresCount, n)
     }
 
-    log.info(f"Planned ${partitions.size} partitions")
+    log.info(f"Planned ${partitions.size} partition(s)")
     partitions.toArray
   }
 
@@ -55,13 +55,22 @@ class ArcgisBatch(private val readConfig: ReadConfig)
   /**
    * Plans multiple partitions when partitioning options are configured.
    *
+   * @param featuresCount number of features in the layer
+   * @param partitions TODO
    * @return the planned ArcGIS partitions
    * @throws UnsupportedOperationException always; multi-partition planning is not implemented
    * @since 0.1.0
    */
-  private def planMultiplePartitions(): Seq[ArcgisPartition] = {
+  private def planMultiplePartitions(
+                                      featuresCount: Int,
+                                      partitions: Int
+                                    ): Seq[ArcgisPartition] = {
 
-   throw new UnsupportedOperationException("TODO")
+    val rowsPerPartition = featuresCount / partitions
+    Range.inclusive(0, featuresCount, partitions).map {
+      offset => // TODO
+    }
+    Seq.empty
   }
 
   /**
