@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.core.schema
 
 import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerField}
-import org.apache.spark.sql.types.{DataType, DoubleType, IntegerType, StringType, StructType}
+import org.apache.spark.sql.types.{DataType, DoubleType, IntegerType, StringType, StructType, TimestampType}
 import org.scalatest.Inspectors
 
 class SchemaUtilsSpec
@@ -57,6 +57,8 @@ class SchemaUtilsSpec
         assertArcgisSparkTypeMapping("name", EsriFieldType.DOUBLE, DoubleType)
         assertArcgisSparkTypeMapping("name", EsriFieldType.INTEGER, IntegerType)
         assertArcgisSparkTypeMapping("name", EsriFieldType.OID, IntegerType)
+        assertArcgisSparkTypeMapping("name", EsriFieldType.DATE, TimestampType)
+        assertArcgisSparkTypeMapping("name", EsriFieldType.SMALL_INTEGER, IntegerType)
       }
 
       it("define the geometry column") {

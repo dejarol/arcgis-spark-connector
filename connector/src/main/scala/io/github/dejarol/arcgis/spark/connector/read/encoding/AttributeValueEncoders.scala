@@ -15,6 +15,26 @@ object AttributeValueEncoders {
   /**
    * TODO
    */
+  private object DateEncoder
+    extends AttributeValueEncoder[lang.Long] {
+
+    override def apply(value: JValue): lang.Long = {
+
+      value match {
+        case JLong(num) => num.longValue() * 1000
+        case JInt(num) => num.longValue() * 1000
+        case JDecimal(num) => num.longValue() * 1000
+        case JNull => null
+        case _ => throw new IllegalArgumentException(
+          s"Input value was supposed to be a long, but was ${value.getClass.getName}"
+        )
+      }
+    }
+  }
+
+  /**
+   * TODO
+   */
   private object DoubleEncoder
     extends AttributeValueEncoder[lang.Double] {
 
@@ -70,6 +90,12 @@ object AttributeValueEncoders {
       }
     }
   }
+
+  /**
+   * TODO
+   * @return
+   */
+  def forDate(): AttributeValueEncoder[lang.Long] = DateEncoder
 
   /**
    * Creates an encoder for ArcGIS double attributes.

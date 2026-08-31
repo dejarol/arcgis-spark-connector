@@ -23,6 +23,18 @@ class QueryLayerConfigSpec
           actual.value shouldBe expected
         }
 
+        it("objectIDs") {
+
+          emptyConfig.objectIDs shouldBe empty
+
+          val objectIds = Seq(1, 2)
+          val actual = QueryLayerConfig(
+            createSingletonCIMap(QueryLayerConfig.OBJECT_IDS_KEY, objectIds.mkString(","))
+          ).objectIDs
+
+          actual.value should contain theSameElementsAs objectIds
+        }
+
         it("outFields") {
 
           emptyConfig.outFields shouldBe empty

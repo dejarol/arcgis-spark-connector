@@ -30,6 +30,7 @@ class ArcgisBatch(private val readConfig: ReadConfig)
       planSinglePartition(featuresCount)
     }
 
+    log.info(f"Planned ${partitions.size} partitions")
     partitions.toArray
   }
 

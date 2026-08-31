@@ -32,7 +32,7 @@ class QueryLayerParametersSpec
 
           val parts = convertPartsToMap(
             QueryLayerParameters.returnCountOnly(
-              Some(where)
+              Some(where), None
             )
           )
 
@@ -46,7 +46,7 @@ class QueryLayerParametersSpec
         it("without a where") {
 
           val parts = convertPartsToMap(
-            QueryLayerParameters.returnCountOnly(None)
+            QueryLayerParameters.returnCountOnly(None, None)
           )
 
           parts should have size 2
@@ -54,6 +54,40 @@ class QueryLayerParametersSpec
           parts("returnCountOnly") should contain value "true"
           parts should contain key "where"
           parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
+        }
+
+        it("with some objectIDs (but no where)") {
+
+          val parts = convertPartsToMap(
+            QueryLayerParameters.returnCountOnly(
+              None, Some(Seq(1,2))
+            )
+          )
+
+          parts should have size 3
+          parts should contain key "returnCountOnly"
+          parts("returnCountOnly") should contain value "true"
+          parts should contain key "where"
+          parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
+          parts should contain key "objectIds"
+          parts("objectIds") should contain value "1,2"
+        }
+
+        it("with some objectIDs and where") {
+
+          val parts = convertPartsToMap(
+            QueryLayerParameters.returnCountOnly(
+              Some(where), Some(Seq(1,2))
+            )
+          )
+
+          parts should have size 3
+          parts should contain key "returnCountOnly"
+          parts("returnCountOnly") should contain value "true"
+          parts should contain key "where"
+          parts("where") should contain value where
+          parts should contain key "objectIds"
+          parts("objectIds") should contain value "1,2"
         }
       }
 
@@ -75,6 +109,24 @@ class QueryLayerParametersSpec
 
           partsWithoutWhere should contain key "where"
           partsWithoutWhere("where") should contain value QueryLayerParameters.DEFAULT_WHERE
+        }
+
+        it("settings objectIds") {
+
+          // [1] With objectIds
+          val partWithOIDs = convertPartsToMap(
+            QueryLayerParameters(objectIDs = Some(Seq(1, 2, 3)))
+          )
+
+          partWithOIDs should contain key "objectIds"
+          partWithOIDs("objectIds") should contain value "1,2,3"
+
+          // [2] Without objectIds
+          val partWithoutOIDs = convertPartsToMap(
+            QueryLayerParameters()
+          )
+
+          partWithoutOIDs shouldNot contain key "objectIds"
         }
 
         it("settings outFields") {

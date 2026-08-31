@@ -8,6 +8,7 @@ import sttp.model.Part
  * Parameters sent as multipart form fields to an ArcGIS feature layer query.
  *
  * @param where             optional ArcGIS `where` clause
+ * @param objectIDs         TODO
  * @param outFields         optional output field names
  * @param returnGeometry    whether the query should include geometry
  * @param outSR             optional output spatial reference WKID
@@ -18,6 +19,7 @@ import sttp.model.Part
  */
 case class QueryLayerParameters(
                                  where: Option[String] = None,
+                                 objectIDs: Option[Seq[Int]] = None,
                                  outFields: Option[Seq[String]] = None,
                                  returnGeometry: Option[Boolean] = None,
                                  outSR: Option[Int] = None,
@@ -70,6 +72,17 @@ case class QueryLayerParameters(
   private def whereMultiPart: Part[BasicBodyPart] = multipart("where", where.getOrElse(DEFAULT_WHERE))
 
   /**
+   * TODO
+   * @return
+   */
+  private def objectIDsMultiPart: Option[Part[BasicBodyPart]] = {
+
+    objectIDs.map {
+      ids => multipart("objectIds", ids.mkString(","))
+    }
+  }
+
+  /**
    * Builds the multipart parts for a count-only query.
    *
    * @return parts for `returnCountOnly` and `where`
@@ -77,10 +90,18 @@ case class QueryLayerParameters(
    */
   private def partsForReturnCountOnly(): Seq[Part[BasicBodyPart]] = {
 
-    Seq(
+    val defaults = Seq(
       multipart("returnCountOnly", "true"),
       whereMultiPart
     )
+
+    val optionals = Seq(
+      objectIDsMultiPart
+    ).collect {
+      case Some(value) => value
+    }
+
+    defaults ++ optionals
   }
 
   /**
@@ -107,6 +128,7 @@ case class QueryLayerParameters(
   private def optionalParts(): Seq[Option[Part[BasicBodyPart]]] = {
 
     Seq(
+      objectIDsMultiPart,
       outSR.map(sr => multipart("outSR", String.valueOf(sr))),
       resultOffset.map(offset => multipart("resultOffset", String.valueOf(offset))),
       resultRecordCount.map(count => multipart("resultRecordCount", String.valueOf(count)))
@@ -141,14 +163,19 @@ object QueryLayerParameters {
    * Builds query parameters that request only the feature count.
    *
    * @param where optional ArcGIS `where` clause
+   * @param objectIDs TODO
    * @return parameters with `returnCountOnly` set to `true`
    * @since 0.1.0
    */
-  def returnCountOnly(where: Option[String]): QueryLayerParameters = {
+  def returnCountOnly(
+                       where: Option[String],
+                       objectIDs: Option[Seq[Int]]
+                     ): QueryLayerParameters = {
 
     QueryLayerParameters(
       where = where,
-      returnCountOnly = Some(true)
+      returnCountOnly = Some(true),
+      objectIDs = objectIDs
     )
   }
 }

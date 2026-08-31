@@ -59,8 +59,9 @@ class ArcgisFeatureToInternalRowEncoderImpl(
                                    ): Any = {
 
     `type` match {
+      case EsriFieldType.DATE => AttributeValueEncoders.forDate().apply(value)
       case EsriFieldType.DOUBLE => AttributeValueEncoders.forDouble().apply(value)
-      case EsriFieldType.INTEGER | EsriFieldType.OID => AttributeValueEncoders.forInteger().apply(value)
+      case EsriFieldType.INTEGER | EsriFieldType.OID | EsriFieldType.SMALL_INTEGER => AttributeValueEncoders.forInteger().apply(value)
       case EsriFieldType.STRING => AttributeValueEncoders.forString().apply(value)
       case _ => throw new UnsupportedEsriFieldTypeException(`type`)
     }

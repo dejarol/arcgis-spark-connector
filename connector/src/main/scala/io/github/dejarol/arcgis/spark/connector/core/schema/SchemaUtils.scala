@@ -51,8 +51,9 @@ object SchemaUtils {
   protected[schema] def featureLayerFieldToStructField(field: FeatureLayerField): StructField = {
 
     val sparkType: DataType = field.`type` match {
+      case EsriFieldType.DATE => TimestampType
       case EsriFieldType.DOUBLE => DoubleType
-      case EsriFieldType.INTEGER | EsriFieldType.OID => IntegerType
+      case EsriFieldType.INTEGER | EsriFieldType.OID | EsriFieldType.SMALL_INTEGER => IntegerType
       case EsriFieldType.STRING => StringType
       case _ => throw new UnsupportedEsriFieldTypeException(field.`type`)
     }

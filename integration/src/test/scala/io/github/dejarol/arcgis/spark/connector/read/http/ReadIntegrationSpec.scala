@@ -19,6 +19,16 @@ class ReadIntegrationSpec
 
           df.count() shouldBe 1
         }
+
+        it("setting some objectIDs") {
+
+          val df = spark.read.format(ArcgisTableProvider.SHORT_NAME)
+            .option(ReadConfig.LAYER_URI_KEY, integrationProperties.getProperty("ci.arcgis.test.pointLayerWithDate.layerUri"))
+            .option(ReadConfig.QUERY_PREFIX + QueryLayerConfig.OBJECT_IDS_KEY, "1")
+            .load()
+
+          df.count() shouldBe 1
+        }
       }
     }
   }

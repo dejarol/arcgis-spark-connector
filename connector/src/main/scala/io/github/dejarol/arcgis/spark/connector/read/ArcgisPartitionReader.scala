@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read
 
 import io.github.dejarol.arcgis.spark.connector.read.config.ReadConfig
 import io.github.dejarol.arcgis.spark.connector.read.encoding.ArcgisFeatureToInternalRowEncoder
-import io.github.dejarol.arcgis.spark.connector.read.models.{ArcgisFeature, QueryLayerResponse}
+import io.github.dejarol.arcgis.spark.connector.read.models.ArcgisFeature
 import io.github.dejarol.arcgis.spark.connector.read.partitioning.ArcgisPartition
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.catalyst.InternalRow
@@ -27,7 +27,7 @@ class ArcgisPartitionReader(
   private lazy val featureIterator: Iterator[ArcgisFeature] = partition.parametersForPartitionQueries.map {
     parameters => readConfig.queryUsingPost(parameters)
   }.collect {
-    case r: QueryLayerResponse if r.nonEmpty => r.features
+    case r if r.nonEmpty => r.features
   }.flatten.toIterator
 
   /**

@@ -111,7 +111,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
 
     withRequestHandlerDo {
       _.returnCountOnly(
-        layerUri, queryLayerConfig.where
+        layerUri, queryLayerConfig.where, queryLayerConfig.objectIDs
       ).count
     }
   }

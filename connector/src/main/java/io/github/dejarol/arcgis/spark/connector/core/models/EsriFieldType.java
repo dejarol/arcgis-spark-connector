@@ -11,9 +11,11 @@ import org.jetbrains.annotations.Contract;
 public enum EsriFieldType
         implements EnumWithAPIName {
 
+    DATE("esriFieldTypeDate"),
     DOUBLE("esriFieldTypeDouble"),
     INTEGER("esriFieldTypeInteger"),
     OID("esriFieldTypeOID"),
+    SMALL_INTEGER("esriFieldTypeSmallInteger"),
     STRING("esriFieldTypeString");
 
     private final String apiName;

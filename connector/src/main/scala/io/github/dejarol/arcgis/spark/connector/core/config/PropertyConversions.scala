@@ -25,10 +25,18 @@ object PropertyConversions {
 
   /**
    * TODO
+   * @param internal
+   * @param internalDescription
+   * @tparam T
    */
-  object ToList extends PropertyConversion[Seq[String]] {
-    override def apply(value: String): Seq[String] = value.split(',').map(_.trim)
-    override def targetTypeDescription: String = "list of strings (comma separated)"
+  private class ToListOf[T](
+                             private val internal: String => T,
+                             private val internalDescription: String
+                           )
+
+    extends PropertyConversion[Seq[T]] {
+    override def apply(value: String): Seq[T] = value.split(',').map(internal)
+    override def targetTypeDescription: String = s"list of $internalDescription"
   }
 
   /**
@@ -38,4 +46,16 @@ object PropertyConversions {
     override def apply(value: String): Boolean = java.lang.Boolean.parseBoolean(value)
     override def targetTypeDescription: String = "boolean"
   }
+
+  /**
+   * TODO
+   * @return
+   */
+  def toListOfString(): PropertyConversion[Seq[String]] = new ToListOf[String](_.trim, "string")
+
+  /**
+   * TODO
+   * @return
+   */
+  def toListOfInt(): PropertyConversion[Seq[Int]] = new ToListOf[Int](_.trim.toInt, "integer")
 }

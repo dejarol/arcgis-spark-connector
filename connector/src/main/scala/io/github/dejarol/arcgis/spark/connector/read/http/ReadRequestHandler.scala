@@ -73,16 +73,20 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
    * TODO
    * @param layerUri
    * @param where
+   * @param objectIds
    * @return
    */
   def returnCountOnly(
                        layerUri: Uri,
-                       where: Option[String]
+                       where: Option[String],
+                       objectIds: Option[Seq[Int]]
                      ): ReturnCountOnlyResponse = {
 
     unsafelySend(
       ReturnCountOnlyRequestBuilder(
-        layerUri, QueryLayerParameters.returnCountOnly(where)
+        layerUri, QueryLayerParameters.returnCountOnly(
+          where, objectIds
+        )
       )
     )
   }
