@@ -80,8 +80,9 @@ class CustomizationsSpec
         describe("the deserialization of geometries like") {
           it("points") {
 
+            // [1.1] Produce a JSON string with numeric 'x' and 'y' fields plus 'spatialReference'
             val (x, y, wkid) = (1.23, 4.56, 4326)
-            val json =
+            val jsonWithSR =
               f"""
                  |{
                  | "x": $x,
@@ -92,16 +93,29 @@ class CustomizationsSpec
                  |}""".stripMargin
 
             assertDeserializationOfGeometry(
-              json, PointGeometry(
+              jsonWithSR, PointGeometry(
                 x, y, Some(SpatialReference(Some(wkid), None))
               )
+            )
+
+            // [1.2] Produce a JSON string without 'spatialReference'
+            val jsonWithoutSR =
+              f"""
+                 |{
+                 |  "x": $x,
+                 |  "y": $y
+                 |}""".stripMargin
+
+            assertDeserializationOfGeometry(
+              jsonWithoutSR, PointGeometry(x, y, None)
             )
           }
 
           it("polygons") {
 
+            // [1.1] Produce a JSON string with numeric 'rings' and 'spatialReference'
             val (x, y, wkid) = (1.23, 4.56, 4326)
-            val json =
+            val jsonWithSR =
               f"""
                  |{
                  |  "rings": [
@@ -116,9 +130,27 @@ class CustomizationsSpec
                  |""".stripMargin
 
             assertDeserializationOfGeometry(
-              json, PolygonGeometry(
+              jsonWithSR, PolygonGeometry(
                 Seq(Seq(Seq(x, y))),
                 Some(SpatialReference(Some(wkid), None))
+              )
+            )
+
+            // [1.2] Produce a JSON string without 'spatialReference'
+            val jsonWithoutSR =
+              f"""
+                 |{
+                 |  "rings": [
+                 |    [
+                 |      [$x, $y]
+                 |    ]
+                 |   ]
+                 |}""".stripMargin
+
+            assertDeserializationOfGeometry(
+              jsonWithoutSR, PolygonGeometry(
+                Seq(Seq(Seq(x, y))),
+                None
               )
             )
           }

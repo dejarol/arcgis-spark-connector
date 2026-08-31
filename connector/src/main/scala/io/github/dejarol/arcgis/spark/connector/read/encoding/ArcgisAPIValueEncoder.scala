@@ -36,3 +36,6 @@ trait AttributeValueEncoder[Output]
  */
 trait GeometryValueEncoder[G <: Geometry]
   extends ArcgisAPIValueEncoder[G, InternalRow]
+
+trait GeometryValueEncoderV2
+  extends ArcgisAPIValueEncoder[JValue, InternalRow]

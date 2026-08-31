@@ -3,7 +3,7 @@ package io.github.dejarol.arcgis.spark.connector.core.json
 import io.github.dejarol.arcgis.spark.connector.core.EnumWithAPIName
 import io.github.dejarol.arcgis.spark.connector.core.models.{Geometry, PointGeometry, PolygonGeometry}
 import io.github.dejarol.arcgis.spark.connector.core.utils.Enums
-import org.json4s.JsonAST.{JDecimal, JDouble, JInt, JLong, JObject}
+import org.json4s.JsonAST.JObject
 import org.json4s.{CustomSerializer, DefaultFormats, Extraction, JArray, JField, JString, JValue}
 
 import scala.reflect.ClassTag
@@ -69,9 +69,8 @@ object Customizations {
   private def isPointGeometryJson(json: JObject): Boolean = {
 
     val fields = json.obj.toMap
-    fields.get("x").exists(isJsonNumber) &&
-      fields.get("y").exists(isJsonNumber) &&
-      fields.contains("spatialReference")
+    fields.get("x").exists(Json4SUtils.isNumber) &&
+      fields.get("y").exists(Json4SUtils.isNumber)
   }
 
   /**
@@ -103,26 +102,11 @@ object Customizations {
         rings.forall {
           case JArray(ring) =>
             ring.forall {
-              case JArray(coordinates) => coordinates.forall(isJsonNumber)
+              case JArray(coordinates) => coordinates.forall(Json4SUtils.isNumber)
               case _ => false
             }
           case _ => false
         }
-      case _ => false
-    }
-  }
-
-  /**
-   * Returns whether the JSON value is a numeric node.
-   *
-   * @param value JSON value to inspect
-   * @return `true` when the value is an integer, long, decimal, or double
-   * @since 0.1.0
-   */
-  private def isJsonNumber(value: JValue): Boolean = {
-
-    value match {
-      case _: JDouble | _: JInt | _: JLong | _: JDecimal => true
       case _ => false
     }
   }

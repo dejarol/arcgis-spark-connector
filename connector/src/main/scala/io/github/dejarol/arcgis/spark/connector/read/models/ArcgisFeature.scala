@@ -6,7 +6,10 @@ import org.json4s.JsonAST.JValue
 /**
  * A single feature from an ArcGIS feature layer query.
  *
- * @param attributes attribute values keyed by field name
+ * A feature consists of a
+ *  - set of attributes, here modeled as a map where keys are field names and values are field values, in the form of [[org.json4s.JsonAST.JValue]]
+ *  - an optional geometry, here modeled as a [[Geometry]]
+ * @param attributes the feature attributes
  * @param geometry   optional geometry of the feature
  * @since 0.1.0
  */
@@ -22,7 +25,7 @@ case class ArcgisFeature(
    * @return `Some` wrapping the optional attribute value when `key` exists, `None` otherwise
    * @since 0.1.0
    */
-  def unsafelyGetAttributes(key: String): JValue = {
+  def unsafelyGetAttribute(key: String): JValue = {
 
     attributes.get(key) match {
       case Some(value) => value

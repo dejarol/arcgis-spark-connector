@@ -1,6 +1,5 @@
 package io.github.dejarol.arcgis.spark.connector.read.http
 
-import io.github.dejarol.arcgis.spark.connector.core.models.PolygonGeometry
 import io.github.dejarol.arcgis.spark.connector.read.config.{QueryLayerConfig, ReadConfig}
 import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkSpec}
 

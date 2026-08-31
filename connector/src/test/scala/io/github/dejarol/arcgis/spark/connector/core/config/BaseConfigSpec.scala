@@ -1,15 +1,14 @@
 package io.github.dejarol.arcgis.spark.connector.core.config
 
-import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
-import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
+import io.github.dejarol.arcgis.spark.connector.core.ConfigSpec
 
 class BaseConfigSpec
-  extends BasicSpec {
+  extends ConfigSpec {
 
-  import BaseConfigSpec._
-
-  private lazy val emptyConfig: BaseConfig = createEmptyConfig()
-  private lazy val singleEntryConfig: BaseConfig = createConfig("key", "value")
+  private lazy val emptyConfig: BaseConfig = new BaseConfig(EMPTY_CIMAP)
+  private lazy val singleEntryConfig: BaseConfig = new BaseConfig(
+    createSingletonCIMap("key", "value")
+  )
 
   describe(anInstanceOf[BaseConfig]) {
     describe(SHOULD) {
@@ -38,7 +37,9 @@ class BaseConfigSpec
 
           emptyConfig.getAs[Int]("key", PropertyConversions.ToInteger) shouldBe empty
 
-          val valid = createConfig("key", String.valueOf(8))
+          val valid = new BaseConfig(
+            createSingletonCIMap("key", String.valueOf(8))
+          )
           valid.getAs[Int]("key", PropertyConversions.ToInteger) shouldBe Some(8)
           valid.unsafelyGetAs[Int]("key", PropertyConversions.ToInteger) shouldBe 8
         }
@@ -47,7 +48,9 @@ class BaseConfigSpec
 
           emptyConfig.getAs[Int]("k", PropertyConversions.ToInteger, -1) shouldBe -1
 
-          val valid = createConfig("k", "27")
+          val valid = new BaseConfig(
+            createSingletonCIMap("k", "27")
+          )
           valid.getAs[Int]("k", PropertyConversions.ToInteger, -1) shouldBe 27
           valid.unsafelyGetAs[Int]("k", PropertyConversions.ToInteger) shouldBe 27
         }
@@ -76,10 +79,12 @@ class BaseConfigSpec
           emptyConfig.propertiesStartingWithPrefix(prefix) shouldBe empty
           singleEntryConfig.propertiesStartingWithPrefix(prefix) shouldBe empty
 
-          val properties = createConfig(
-            Map(
-              "k1" -> "v1",
-              prefix + "k2" -> "v2"
+          val properties = new BaseConfig(
+            createCIMap(
+              Map(
+                "k1" -> "v1",
+                prefix + "k2" -> "v2"
+              )
             )
           ).propertiesStartingWithPrefix(prefix)
           properties shouldNot be (empty)
@@ -87,56 +92,5 @@ class BaseConfigSpec
         }
       }
     }
-  }
-}
-
-object BaseConfigSpec {
-
-  /**
-   * TODO
-   * @return
-   */
-  private def createEmptyConfig(): BaseConfig = {
-
-    new BaseConfig(
-      CaseInsensitiveMap(
-        Map.empty
-      )
-    )
-  }
-
-  /**
-   * Creates a configuration with a single property for the tests in this suite.
-   *
-   * @param key   property name
-   * @param value property value
-   * @return a configuration containing only that entry
-   * @since 0.1.0
-   */
-  //noinspection SameParameterValue
-  private def createConfig(
-                            key: String,
-                            value: String
-                          ): BaseConfig = {
-
-   new BaseConfig(
-     CaseInsensitiveMap(
-       Map(key -> value)
-     )
-   )
-  }
-
-  /**
-   * Creates a configuration from one or more entries for the tests in this suite.
-   *
-   * @param map map of property entries
-   * @return a configuration containing the given entries
-   * @since 0.1.0
-   */
-  private def createConfig(map: Map[String, String]): BaseConfig = {
-
-    new BaseConfig(
-      CaseInsensitiveMap(map)
-    )
   }
 }

@@ -6,12 +6,12 @@ import io.github.dejarol.arcgis.spark.connector.read.config.QueryLayerConfig
 /**
  * TODO
  * @param featuresCount
- * @param maxRecordsPerQuery
+ * @param fetchSize
  * @param queryLayerConfig
  */
 case class SingleArcgisPartition(
                                   private val featuresCount: Int,
-                                  private val maxRecordsPerQuery: Int,
+                                  private val fetchSize: Int,
                                   private val queryLayerConfig: QueryLayerConfig
                                 )
   extends ArcgisPartition {
@@ -20,18 +20,25 @@ case class SingleArcgisPartition(
 
   override def parametersForPartitionQueries: Seq[QueryLayerParameters] = {
 
-    Range.inclusive(
-      0, featuresCount, maxRecordsPerQuery
-    ).map {
-      offset =>
+    // [1] If there are less features than the fetch size
+    if (featuresCount <= fetchSize) {
+      // [1.1] Return a single query that does not set result offset and record count
+      Seq(queryLayerConfig.asQueryParameters)
+    }
 
-        val resultRecordCount = Math.min(
-          maxRecordsPerQuery, featuresCount - offset
-        )
+    else {
 
-        queryLayerConfig
-          .asQueryParameters
-          .withResultOffsetAndRecordCount(offset, resultRecordCount)
+      // [2] Otherwise, return a sequence of queries
+      Range.inclusive(
+        0, featuresCount, fetchSize
+      ).map {
+        offset =>
+
+          val resultRecordCount = Math.min(fetchSize, featuresCount - offset)
+          queryLayerConfig
+            .asQueryParameters
+            .withResultOffsetAndRecordCount(offset, resultRecordCount)
+      }
     }
   }
 }

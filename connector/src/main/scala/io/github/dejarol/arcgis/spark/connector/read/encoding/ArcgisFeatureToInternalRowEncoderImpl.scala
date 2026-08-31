@@ -32,7 +32,7 @@ class ArcgisFeatureToInternalRowEncoderImpl(
 
     val attributeValues: Seq[Any] = fields.map {
       field => extractAttributeValue(
-        feature.unsafelyGetAttributes(field.name),
+        feature.unsafelyGetAttribute(field.name),
         field.`type`
       )
     }
