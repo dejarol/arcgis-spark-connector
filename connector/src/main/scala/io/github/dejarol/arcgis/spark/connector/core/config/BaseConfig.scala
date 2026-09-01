@@ -18,9 +18,11 @@ class BaseConfig(protected val properties: CaseInsensitiveMap[String])
   import BaseConfig._
 
   /**
-   * TODO
-   * @param key
-   * @return
+   * Returns the raw string value of a property.
+   *
+   * @param key property name to look up
+   * @return the property value
+   * @since 0.1.0
    */
   final def apply(key: String): String = properties(key)
 
@@ -33,9 +35,11 @@ class BaseConfig(protected val properties: CaseInsensitiveMap[String])
   final def isEmpty: Boolean = properties.isEmpty
 
   /**
-   * TODO
-   * @param key
-   * @return
+   * Reports whether this configuration contains the given property.
+   *
+   * @param key property name to look up
+   * @return `true` if `key` is present
+   * @since 0.1.0
    */
   final def contains(key: String): Boolean = properties.contains(key)
 
@@ -101,12 +105,14 @@ class BaseConfig(protected val properties: CaseInsensitiveMap[String])
   }
 
   /**
-   * TODO
-   * @param key
-   * @param conversion
-   * @param default
-   * @tparam T
-   * @return
+   * Looks up a property and converts it to type `T`, falling back to a default when the key is missing.
+   *
+   * @param key        property name to look up
+   * @param conversion conversion applied to the raw string value
+   * @param default    value returned when `key` is missing
+   * @tparam T converted value type
+   * @return the converted value, or `default` if `key` is missing
+   * @since 0.1.0
    */
   protected[config] final def getAs[T](
                                         key: String,

@@ -1,13 +1,17 @@
 package io.github.dejarol.arcgis.spark.connector.read.partitioning
 
 /**
- * TODO
+ * Plans the [[ArcgisPartition]] instances used to scan a feature layer.
+ *
+ * @since 0.1.0
  */
 trait ArcgisPartitionPlanner {
 
   /**
-   * TODO
-   * @return
+   * Plans the partitions for a feature-layer scan.
+   *
+   * @return the planned ArcGIS partitions
+   * @since 0.1.0
    */
   def plan(): Seq[ArcgisPartition]
 }

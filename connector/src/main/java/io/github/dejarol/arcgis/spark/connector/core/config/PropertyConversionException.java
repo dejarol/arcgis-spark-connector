@@ -3,16 +3,20 @@ package io.github.dejarol.arcgis.spark.connector.core.config;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * TODO
+ * Indicates that a configuration property value could not be converted to the expected type.
+ *
+ * @since 0.1.0
  */
 public class PropertyConversionException
         extends IllegalArgumentException {
 
     /**
-     * TODO
-     * @param key
-     * @param conversion
-     * @param cause
+     * Creates an exception describing a failed property conversion.
+     *
+     * @param key        property name that failed conversion
+     * @param conversion conversion that was applied
+     * @param cause      error raised while converting the value
+     * @since 0.1.0
      */
     public PropertyConversionException(
             String key,

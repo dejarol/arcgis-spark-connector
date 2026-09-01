@@ -7,11 +7,13 @@ import sttp.model.Part
 import java.time.Duration
 
 /**
- * TODO
- * @param username
- * @param password
- * @param referer
- * @param duration
+ * Credentials and options sent as multipart form fields to an ArcGIS generateToken request.
+ *
+ * @param username account user name
+ * @param password account password
+ * @param referer  HTTP referer sent with the request
+ * @param duration token lifetime; defaults to one hour
+ * @since 0.1.0
  */
 case class GenerateTokenParameters(
                                     username: String,
@@ -21,6 +23,12 @@ case class GenerateTokenParameters(
                                   )
   extends AsMultiParts {
 
+  /**
+   * Returns the multipart form parts for a generateToken request.
+   *
+   * @return STTP multipart parts ready to attach to a request
+   * @since 0.1.0
+   */
   override def parts(): Seq[Part[BasicBodyPart]] = {
 
     Seq(

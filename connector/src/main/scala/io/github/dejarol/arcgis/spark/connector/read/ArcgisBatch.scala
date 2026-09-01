@@ -19,6 +19,7 @@ class ArcgisBatch(private val readConfig: ReadConfig)
    * Plans the input partitions for this batch scan.
    *
    * @return one partition when partitioning is unset; otherwise multiple partitions
+   * @throws IllegalArgumentException if the configured partition count is zero or negative
    * @since 0.1.0
    */
   override def planInputPartitions(): Array[InputPartition] = {
@@ -57,7 +58,7 @@ class ArcgisBatch(private val readConfig: ReadConfig)
    * Plans multiple partitions when partitioning options are configured.
    *
    * @param featuresCount number of features in the layer
-   * @param partitions TODO
+   * @param partitions    number of partitions to create
    * @return the planned ArcGIS partitions
    * @since 0.1.0
    */
