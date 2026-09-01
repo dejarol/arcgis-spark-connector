@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read
 
 import io.github.dejarol.arcgis.spark.connector.read.config.ReadConfig
-import io.github.dejarol.arcgis.spark.connector.read.partitioning.{ArcgisPartition, SingleArcgisPartition}
+import io.github.dejarol.arcgis.spark.connector.read.partitioning.{ArcgisPartition, MultiplePartitionPlanner, SinglePartitionPlanner}
 import org.apache.spark.internal.Logging
 import org.apache.spark.sql.connector.read.{Batch, InputPartition, PartitionReaderFactory}
 
@@ -28,6 +28,9 @@ class ArcgisBatch(private val readConfig: ReadConfig)
     val partitions = numPartitions match {
       case Some(1) | None => planSinglePartition(featuresCount)
       case Some(n) if n > 1 => planMultiplePartitions(featuresCount, n)
+      case Some(n) if n <= 0 => throw new IllegalArgumentException(
+        s"Invalid number of partitions: $n. Should be greater than 1"
+      )
     }
 
     log.info(f"Planned ${partitions.size} partition(s)")
@@ -38,18 +41,16 @@ class ArcgisBatch(private val readConfig: ReadConfig)
    * Plans a single partition covering the full feature count.
    *
    * @param featuresCount number of features in the layer
-   * @return a sequence containing one [[SingleArcgisPartition]]
+   * @return a sequence containing a single [[ArcgisPartition]]
    * @since 0.1.0
    */
   private def planSinglePartition(featuresCount: Int): Seq[ArcgisPartition] = {
 
-    Seq(
-      SingleArcgisPartition(
-        featuresCount,
-        readConfig.partitioningConfig.fetchSize,
-        readConfig.queryLayerConfig
-      )
-    )
+    SinglePartitionPlanner(
+      featuresCount,
+      readConfig.partitioningConfig.fetchSize,
+      readConfig.queryLayerConfig
+    ).plan()
   }
 
   /**
@@ -58,7 +59,6 @@ class ArcgisBatch(private val readConfig: ReadConfig)
    * @param featuresCount number of features in the layer
    * @param partitions TODO
    * @return the planned ArcGIS partitions
-   * @throws UnsupportedOperationException always; multi-partition planning is not implemented
    * @since 0.1.0
    */
   private def planMultiplePartitions(
@@ -66,11 +66,12 @@ class ArcgisBatch(private val readConfig: ReadConfig)
                                       partitions: Int
                                     ): Seq[ArcgisPartition] = {
 
-    val rowsPerPartition = featuresCount / partitions
-    Range.inclusive(0, featuresCount, partitions).map {
-      offset => // TODO
-    }
-    Seq.empty
+    MultiplePartitionPlanner(
+      featuresCount,
+      partitions,
+      readConfig.partitioningConfig.fetchSize,
+      readConfig.queryLayerConfig
+    ).plan()
   }
 
   /**
