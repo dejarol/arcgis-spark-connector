@@ -16,6 +16,7 @@ object Json4SUtils {
 
     value match {
       case _: JNumber => true
+      case _ => false
     }
   }
 }

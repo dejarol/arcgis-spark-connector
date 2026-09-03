@@ -11,7 +11,8 @@ import org.apache.spark.sql.util.CaseInsensitiveStringMap
 import java.util
 
 /**
- * Concrete implementation of Spark's connector [[TableProvider]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.catalog.TableProvider]]
+ * for ARCGIS datasource
  *
  * @since 0.1.0
  */

@@ -4,7 +4,7 @@ import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import org.apache.spark.sql.connector.read.InputPartition
 
 /**
- * Concrete implementation of Spark's connector [[InputPartition]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.InputPartition]] for ARCGIS datasource
  *
  * @since 0.1.0
  */

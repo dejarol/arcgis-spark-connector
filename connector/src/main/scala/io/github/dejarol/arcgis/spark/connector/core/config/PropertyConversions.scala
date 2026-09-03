@@ -122,7 +122,7 @@ object PropertyConversions {
    * @return a conversion to a sequence of strings
    * @since 0.1.0
    */
-  def toListOfString(): PropertyConversion[Seq[String]] = new ToListOf[String](_.trim, "string")
+  def toListOfString: PropertyConversion[Seq[String]] = new ToListOf[String](_.trim, "string")
 
   /**
    * Returns a conversion from a comma-separated string to a sequence of integers.
@@ -130,5 +130,5 @@ object PropertyConversions {
    * @return a conversion to a sequence of integers
    * @since 0.1.0
    */
-  def toListOfInt(): PropertyConversion[Seq[Int]] = new ToListOf[Int](_.trim.toInt, "integer")
+  def toListOfInt: PropertyConversion[Seq[Int]] = new ToListOf[Int](_.trim.toInt, "integer")
 }

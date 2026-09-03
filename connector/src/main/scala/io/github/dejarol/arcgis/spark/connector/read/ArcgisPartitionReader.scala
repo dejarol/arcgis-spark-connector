@@ -9,7 +9,8 @@ import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.connector.read.PartitionReader
 
 /**
- * Concrete implementation of Spark's connector [[PartitionReader]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.PartitionReader]]
+ * for ARCGIS datasource
  *
  * @param readConfig options that control how the feature layer is queried
  * @param partition  partition whose features are read

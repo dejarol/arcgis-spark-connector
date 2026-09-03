@@ -30,7 +30,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   def layerUri: Uri = unsafelyGetAs[Uri](LAYER_URI_KEY, PropertyConversions.ToUri)
 
   /**
-   * Returns query options taken from properties prefixed with [[QUERY_PREFIX]].
+   * Returns query options taken from properties prefixed with <b>query.</b>
    *
    * @return a query configuration with the prefix stripped from each key
    * @since 0.1.0
@@ -43,7 +43,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
-   * Returns partitioning options taken from properties prefixed with [[PARTITIONING_PREFIX]].
+   * Returns partitioning options taken from properties prefixed with <b>partitioning.</b>
    *
    * @return a partitioning configuration with the prefix stripped from each key
    * @since 0.1.0

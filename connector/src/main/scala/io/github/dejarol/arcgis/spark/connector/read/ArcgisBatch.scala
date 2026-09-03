@@ -6,7 +6,8 @@ import org.apache.spark.internal.Logging
 import org.apache.spark.sql.connector.read.{Batch, InputPartition, PartitionReaderFactory}
 
 /**
- * Concrete implementation of Spark's connector [[Batch]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.Batch]]
+ * for ARCGIS datasource
  *
  * @param readConfig options that control how the feature layer is queried
  * @since 0.1.0

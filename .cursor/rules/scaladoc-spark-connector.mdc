@@ -10,19 +10,21 @@ When writing or completing **class-level** Scaladoc on a class or trait that ext
 
 ## Opening line
 
-Use this template, linking the **primary** Spark SPI type:
+Use this template, linking the **primary** Spark SPI type with its **fully qualified** class path:
 
 ```
-Concrete implementation of Spark's connector [[SparkType]] for ARCGIS datasource
+Concrete implementation of Spark's connector [[org.apache.spark.sql.connector....SparkType]] for ARCGIS datasource
 ```
 
-Replace `SparkType` with the Spark type that defines the class's connector role, for example `[[Table]]`, `[[ScanBuilder]]`, `[[Scan]]`, `[[Batch]]`, `[[TableProvider]]`, `[[PartitionReader]]`, `[[PartitionReaderFactory]]`, or `[[InputPartition]]`. The same formula applies to any other type under `org.apache.spark.sql.connector` or `org.apache.spark.sql.sources` that is part of the connector SPI.
+Replace the link with the full package plus type name, for example `[[org.apache.spark.sql.connector.catalog.Table]]`, `[[org.apache.spark.sql.connector.read.ScanBuilder]]`, `[[org.apache.spark.sql.connector.read.Scan]]`, `[[org.apache.spark.sql.connector.read.Batch]]`, `[[org.apache.spark.sql.connector.catalog.TableProvider]]`, `[[org.apache.spark.sql.connector.read.PartitionReader]]`, `[[org.apache.spark.sql.connector.read.PartitionReaderFactory]]`, or `[[org.apache.spark.sql.connector.read.InputPartition]]`. The same formula applies to any other type under `org.apache.spark.sql.connector` or `org.apache.spark.sql.sources` that is part of the connector SPI.
+
+Do **not** use a short name such as `[[Table]]` or `[[Scan]]`. sbt Scaladoc resolves these links through `apiMappings`; an unqualified name is not found in the generated artifact.
 
 This opening line is the first line of the class description and counts toward the 10-line description limit in `scaladoc-classes`.
 
 ## Which Spark type to link
 
-- Link the primary connector role, not mix-ins. `ArcgisTable extends Table with SupportsRead` → `[[Table]]`, not `[[SupportsRead]]`.
+- Link the primary connector role, not mix-ins. `ArcgisTable extends Table with SupportsRead` → `[[org.apache.spark.sql.connector.catalog.Table]]`, not `[[org.apache.spark.sql.connector.catalog.SupportsRead]]`.
 - Ignore non-SPI Spark types such as `Logging`.
 - If the type extends several SPI interfaces, pick the one that names its role in the Spark connector lifecycle.
 
@@ -38,17 +40,27 @@ This opening line is the first line of the class description and counts toward t
  */
 class ArcgisTable(...) extends Table with SupportsRead
 
-// ❌ BAD — opening line present, but shared class rules not applied
+// ❌ BAD — short-name link; sbt cannot resolve it in the generated docs
 /**
  * Concrete implementation of Spark's connector [[Table]] for ARCGIS datasource
+ *
+ * @param tableSchema     Spark schema of the feature layer
+ * @param tableProperties table options used to configure reads
+ * @since 0.1.0
+ */
+class ArcgisTable(...) extends Table with SupportsRead
+
+// ❌ BAD — opening line present, but shared class rules not applied
+/**
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.catalog.Table]] for ARCGIS datasource
  * @param tableSchema
  * @param tableProperties
  */
 class ArcgisTable(...) extends Table with SupportsRead
 
-// ✅ GOOD — opening line, then @param and @since from scaladoc-classes
+// ✅ GOOD — fully qualified opening-line link, then @param and @since from scaladoc-classes
 /**
- * Concrete implementation of Spark's connector [[Table]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.catalog.Table]] for ARCGIS datasource
  *
  * @param tableSchema     Spark schema of the feature layer
  * @param tableProperties table options used to configure reads
@@ -63,7 +75,7 @@ class ArcgisTable(
 ```scala
 // ✅ GOOD — ScanBuilder; extra description is allowed after the opening line
 /**
- * Concrete implementation of Spark's connector [[ScanBuilder]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.ScanBuilder]] for ARCGIS datasource
  *
  * Builds an [[ArcgisScan]] from the table schema and read configuration.
  *
@@ -77,6 +89,7 @@ class ArcgisScanBuilder(...) extends ScanBuilder
 ## Notes
 
 - Do not invent a different first sentence for these types; always use the template above.
+- The Spark SPI link in that first sentence must be fully qualified (`[[org.apache.spark.sql.connector....Type]]`). Short names fail to resolve when sbt generates the docs.
 - After the opening line, do not skip `@param` / `@since` (or construction guidance) required by `scaladoc-classes`.
 - This rule does **not** apply to classes that only use Spark types as fields or method signatures without extending a connector SPI type.
 - Method Scaladoc is unchanged; see `scaladoc-methods`.

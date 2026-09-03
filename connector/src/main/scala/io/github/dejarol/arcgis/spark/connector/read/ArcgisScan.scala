@@ -5,7 +5,7 @@ import org.apache.spark.sql.connector.read.{Batch, Scan}
 import org.apache.spark.sql.types.StructType
 
 /**
- * Concrete implementation of Spark's connector [[Scan]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.Scan]] for ARCGIS datasource
  *
  * @param readConfig  options that control how the feature layer is queried
  * @param tableSchema Spark schema of the scan

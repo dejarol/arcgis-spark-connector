@@ -27,7 +27,7 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
    * TODO
    * @return
    */
-  def objectIDs: Option[Seq[Int]] = getAs[Seq[Int]](OBJECT_IDS_KEY, PropertyConversions.toListOfInt())
+  def objectIDs: Option[Seq[Int]] = getAs[Seq[Int]](OBJECT_IDS_KEY, PropertyConversions.toListOfInt)
 
   /**
    * Returns the output field names, if set.
@@ -35,7 +35,7 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
    * @return the field names, or `None` if unset
    * @since 0.1.0
    */
-  def outFields: Option[Seq[String]] = getAs[Seq[String]](OUT_FIELDS_KEY, PropertyConversions.toListOfString())
+  def outFields: Option[Seq[String]] = getAs[Seq[String]](OUT_FIELDS_KEY, PropertyConversions.toListOfString)
 
   /**
    * Returns whether the query should include geometry, if set.

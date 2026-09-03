@@ -5,7 +5,7 @@ import org.apache.spark.sql.connector.read.{Scan, ScanBuilder}
 import org.apache.spark.sql.types.StructType
 
 /**
- * Concrete implementation of Spark's connector [[ScanBuilder]] for ARCGIS datasource
+ * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.ScanBuilder]] for ARCGIS datasource
  *
  * Builds an [[ArcgisScan]] from the table schema and read configuration.
  *
