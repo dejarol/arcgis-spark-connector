@@ -4,8 +4,10 @@ import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, Propert
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
 /**
- * TODO
+ * Partitioning options that control how a feature layer scan is split across Spark partitions.
+ *
  * @param properties configuration entries keyed by property name
+ * @since 0.1.0
  */
 case class PartitioningConfig(override protected val properties: CaseInsensitiveMap[String])
   extends BaseConfig(properties) {
@@ -13,8 +15,10 @@ case class PartitioningConfig(override protected val properties: CaseInsensitive
   import PartitioningConfig._
 
   /**
-   * TODO
-   * @return
+   * Returns the number of features to fetch per query page.
+   *
+   * @return the configured fetch size, or [[PartitioningConfig.FETCH_SIZE_DEFAULT]] when unset
+   * @since 0.1.0
    */
   def fetchSize: Int = {
 
@@ -26,8 +30,10 @@ case class PartitioningConfig(override protected val properties: CaseInsensitive
   }
 
   /**
-   * TODO
-   * @return
+   * Returns the desired number of Spark partitions, if set.
+   *
+   * @return the partition count, or `None` if unset
+   * @since 0.1.0
    */
   def numPartitions: Option[Int] = {
 
@@ -40,8 +46,24 @@ case class PartitioningConfig(override protected val properties: CaseInsensitive
 
 object PartitioningConfig {
 
+  /**
+   * Property key for the number of features to fetch per query page.
+   *
+   * @since 0.1.0
+   */
   final val FETCH_SIZE_KEY: String = "fetchSize"
+
+  /**
+   * Default fetch size used when [[FETCH_SIZE_KEY]] is unset.
+   *
+   * @since 0.1.0
+   */
   final val FETCH_SIZE_DEFAULT: Int = 50
 
+  /**
+   * Property key for the desired number of Spark partitions.
+   *
+   * @since 0.1.0
+   */
   final val NUM_PARTITIONS_KEY: String = "numPartitions"
 }

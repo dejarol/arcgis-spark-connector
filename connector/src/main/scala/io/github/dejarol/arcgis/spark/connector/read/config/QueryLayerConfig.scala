@@ -24,8 +24,10 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   def where: Option[String] = get(WHERE_KEY)
 
   /**
-   * TODO
-   * @return
+   * Returns the ArcGIS object IDs to query, if set.
+   *
+   * @return the object IDs, or `None` if unset
+   * @since 0.1.0
    */
   def objectIDs: Option[Seq[Int]] = getAs[Seq[Int]](OBJECT_IDS_KEY, PropertyConversions.toListOfInt)
 
@@ -81,7 +83,9 @@ object QueryLayerConfig {
   final val WHERE_KEY = "where"
 
   /**
-   * TODO
+   * Property key for the comma-separated ArcGIS object IDs.
+   *
+   * @since 0.1.0
    */
   final val OBJECT_IDS_KEY = "objectIds"
 

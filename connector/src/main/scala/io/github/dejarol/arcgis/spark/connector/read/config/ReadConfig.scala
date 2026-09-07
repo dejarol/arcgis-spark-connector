@@ -96,7 +96,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   /**
    * Queries the feature layer for the number of matching features.
    *
-   * @return the feature count for the configured `where` clause
+   * @return the feature count for the configured `where` clause and `objectIds`
    * @since 0.1.0
    */
   def returnCountOnly: Int = {
@@ -128,9 +128,11 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
 object ReadConfig {
 
   /**
-   * TODO
-   * @param map
-   * @return
+   * Builds a read configuration from a Spark options map.
+   *
+   * @param map case-insensitive Spark options
+   * @return a read configuration backed by `map`
+   * @since 0.1.0
    */
   def fromCIMap(map: CaseInsensitiveStringMap): ReadConfig = {
 
@@ -142,10 +144,14 @@ object ReadConfig {
   }
 
   /**
-   * TODO
-   * @param first
-   * @param second
-   * @return
+   * Builds a read configuration by merging two Spark option maps.
+   *
+   * Entries in `second` override entries in `first` when keys collide.
+   *
+   * @param first  base case-insensitive Spark options
+   * @param second options overlaid on `first`
+   * @return a read configuration backed by the merged maps
+   * @since 0.1.0
    */
   def fromUnionOf(
                    first: CaseInsensitiveStringMap,

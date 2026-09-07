@@ -17,13 +17,15 @@ class ReadRequestHandlerIntegrationSpec
   )
 
   /**
-   * TODO
-   * @param response
-   * @param expectedGeometryType
-   * @param expectedNumberOfFeatures
-   * @param featuresShouldHaveGeometry
-   * @param expectedFieldNames
-   * @param expectedSR
+   * Asserts that a query response matches the expected geometry, feature count, and field set.
+   *
+   * @param response                   query response to inspect
+   * @param expectedGeometryType       expected geometry type of the features
+   * @param expectedNumberOfFeatures   expected number of features
+   * @param featuresShouldHaveGeometry whether each feature must include a geometry
+   * @param expectedFieldNames         expected field names when a subset was requested
+   * @param expectedSR                 expected spatial reference WKID when set
+   * @since 0.1.0
    */
   private def assertQueryResponse(
                                    response: QueryLayerResponse,

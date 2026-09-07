@@ -13,11 +13,21 @@ import java.lang
 object AttributeValueEncoders {
 
   /**
-   * TODO
+   * Encodes ArcGIS date attributes as Spark timestamps (epoch milliseconds).
+   *
+   * @since 0.1.0
    */
   private object DateEncoder
     extends AttributeValueEncoder[lang.Long] {
 
+    /**
+     * Encodes a numeric JSON value as milliseconds since epoch.
+     *
+     * @param value JSON attribute value
+     * @return milliseconds since epoch, or `null` for JSON null
+     * @throws IllegalArgumentException if `value` is not a number or null
+     * @since 0.1.0
+     */
     override def apply(value: JValue): lang.Long = {
 
       value match {
@@ -33,11 +43,21 @@ object AttributeValueEncoders {
   }
 
   /**
-   * TODO
+   * Encodes ArcGIS numeric attributes as Java doubles.
+   *
+   * @since 0.1.0
    */
   private object DoubleEncoder
     extends AttributeValueEncoder[lang.Double] {
 
+    /**
+     * Encodes a numeric JSON value as a Java `Double`.
+     *
+     * @param value JSON attribute value
+     * @return the numeric value as a `Double`, or `null` for JSON null
+     * @throws IllegalArgumentException if `value` is not a number or null
+     * @since 0.1.0
+     */
     override def apply(value: JValue): lang.Double = {
 
       value match {
@@ -54,11 +74,21 @@ object AttributeValueEncoders {
   }
 
   /**
-   * TODO
+   * Encodes ArcGIS integer attributes as Java integers.
+   *
+   * @since 0.1.0
    */
   private object IntegerEncoder
     extends AttributeValueEncoder[lang.Integer] {
 
+    /**
+     * Encodes a numeric JSON value as a Java `Integer`.
+     *
+     * @param value JSON attribute value
+     * @return the numeric value as an `Integer`, or `null` for JSON null
+     * @throws IllegalArgumentException if `value` is not a number or null
+     * @since 0.1.0
+     */
     override def apply(value: JValue): Integer = {
 
       value match {
@@ -74,11 +104,21 @@ object AttributeValueEncoders {
   }
 
   /**
-   * TODO
+   * Encodes ArcGIS string attributes as Spark UTF8 strings.
+   *
+   * @since 0.1.0
    */
   private object StringEncoder
     extends AttributeValueEncoder[UTF8String] {
 
+    /**
+     * Encodes a JSON string as a Spark `UTF8String`.
+     *
+     * @param value JSON attribute value
+     * @return the string as UTF8, or `null` for JSON null
+     * @throws IllegalArgumentException if `value` is not a string or null
+     * @since 0.1.0
+     */
     override def apply(value: JValue): UTF8String = {
 
       value match {
@@ -92,8 +132,10 @@ object AttributeValueEncoders {
   }
 
   /**
-   * TODO
-   * @return
+   * Creates an encoder for ArcGIS date attributes.
+   *
+   * @return an encoder that maps missing values to `null` and present epoch seconds to milliseconds
+   * @since 0.1.0
    */
   def forDate(): AttributeValueEncoder[lang.Long] = DateEncoder
 

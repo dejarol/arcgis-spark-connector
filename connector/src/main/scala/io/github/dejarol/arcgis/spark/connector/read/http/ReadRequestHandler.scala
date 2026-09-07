@@ -9,18 +9,24 @@ import sttp.client4.{DefaultSyncBackend, SyncBackend}
 import sttp.model.Uri
 
 /**
- * TODO
- * @param backend
+ * Sends read-related HTTP requests against an ArcGIS feature layer.
+ *
+ * @param backend STTP backend used to send requests
+ * @since 0.1.0
  */
 case class ReadRequestHandler(override protected val backend: SyncBackend)
   extends BaseRequestHandler(backend) {
 
   /**
-   * TODO
-   * @param layerUri
-   * @param outFields
-   * @param token
-   * @return
+   * Fetches the feature layer's fields and geometry type.
+   *
+   * When `outFields` is set, only fields whose names match (case-insensitive) are returned.
+   *
+   * @param layerUri  URI of the feature layer
+   * @param outFields optional output field names used to filter the layer definition
+   * @param token     optional ArcGIS authentication token
+   * @return the (possibly filtered) layer fields and the layer geometry type
+   * @since 0.1.0
    */
   def getFeatureLayerFieldsAndGeometry(
                                         layerUri: Uri,
@@ -51,10 +57,13 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
   }
 
   /**
-   * @param layerUri
-   * @param queryParameters
-   * @param token
-   * @return
+   * Queries the feature layer using an HTTP POST.
+   *
+   * @param layerUri        URI of the feature layer
+   * @param queryParameters multipart query parameters sent with the request
+   * @param token           optional ArcGIS authentication token
+   * @return the query response body
+   * @since 0.1.0
    */
   def queryUsingPost(
                       layerUri: Uri,
@@ -70,11 +79,14 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
   }
 
   /**
-   * TODO
-   * @param layerUri
-   * @param where
-   * @param objectIds
-   * @return
+   * Queries the feature layer for the number of matching features.
+   *
+   * @param layerUri  URI of the feature layer
+   * @param where     optional ArcGIS `where` clause
+   * @param objectIds optional object IDs that further restrict the count
+   * @param token     optional ArcGIS authentication token
+   * @return a response containing the matching feature count
+   * @since 0.1.0
    */
   def returnCountOnly(
                        layerUri: Uri,
@@ -96,8 +108,10 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
 object ReadRequestHandler {
 
   /**
-   * TODO
-   * @return
+   * Creates a handler that uses STTP's default synchronous backend.
+   *
+   * @return a request handler backed by the default STTP backend
+   * @since 0.1.0
    */
   def withDefaultBackend(): ReadRequestHandler = {
 
