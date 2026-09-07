@@ -12,9 +12,6 @@ class ReadRequestHandlerIntegrationSpec
       with Inspectors {
 
   private lazy val handler = ReadRequestHandler.withDefaultBackend()
-  private lazy val polygonLayerUri = uriFromString(
-    integrationProperties.getProperty("ci.arcgis.test.polygonLayer.layerUri")
-  )
 
   /**
    * Asserts that a query response matches the expected geometry, feature count, and field set.

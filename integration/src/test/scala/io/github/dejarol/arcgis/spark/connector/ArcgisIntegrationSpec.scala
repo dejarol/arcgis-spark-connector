@@ -30,6 +30,12 @@ trait ArcgisIntegrationSpec
   }
 
   protected final lazy val integrationProperties: Properties = readIntegrationProperties()
+  protected final lazy val polygonLayerUri = uriFromString(
+    integrationProperties.getProperty("ci.arcgis.test.polygonLayer.layerUri")
+  )
+  protected final lazy val pointLayerUri = uriFromString(
+    integrationProperties.getProperty("ci.arcgis.test.pointLayerWithDate.layerUri")
+  )
 
   /**
    * Converts a string to a URI

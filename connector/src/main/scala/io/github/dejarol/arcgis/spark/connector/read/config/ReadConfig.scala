@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.JavaScalaConverters
-import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
+import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, NoSuchPropertyException, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
@@ -27,7 +27,17 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
    * @return the parsed layer URI
    * @since 0.1.0
    */
-  def layerUri: Uri = unsafelyGetAs[Uri](LAYER_URI_KEY, PropertyConversions.ToUri)
+  def layerUri: Uri = {
+
+    getAs[Uri](LAYER_URI_KEY, PropertyConversions.ToUri).orElse(
+      getAs[Uri]("path", PropertyConversions.ToUri)
+    ).getOrElse {
+      throw new NoSuchPropertyException(
+        f"Neither 'path' or '$LAYER_URI_KEY' options were defined. " +
+          f"Please set one of the two for reading data from ARCGIS"
+      )
+    }
+  }
 
   /**
    * Returns query options taken from properties prefixed with <b>query.</b>

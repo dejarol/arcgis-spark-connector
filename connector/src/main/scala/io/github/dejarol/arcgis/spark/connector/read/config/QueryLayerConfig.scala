@@ -1,6 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
-import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, PropertyConversions}
+import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, ExtendableConfig, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 
@@ -11,9 +11,17 @@ import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
  * @since 0.1.0
  */
 case class QueryLayerConfig(override protected val properties: CaseInsensitiveMap[String])
-  extends BaseConfig(properties) {
+  extends BaseConfig(properties)
+    with ExtendableConfig[QueryLayerConfig] {
 
   import QueryLayerConfig._
+
+  override def withOption(key: String, value: String): QueryLayerConfig = {
+
+    this.copy(
+      properties + (key, value)
+    )
+  }
 
   /**
    * Returns the ArcGIS `where` clause, if set.
@@ -32,12 +40,26 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   def objectIDs: Option[Seq[Int]] = getAs[Seq[Int]](OBJECT_IDS_KEY, PropertyConversions.toListOfInt)
 
   /**
+   * TODO
+   * @param ids
+   * @return
+   */
+  def withObjectIDs(ids: Seq[Int]): QueryLayerConfig = withOption(OBJECT_IDS_KEY, ids.mkString(","))
+
+  /**
    * Returns the output field names, if set.
    *
    * @return the field names, or `None` if unset
    * @since 0.1.0
    */
   def outFields: Option[Seq[String]] = getAs[Seq[String]](OUT_FIELDS_KEY, PropertyConversions.toListOfString)
+
+  /**
+   * TODO
+   * @param fields
+   * @return
+   */
+  def withOutFields(fields: Seq[String]): QueryLayerConfig = withOption(OUT_FIELDS_KEY, fields.mkString(","))
 
   /**
    * Returns whether the query should include geometry, if set.

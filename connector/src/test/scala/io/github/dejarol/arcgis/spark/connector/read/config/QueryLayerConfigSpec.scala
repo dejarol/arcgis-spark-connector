@@ -75,6 +75,26 @@ class QueryLayerConfigSpec
           actual.value shouldBe expected
         }
       }
+
+      describe("enrich an existing configuration with") {
+        it("some objectIDs") {
+
+          val objIDs = Seq(0, 1, 2)
+          emptyConfig.objectIDs shouldBe empty
+          emptyConfig.withObjectIDs(
+            objIDs
+          ).objectIDs.value should contain theSameElementsAs objIDs
+        }
+
+        it("some outFields") {
+
+          val outFields = Seq("name", "age")
+          emptyConfig.outFields shouldBe empty
+          emptyConfig.withOutFields(
+            outFields
+          ).outFields.value should contain theSameElementsAs outFields
+        }
+      }
     }
   }
 }

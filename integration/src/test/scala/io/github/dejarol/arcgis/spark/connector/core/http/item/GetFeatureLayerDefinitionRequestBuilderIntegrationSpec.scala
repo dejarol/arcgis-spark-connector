@@ -13,8 +13,7 @@ class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
 
           val body = sendRequestAndGetBody[FeatureLayerDefinition](
             GetFeatureLayerDefinitionRequestBuilder(
-              uriFromString(integrationProperties.getProperty("ci.arcgis.test.polygonLayer.layerUri")),
-              None
+              polygonLayerUri, None
             )
           )
 

@@ -59,15 +59,24 @@ class ReadConfigSpec
     describe(SHOULD) {
       it("retrieve the layerUri") {
 
+        // [1.1] Empty config
         a [NoSuchPropertyException] shouldBe thrownBy {
           emptyReadConfig.layerUri
         }
 
+        // [1.2] Config with 'layerUri' option
         val value = "http://localhost:6080/arcgis/rest/services/ServiceName/MapServer/0"
-        val valid = ReadConfig(
+        val configWithLayerUriOption = ReadConfig(
           createSingletonCIMap(ReadConfig.LAYER_URI_KEY, value)
         )
-        valid.layerUri shouldBe Uri.unsafeParse(value)
+        configWithLayerUriOption.layerUri shouldBe Uri.unsafeParse(value)
+
+        // [1.3] Config with 'path' option
+        val configWithPathOption = ReadConfig(
+          createSingletonCIMap("path", value)
+        )
+
+        configWithPathOption.layerUri shouldBe Uri.unsafeParse(value)
       }
 
       it("retrieve query options") {
