@@ -7,8 +7,8 @@ import org.json4s.JsonAST.JValue
  * A single feature from an ArcGIS feature layer query.
  *
  * A feature consists of a
- *  - set of attributes, here modeled as a map where keys are field names and values are field values, in the form of [[org.json4s.JsonAST.JValue]]
- *  - an optional geometry, here modeled as a [[Geometry]]
+ *  - set of attributes, here modeled as a map where keys are field names and values are field values
+ *  - an optional geometry
  * @param attributes the feature attributes
  * @param geometry   optional geometry of the feature
  * @since 0.1.0

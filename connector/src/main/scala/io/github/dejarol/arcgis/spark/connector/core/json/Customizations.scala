@@ -33,12 +33,12 @@ object Customizations {
   }
 
   /**
-   * Creates a serializer that maps ArcGIS geometry JSON to [[Geometry]] subtypes.
+   * Creates a serializer that maps ArcGIS geometry JSON to [[io.github.dejarol.arcgis.spark.connector.core.models.Geometry]] subtypes.
    *
-   * A JSON object with `x`, `y`, and `spatialReference` is read as [[PointGeometry]].
-   * A JSON object whose `rings` field is an array of arrays of arrays of numbers is read as [[PolygonGeometry]].
+   * A JSON object with `x`, `y`, and `spatialReference` is read as a [[io.github.dejarol.arcgis.spark.connector.core.models.PointGeometry]].
+   * A JSON object whose `rings` field is an array of arrays of arrays of numbers is read as a [[io.github.dejarol.arcgis.spark.connector.core.models.PolygonGeometry]].
    *
-   * @return a serializer for [[Geometry]]
+   * @return a serializer for [[io.github.dejarol.arcgis.spark.connector.core.models.Geometry]]
    * @since 0.1.0
    */
   def serializerForGeometry(): CustomSerializer[Geometry] = {

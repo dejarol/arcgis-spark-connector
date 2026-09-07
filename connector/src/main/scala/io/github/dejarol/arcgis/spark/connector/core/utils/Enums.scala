@@ -83,7 +83,7 @@ object Enums {
    * @param predicate function that decides whether an enum constant matches `v`
    * @tparam E Java enum type whose constants are searched
    * @return the first matching constant
-   * @throws NoSuchElementException if no constant matches `v`
+   * @throws java.util.NoSuchElementException if no constant matches `v`
    * @since 0.1.0
    */
   def unsafeValueOfEnum[E <: Enum[E] : ClassTag](
@@ -102,7 +102,7 @@ object Enums {
    * @param v value compared with each constant's `name()`
    * @tparam E Java enum type whose constants are searched
    * @return the matching constant
-   * @throws NoSuchElementException if no constant matches `v` ignoring case
+   * @throws java.util.NoSuchElementException if no constant matches `v` ignoring case
    * @since 0.1.0
    */
   def unsafeValueOfEnum[E <: Enum[E] : ClassTag](v: String): E = {
@@ -119,7 +119,7 @@ object Enums {
    * @param maybe optional matching enum constant
    * @tparam E Java enum type whose constants were searched
    * @return the matching constant
-   * @throws NoSuchElementException if `maybe` is empty
+   * @throws java.util.NoSuchElementException if `maybe` is empty
    * @since 0.1.0
    */
   private def valueOrThrow[E <: Enum[E] : ClassTag](v: String, maybe: Option[E]): E = {

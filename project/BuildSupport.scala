@@ -38,7 +38,9 @@ object BuildSupport {
     private def isSparkModule(module: ModuleID): Boolean = {
 
       module.organization.equalsIgnoreCase("org.apache.spark") &&
-        SPARK_ARTIFACTS.exists { prefix => module.name.startsWith(prefix) }
+        SPARK_ARTIFACTS.exists {
+          prefix => module.name.startsWith(prefix)
+        }
     }
 
     /**

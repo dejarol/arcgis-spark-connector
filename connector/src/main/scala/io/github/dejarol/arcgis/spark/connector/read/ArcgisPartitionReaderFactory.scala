@@ -21,7 +21,7 @@ class ArcgisPartitionReaderFactory(private val readConfig: ReadConfig)
    *
    * @param inputPartition partition to read; must be an [[ArcgisPartition]]
    * @return a reader that yields InternalRows for the partition
-   * @throws IllegalArgumentException if `inputPartition` is not an [[ArcgisPartition]]
+   * @throws java.lang.IllegalArgumentException if `inputPartition` is not an [[ArcgisPartition]]
    * @since 0.1.0
    */
   override def createReader(inputPartition: InputPartition): PartitionReader[InternalRow] = {

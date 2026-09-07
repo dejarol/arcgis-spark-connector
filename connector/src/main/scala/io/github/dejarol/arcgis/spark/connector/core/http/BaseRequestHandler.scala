@@ -16,7 +16,7 @@ class BaseRequestHandler(protected val backend: SyncBackend) {
    * @param request request builder to execute
    * @tparam R expected response body type
    * @return the successful response body
-   * @throws java.lang.Throwable if the request body is a `Left`
+   * @throws Throwable the underlying throwable if the request body was a `Left`
    * @since 0.1.0
    */
   final def unsafelySend[R](request: SttpEitherThrowableOrValueBuilder[R]): R = {

@@ -43,7 +43,7 @@ class ArcgisTable(
   /**
    * Returns the capabilities supported by this table.
    *
-   * @return a set containing [[TableCapability.BATCH_READ]]
+   * @return a set containing the table capabilities
    * @since 0.1.0
    */
   override def capabilities(): util.Set[TableCapability] = {
