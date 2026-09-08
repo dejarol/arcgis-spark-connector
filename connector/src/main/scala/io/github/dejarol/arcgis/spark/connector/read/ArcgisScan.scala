@@ -7,13 +7,13 @@ import org.apache.spark.sql.types.StructType
 /**
  * Concrete implementation of Spark's connector [[org.apache.spark.sql.connector.read.Scan]] for ARCGIS datasource
  *
- * @param readConfig  options that control how the feature layer is queried
- * @param tableSchema Spark schema of the scan
+ * @param scanConfig  options that control how the feature layer is queried
+ * @param scanSchema Spark schema of the scan
  * @since 0.1.0
  */
 class ArcgisScan(
-                  private val readConfig: ReadConfig,
-                  private val tableSchema: StructType
+                  private val scanConfig: ReadConfig,
+                  private val scanSchema: StructType
                 )
   extends Scan {
 
@@ -23,7 +23,7 @@ class ArcgisScan(
    * @return the table schema
    * @since 0.1.0
    */
-  override def readSchema(): StructType = tableSchema
+  override def readSchema(): StructType = scanSchema
 
   /**
    * Converts this scan into a batch scan.
@@ -33,6 +33,6 @@ class ArcgisScan(
    */
   override def toBatch: Batch = {
 
-    new ArcgisBatch(readConfig)
+    new ArcgisBatch(scanConfig)
   }
 }

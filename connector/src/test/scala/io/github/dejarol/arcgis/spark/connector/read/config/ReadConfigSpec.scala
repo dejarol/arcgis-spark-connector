@@ -3,13 +3,15 @@ package io.github.dejarol.arcgis.spark.connector.read.config
 import io.github.dejarol.arcgis.spark.connector.core.ConfigSpec
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, NoSuchPropertyException}
 import org.apache.spark.sql.util.CaseInsensitiveStringMap
+import org.scalatest.OptionValues
 import org.scalatest.enablers.KeyMapping
 import sttp.model.Uri
 
 import java.util
 
 class ReadConfigSpec
-  extends ConfigSpec {
+  extends ConfigSpec
+    with OptionValues {
 
   import ReadConfigSpec._
 
@@ -30,7 +32,7 @@ class ReadConfigSpec
           config should contain key "k1"
         }
 
-        it("the union of two case insensitive maps") {
+        it("the union of CI maps") {
 
           val first: util.Map[String, String] = new util.HashMap[String, String]() {{
             put("k1", "v1")
@@ -57,62 +59,75 @@ class ReadConfigSpec
 
   describe(anInstanceOf[ReadConfig]) {
     describe(SHOULD) {
-      it("retrieve the layerUri") {
+      describe("retrieve") {
+        it("the layerUri") {
 
-        // [1.1] Empty config
-        a [NoSuchPropertyException] shouldBe thrownBy {
-          emptyReadConfig.layerUri
+          // [1.1] Empty config
+          a[NoSuchPropertyException] shouldBe thrownBy {
+            emptyReadConfig.layerUri
+          }
+
+          // [1.2] Config with 'layerUri' option
+          val value = "http://localhost:6080/arcgis/rest/services/ServiceName/MapServer/0"
+          val configWithLayerUriOption = ReadConfig(
+            createSingletonCIMap(ReadConfig.LAYER_URI_KEY, value)
+          )
+          configWithLayerUriOption.layerUri shouldBe Uri.unsafeParse(value)
+
+          // [1.3] Config with 'path' option
+          val configWithPathOption = ReadConfig(
+            createSingletonCIMap("path", value)
+          )
+
+          configWithPathOption.layerUri shouldBe Uri.unsafeParse(value)
         }
 
-        // [1.2] Config with 'layerUri' option
-        val value = "http://localhost:6080/arcgis/rest/services/ServiceName/MapServer/0"
-        val configWithLayerUriOption = ReadConfig(
-          createSingletonCIMap(ReadConfig.LAYER_URI_KEY, value)
-        )
-        configWithLayerUriOption.layerUri shouldBe Uri.unsafeParse(value)
+        it("query options") {
 
-        // [1.3] Config with 'path' option
-        val configWithPathOption = ReadConfig(
-          createSingletonCIMap("path", value)
-        )
+          emptyReadConfig.queryLayerConfig shouldBe empty
 
-        configWithPathOption.layerUri shouldBe Uri.unsafeParse(value)
+          val queryConfig = ReadConfig(
+            createCIMap(
+              Map(
+                ReadConfig.QUERY_PREFIX + "k1" -> "v1",
+                "k2" -> "v2"
+              )
+            )
+          ).queryLayerConfig
+
+          queryConfig shouldNot be(empty)
+          queryConfig should contain key "k1"
+          queryConfig shouldNot contain key "k2"
+        }
+
+        it("partitioning options") {
+
+          emptyReadConfig.partitioningConfig shouldBe empty
+
+          val partitioningConfig = ReadConfig(
+            createCIMap(
+              Map(
+                ReadConfig.PARTITIONING_PREFIX + "k1" -> "v1",
+                "k2" -> "v2"
+              )
+            )
+          ).partitioningConfig
+
+          partitioningConfig shouldNot be(empty)
+          partitioningConfig should contain key "k1"
+          partitioningConfig shouldNot contain key "k2"
+        }
       }
 
-      it("retrieve query options") {
+      describe("enrich the existing options with") {
+        it("outFields") {
 
-        emptyReadConfig.queryLayerConfig shouldBe empty
-
-        val queryConfig = ReadConfig(
-          createCIMap(
-            Map(
-              ReadConfig.QUERY_PREFIX + "k1" -> "v1",
-              "k2" -> "v2"
-            )
-          )
-        ).queryLayerConfig
-
-        queryConfig shouldNot be (empty)
-        queryConfig should contain key "k1"
-        queryConfig shouldNot contain key "k2"
-      }
-
-      it("retrieve partitioning options") {
-
-        emptyReadConfig.partitioningConfig shouldBe empty
-
-        val partitioningConfig = ReadConfig(
-          createCIMap(
-            Map(
-              ReadConfig.PARTITIONING_PREFIX + "k1" -> "v1",
-              "k2" -> "v2"
-            )
-          )
-        ).partitioningConfig
-
-        partitioningConfig shouldNot be (empty)
-        partitioningConfig should contain key "k1"
-        partitioningConfig shouldNot contain key "k2"
+          val outFields = Seq("ID", "NAME")
+          emptyReadConfig.queryLayerConfig.outFields shouldBe empty
+          emptyReadConfig.withOutFields(
+            outFields
+          ).queryLayerConfig.outFields.value should contain theSameElementsAs outFields
+        }
       }
     }
   }

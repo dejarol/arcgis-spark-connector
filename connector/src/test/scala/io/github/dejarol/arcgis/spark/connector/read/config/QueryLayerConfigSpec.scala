@@ -85,15 +85,6 @@ class QueryLayerConfigSpec
             objIDs
           ).objectIDs.value should contain theSameElementsAs objIDs
         }
-
-        it("some outFields") {
-
-          val outFields = Seq("name", "age")
-          emptyConfig.outFields shouldBe empty
-          emptyConfig.withOutFields(
-            outFields
-          ).outFields.value should contain theSameElementsAs outFields
-        }
       }
     }
   }

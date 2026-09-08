@@ -27,7 +27,7 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   override def withOption(key: String, value: String): QueryLayerConfig = {
 
     this.copy(
-      properties + (key, value)
+      properties = properties + (key, value)
     )
   }
 
@@ -63,15 +63,6 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
    * @since 0.1.0
    */
   def outFields: Option[Seq[String]] = getAs[Seq[String]](OUT_FIELDS_KEY, PropertyConversions.toListOfString)
-
-  /**
-   * Returns a copy of this configuration with the given output field names set.
-   *
-   * @param fields output field names
-   * @return a copy whose `outFields` option is the comma-separated `fields`
-   * @since 0.1.0
-   */
-  def withOutFields(fields: Seq[String]): QueryLayerConfig = withOption(OUT_FIELDS_KEY, fields.mkString(","))
 
   /**
    * Returns whether the query should include geometry, if set.

@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.JavaScalaConverters
-import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, NoSuchPropertyException, PropertyConversions}
+import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, ExtendableConfig, NoSuchPropertyException, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
@@ -17,9 +17,34 @@ import sttp.model.Uri
  * @since 0.1.0
  */
 case class ReadConfig(override protected val properties: CaseInsensitiveMap[String])
-  extends BaseConfig(properties) {
+  extends BaseConfig(properties)
+    with ExtendableConfig[ReadConfig] {
 
   import ReadConfig._
+
+  override def withOption(key: String, value: String): ReadConfig = {
+
+    this.copy(
+      properties = properties + (key, value)
+    )
+  }
+
+  /**
+   * Returns a copy of this configuration with option <b>query.outFields</b> set to the list of
+   * field names in the given schema.
+   *
+   * @param fields the schema of the table to scan
+   * @return a copy whose <b>query.outFields</b> set
+   * @since 0.1.0
+   */
+
+  def withOutFields(fields: Seq[String]): ReadConfig = {
+
+    withOption(
+      QUERY_PREFIX + QueryLayerConfig.OUT_FIELDS_KEY,
+      fields.mkString(",")
+    )
+  }
 
   /**
    * Returns the URI of the ArcGIS feature layer to read.

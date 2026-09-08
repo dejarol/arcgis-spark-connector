@@ -1,9 +1,11 @@
 package io.github.dejarol.arcgis.spark.connector.read.http
 
 import io.github.dejarol.arcgis.spark.connector.core.schema.SchemaUtils
+import io.github.dejarol.arcgis.spark.connector.read.ArcgisScan
 import io.github.dejarol.arcgis.spark.connector.read.config.{QueryLayerConfig, ReadConfig}
 import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkMixins}
-import org.apache.spark.sql.DataFrame
+import org.apache.spark.sql.execution.datasources.v2.BatchScanExec
+import org.apache.spark.sql.{DataFrame, functions => f}
 import org.apache.spark.sql.types.StructType
 
 class ReadIntegrationSpec
@@ -20,7 +22,7 @@ class ReadIntegrationSpec
 
     spark.read.format(ArcgisTableProvider.SHORT_NAME)
       .options(options)
-      .load("")
+      .load()
   }
 
   describe(s"Datasource ${ArcgisTableProvider.SHORT_NAME}") {
@@ -101,6 +103,27 @@ class ReadIntegrationSpec
               .asInstanceOf[StructType]
               .fieldNames should contain theSameElementsAs Seq("rings", "spatialReference")
           }
+        }
+      }
+
+      describe("support") {
+        it("pushing required columns") {
+
+          val df = invokeDatasourceWithOptions(
+            Map(
+              ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString()
+            )
+          ).select(f.col("GEOID"), f.col("NAME"))
+
+          val scan = df.queryExecution.executedPlan.collectFirst {
+            case scan: BatchScanExec =>
+              scan.scan
+          }.collect {
+            case scan: ArcgisScan => scan
+          }
+
+          val a = 1
+          // TODO
         }
       }
     }
