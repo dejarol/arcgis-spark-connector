@@ -53,8 +53,7 @@ object AsMultiPartSpec {
       (map.body, value) match {
         case (StringBody(actual, _, _), expected: String) => actual.equals(expected)
         case (StringBody(actual, _, _), expected: Int) => actual.equals(String.valueOf(expected))
-        case (StringBody(actual, _, _), expected: Boolean) => actual.equals(String.valueOf(expected.toString))
-        case (StringBody(actual, _, _), expected: Seq[String]) => actual.equals(expected.mkString(","))
+        case (StringBody(actual, _, _), expected: Boolean) => actual.equals(String.valueOf(expected))
         case _ => false
       }
     }

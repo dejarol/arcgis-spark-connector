@@ -100,7 +100,7 @@ class ReadRequestHandlerIntegrationSpec
           val response = handler.queryUsingPost(
             polygonLayerUri, QueryLayerParameters(
               where = Some("GEOID = '01'")
-            ), None
+            )
           )
 
           assertQueryResponse(
@@ -113,7 +113,7 @@ class ReadRequestHandlerIntegrationSpec
           val response = handler.queryUsingPost(
             polygonLayerUri, QueryLayerParameters(
               where = Some("GEOID = '01'"), returnGeometry = Some(true)
-            ), None
+            )
           )
 
           assertQueryResponse(
@@ -127,7 +127,7 @@ class ReadRequestHandlerIntegrationSpec
           val response = handler.queryUsingPost(
             polygonLayerUri, QueryLayerParameters(
               where = Some("GEOID = '01'"), outFields = Some(outFields)
-            ), None
+            )
           )
 
           assertQueryResponse(
@@ -142,7 +142,7 @@ class ReadRequestHandlerIntegrationSpec
           val response = handler.queryUsingPost(
             polygonLayerUri, QueryLayerParameters(
               where = Some("GEOID = '01'"), returnGeometry = Some(true), outSR = Some(4326)
-            ), None
+            )
           )
 
           assertQueryResponse(
@@ -160,7 +160,7 @@ class ReadRequestHandlerIntegrationSpec
               outFields = Some(Seq("GEOID", "NAME")),
               resultOffset = Some(offset),
               resultRecordCount = Some(featureCount)
-            ), None
+            )
           )
 
           assertQueryResponse(

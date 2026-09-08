@@ -38,7 +38,7 @@ class QueryLayerParametersSpec
 
           parts should have size 2
           parts should contain key "returnCountOnly"
-          parts("returnCountOnly") should contain value "true"
+          parts("returnCountOnly") should contain value true
           parts should contain key "where"
           parts("where") should contain value where
         }
@@ -51,7 +51,7 @@ class QueryLayerParametersSpec
 
           parts should have size 2
           parts should contain key "returnCountOnly"
-          parts("returnCountOnly") should contain value "true"
+          parts("returnCountOnly") should contain value true
           parts should contain key "where"
           parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
         }
@@ -66,7 +66,7 @@ class QueryLayerParametersSpec
 
           parts should have size 3
           parts should contain key "returnCountOnly"
-          parts("returnCountOnly") should contain value "true"
+          parts("returnCountOnly") should contain value true
           parts should contain key "where"
           parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
           parts should contain key "objectIds"
@@ -94,7 +94,7 @@ class QueryLayerParametersSpec
 
           val parts = convertPartsToMap(
             QueryLayerParameters.returnCountOnly(
-              None, None, Some("token")
+              None, None, Some("tk")
             )
           )
 
@@ -104,7 +104,7 @@ class QueryLayerParametersSpec
           parts should contain key "where"
           parts("where") should contain value QueryLayerParameters.DEFAULT_WHERE
           parts should contain key "token"
-          parts("token") should contain value "token"
+          parts("token") should contain value "tk"
         }
       }
 
