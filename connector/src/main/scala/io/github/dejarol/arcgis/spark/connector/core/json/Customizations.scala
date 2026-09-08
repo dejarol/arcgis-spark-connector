@@ -1,10 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.core.json
 
 import io.github.dejarol.arcgis.spark.connector.core.EnumWithAPIName
-import io.github.dejarol.arcgis.spark.connector.core.models.{Geometry, PointGeometry, PolygonGeometry}
 import io.github.dejarol.arcgis.spark.connector.core.utils.Enums
-import org.json4s.JsonAST.JObject
-import org.json4s.{CustomSerializer, DefaultFormats, Extraction, JArray, JField, JString, JValue}
+import org.json4s.{CustomSerializer, JString}
 
 import scala.reflect.ClassTag
 
@@ -30,84 +28,5 @@ object Customizations {
         case e: E => JString(e.getAPIName)
       }
     ))
-  }
-
-  /**
-   * Creates a serializer that maps ArcGIS geometry JSON to [[io.github.dejarol.arcgis.spark.connector.core.models.Geometry]] subtypes.
-   *
-   * A JSON object with `x`, `y`, and `spatialReference` is read as a [[io.github.dejarol.arcgis.spark.connector.core.models.PointGeometry]].
-   * A JSON object whose `rings` field is an array of arrays of arrays of numbers is read as a [[io.github.dejarol.arcgis.spark.connector.core.models.PolygonGeometry]].
-   *
-   * @return a serializer for [[io.github.dejarol.arcgis.spark.connector.core.models.Geometry]]
-   * @since 0.1.0
-   */
-  def serializerForGeometry(): CustomSerializer[Geometry] = {
-
-    new CustomSerializer[Geometry](format => (
-      {
-        case json: JObject if isPointGeometryJson(json) =>
-          json.extract[PointGeometry](format, manifest[PointGeometry])
-        case json: JObject if isPolygonGeometryJson(json) =>
-          json.extract[PolygonGeometry](format, manifest[PolygonGeometry])
-      },
-      {
-        case point: PointGeometry =>
-          Extraction.decompose(point)(DefaultFormats)
-        case polygon: PolygonGeometry =>
-          Extraction.decompose(polygon)(DefaultFormats)
-      }
-    ))
-  }
-
-  /**
-   * Returns whether the JSON object looks like a point geometry.
-   *
-   * @param json JSON object to inspect
-   * @return `true` when the object has numeric `x` and `y` fields plus `spatialReference`
-   * @since 0.1.0
-   */
-  private def isPointGeometryJson(json: JObject): Boolean = {
-
-    val fields = json.obj.toMap
-    fields.get("x").exists(Json4SUtils.isNumber) &&
-      fields.get("y").exists(Json4SUtils.isNumber)
-  }
-
-  /**
-   * Returns whether the JSON object looks like a polygon geometry.
-   *
-   * @param json JSON object to inspect
-   * @return `true` when `rings` is an array of arrays of arrays of numbers
-   * @since 0.1.0
-   */
-  private def isPolygonGeometryJson(json: JObject): Boolean = {
-
-    json.obj.exists {
-      case JField("rings", rings) => isArrayOfArrayOfArrayOfNumbers(rings)
-      case _ => false
-    }
-  }
-
-  /**
-   * Returns whether the value is a three-level nested JSON array of numbers.
-   *
-   * @param value JSON value to inspect
-   * @return `true` when the value matches `number[][][]`
-   * @since 0.1.0
-   */
-  private def isArrayOfArrayOfArrayOfNumbers(value: JValue): Boolean = {
-
-    value match {
-      case JArray(rings) =>
-        rings.forall {
-          case JArray(ring) =>
-            ring.forall {
-              case JArray(coordinates) => coordinates.forall(Json4SUtils.isNumber)
-              case _ => false
-            }
-          case _ => false
-        }
-      case _ => false
-    }
   }
 }

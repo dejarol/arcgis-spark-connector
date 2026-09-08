@@ -3,6 +3,7 @@ package io.github.dejarol.arcgis.spark.connector.read.encoding
 import io.github.dejarol.arcgis.spark.connector.core.models.{PointGeometry, PolygonGeometry, SpatialReference}
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.util.ArrayData
+import org.json4s.JValue
 
 import java.lang
 
@@ -12,6 +13,7 @@ import java.lang
  * @since 0.1.0
  */
 object GeometryEncoders {
+
 
   /**
    * Encodes an ArcGIS spatial reference as a Spark InternalRow.
@@ -37,27 +39,16 @@ object GeometryEncoders {
     }
   }
 
-  /**
-   * Encodes an ArcGIS point geometry as a Spark InternalRow.
-   *
-   * @since 0.1.0
-   */
   private object PointEncoder
-    extends GeometryValueEncoder[PointGeometry] {
+    extends GeometryValueEncoder {
 
-    /**
-     * Encodes a point into an InternalRow of x, y, and spatial reference.
-     *
-     * @param value point geometry to encode
-     * @return an InternalRow holding coordinates and an optional encoded spatial reference
-     * @since 0.1.0
-     */
-    override def apply(value: PointGeometry): InternalRow = {
+    override def apply(value: JValue): InternalRow = {
 
+      val point = PointGeometry.fromJSON(value)
       InternalRow(
-        lang.Double.valueOf(value.x),
-        lang.Double.valueOf(value.y),
-        value.spatialReference.map(SpatialReferenceEncoder.apply).orNull
+        lang.Double.valueOf(point.x),
+        lang.Double.valueOf(point.y),
+        point.spatialReference.map(SpatialReferenceEncoder.apply).orNull
       )
     }
   }
@@ -68,7 +59,7 @@ object GeometryEncoders {
    * @since 0.1.0
    */
   private object PolygonEncoder
-    extends GeometryValueEncoder[PolygonGeometry] {
+    extends GeometryValueEncoder {
 
     /**
      * Encodes a polygon into an InternalRow of rings and spatial reference.
@@ -77,11 +68,12 @@ object GeometryEncoders {
      * @return an InternalRow holding nested ring coordinates and an optional encoded spatial reference
      * @since 0.1.0
      */
-    override def apply(value: PolygonGeometry): InternalRow = {
+    override def apply(value: JValue): InternalRow = {
 
+      val polygon = PolygonGeometry.fromJSON(value)
       InternalRow(
-        createRingsArray(value.rings),
-        value.spatialReference.map(SpatialReferenceEncoder.apply).orNull
+        createRingsArray(polygon.rings),
+        polygon.spatialReference.map(SpatialReferenceEncoder.apply).orNull
       )
     }
 
@@ -122,7 +114,7 @@ object GeometryEncoders {
    * @return an encoder that writes x, y, and spatial reference into an InternalRow
    * @since 0.1.0
    */
-  def forPoints(): GeometryValueEncoder[PointGeometry] = PointEncoder
+  def forPoints(): GeometryValueEncoder = PointEncoder
 
   /**
    * Returns the encoder for ArcGIS polygon geometries.
@@ -130,5 +122,5 @@ object GeometryEncoders {
    * @return an encoder that writes rings and spatial reference into an InternalRow
    * @since 0.1.0
    */
-  def forPolygons(): GeometryValueEncoder[PolygonGeometry] = PolygonEncoder
+  def forPolygons(): GeometryValueEncoder = PolygonEncoder
 }

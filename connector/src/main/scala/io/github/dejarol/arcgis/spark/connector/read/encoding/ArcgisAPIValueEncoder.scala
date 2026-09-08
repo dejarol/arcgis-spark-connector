@@ -1,6 +1,5 @@
 package io.github.dejarol.arcgis.spark.connector.read.encoding
 
-import io.github.dejarol.arcgis.spark.connector.core.models.Geometry
 import org.apache.spark.sql.catalyst.InternalRow
 import org.json4s.JsonAST.JValue
 
@@ -34,8 +33,6 @@ trait AttributeValueEncoder[Output]
  *
  * @since 0.1.0
  */
-trait GeometryValueEncoder[G <: Geometry]
-  extends ArcgisAPIValueEncoder[G, InternalRow]
 
-trait GeometryValueEncoderV2
+trait GeometryValueEncoder
   extends ArcgisAPIValueEncoder[JValue, InternalRow]

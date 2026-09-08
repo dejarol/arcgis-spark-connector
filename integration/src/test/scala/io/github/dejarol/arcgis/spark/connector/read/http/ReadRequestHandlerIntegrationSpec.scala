@@ -53,7 +53,6 @@ class ReadRequestHandlerIntegrationSpec
       forAll(response.features) {
         feature =>
           feature.geometry shouldBe defined
-          feature.geometry.value.`type`() shouldEqual expectedGeometryType
       }
     } else {
       forAll(response.features) {

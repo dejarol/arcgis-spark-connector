@@ -1,32 +1,62 @@
 package io.github.dejarol.arcgis.spark.connector.core.models
 
-import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JSONMixins}
+import org.json4s.native.JsonMethods
+import org.scalatest.OptionValues
 
 class PolygonGeometrySpec
-  extends BasicSpec {
+  extends BasicSpec
+    with JSONMixins
+    with OptionValues {
 
-  describe(anInstanceOf[PolygonGeometry]) {
+  describe(`object`[PolygonGeometry]) {
     describe(SHOULD) {
-      it("evaluate the geometry type") {
+      describe("deserialize a polygon from a JSON") {
+        it("with a spatial reference") {
 
-        val polygon = PolygonGeometry(Seq(Seq(Seq(1.23, 4.56), Seq(7.89, 10.11))), None)
-        polygon.`type`() shouldEqual EsriGeometryType.POLYGON
-        polygon.isAPoint shouldEqual false
-        polygon.isAPolygon shouldEqual true
+          val json =
+          """
+              |{
+              | "rings": [
+              |   [
+              |     [1.2, 3.4]
+              |   ]
+              | ],
+              | "spatialReference": {
+              |   "wkid": 102100
+              | }
+              |}""".stripMargin
+
+          val polygon = PolygonGeometry.fromJSON(asJValue(json))
+          polygon.rings should have size 1
+          polygon.spatialReference.value shouldBe SpatialReference(Some(102100), None)
+        }
+
+        it("without a spatial reference") {
+
+          val json =
+            """
+              |{
+              | "rings": [
+              |   [
+              |     [1.2, 3.4]
+              |   ]
+              | ]
+              |}""".stripMargin
+
+          val polygon = PolygonGeometry.fromJSON(asJValue(json))
+          polygon.rings should have size 1
+          polygon.spatialReference shouldBe empty
+        }
       }
 
-      it("count polygons and vertices") {
+      it("throw an exception for invalid JSON") {
 
-        val polygon = PolygonGeometry(
-          Seq(
-            Seq(
-              Seq(1.23, 4.56), Seq(7.89, 10.11)
-            )
-          ), None
-        )
-
-        polygon.numberOfPolygons shouldBe 1
-        polygon.numberOfVertices shouldBe 2
+        an[IllegalArgumentException] shouldBe thrownBy {
+          PolygonGeometry.fromJSON(
+            asJValue("{}")
+          )
+        }
       }
     }
   }

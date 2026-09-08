@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.encoding
 
+import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.core.{UnsupportedArcgisGeometryTypeException, UnsupportedEsriFieldTypeException}
-import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerField, PointGeometry, PolygonGeometry}
 import io.github.dejarol.arcgis.spark.connector.read.models.ArcgisFeature
 import org.apache.spark.sql.catalyst.InternalRow
 import org.json4s.JsonAST.JValue
@@ -10,15 +10,13 @@ import org.json4s.JsonAST.JValue
  * Encodes an ArcGIS feature into a Spark InternalRow using layer fields and geometry type.
  *
  * @param fields                feature layer attribute fields to encode
- * @param geometryType          ArcGIS geometry type of the layer
- * @param shouldIncludeGeometry whether the encoded row should include a geometry column
+ * @param maybeGeometryType          ArcGIS geometry type of the layer
  * @since 0.1.0
  */
 class ArcgisFeatureToInternalRowEncoderImpl(
-                                          private val fields: Seq[FeatureLayerField],
-                                          private val geometryType: EsriGeometryType,
-                                          private val shouldIncludeGeometry: Boolean
-                                          )
+                                             private val fields: Seq[FeatureLayerField],
+                                             private val maybeGeometryType: Option[EsriGeometryType]
+                                           )
   extends ArcgisFeatureToInternalRowEncoder {
 
   /**
@@ -37,9 +35,9 @@ class ArcgisFeatureToInternalRowEncoderImpl(
       )
     }
 
-    val attributesAndGeometryValues: Seq[Any] = if (shouldIncludeGeometry) {
-      attributeValues :+ extractGeometryValue(feature)
-    } else attributeValues
+    val attributesAndGeometryValues: Seq[Any] = maybeGeometryType.map {
+      geometryType => attributeValues :+ extractGeometryValue(feature, geometryType)
+    }.getOrElse(attributeValues)
 
     InternalRow(attributesAndGeometryValues: _*)
   }
@@ -75,11 +73,14 @@ class ArcgisFeatureToInternalRowEncoderImpl(
    * @throws UnsupportedArcgisGeometryTypeException if the layer geometry type is unsupported or does not match the feature
    * @since 0.1.0
    */
-  private def extractGeometryValue(feature: ArcgisFeature): InternalRow = {
+  private def extractGeometryValue(
+                                    feature: ArcgisFeature,
+                                    geometryType: EsriGeometryType
+                                  ): InternalRow = {
 
     (geometryType, feature.geometry) match {
-      case (EsriGeometryType.POINT, Some(p: PointGeometry)) => GeometryEncoders.forPoints().apply(p)
-      case (EsriGeometryType.POLYGON, Some(p: PolygonGeometry)) => GeometryEncoders.forPolygons().apply(p)
+      case (EsriGeometryType.POINT, Some(v)) => GeometryEncoders.forPoints().apply(v)
+      case (EsriGeometryType.POLYGON, Some(v)) => GeometryEncoders.forPolygons().apply(v)
       case _ => throw new UnsupportedArcgisGeometryTypeException(geometryType)
     }
   }

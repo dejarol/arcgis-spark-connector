@@ -37,7 +37,6 @@ case class QueryLayerUsingPostRequestBuilder(
       queryParameters.parts(): _*
     ).response(
       ResponseAsSuppliers.eitherThrowableOr[QueryLayerResponse](
-        Customizations.serializerForGeometry(),
         Customizations.serializerForEnumWithAPIName[EsriGeometryType](),
         Customizations.serializerForEnumWithAPIName[EsriFieldType]()
       ).get()

@@ -1,6 +1,5 @@
 package io.github.dejarol.arcgis.spark.connector.read.models
 
-import io.github.dejarol.arcgis.spark.connector.core.models.Geometry
 import org.json4s.JsonAST.JValue
 
 /**
@@ -15,7 +14,7 @@ import org.json4s.JsonAST.JValue
  */
 case class ArcgisFeature(
                           attributes: Map[String, JValue],
-                          geometry: Option[Geometry]
+                          geometry: Option[JValue]
                         ) {
 
   /**

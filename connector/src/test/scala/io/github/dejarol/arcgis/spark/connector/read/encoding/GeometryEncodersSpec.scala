@@ -1,10 +1,11 @@
 package io.github.dejarol.arcgis.spark.connector.read.encoding
 
-import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, UnsupportedArcgisGeometryTypeException}
-import io.github.dejarol.arcgis.spark.connector.core.models.{Geometry, PointGeometry, PolygonGeometry, SpatialReference}
+import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import io.github.dejarol.arcgis.spark.connector.core.models.SpatialReference
 import io.github.dejarol.arcgis.spark.connector.core.schema.SparkGeometryTypes
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.util.ArrayData
+import org.json4s.native.JsonMethods
 
 class GeometryEncodersSpec
   extends BasicSpec {
@@ -30,76 +31,111 @@ class GeometryEncodersSpec
   }
 
   /**
-   * Asserts that a geometry's spatial reference is encoded at the expected InternalRow index.
+   * Asserts that a spatial reference is encoded with the expected WKID fields.
    *
-   * @param geometry geometry whose spatial reference is checked
-   * @param row      encoded InternalRow produced for `geometry`
-   * @throws UnsupportedArcgisGeometryTypeException if `geometry` is neither a point nor a polygon
+   * @param actual the internal row
+   * @param expected the expected spatial reference
    * @since 0.1.0
    */
-  private def assertSpatialReferenceEncodingForGeometry(
-                                                         geometry: Geometry,
-                                                         row: InternalRow
-                                                       ): Unit = {
+  private def assertSpatialReferenceEncoding(
+                                              actual: InternalRow,
+                                              expected: SpatialReference
+                                            ): Unit = {
 
-    val indexForSR: Int = geometry match {
-      case _: PointGeometry => 2
-      case _: PolygonGeometry => 1
-      case _ => throw new UnsupportedArcgisGeometryTypeException(geometry.`type`())
+    // [1] Assert the encoding for wkid
+    expected.wkid match {
+      case Some(value) => actual.getInt(0) shouldBe value
+      case None => actual.isNullAt(0) shouldBe true
     }
 
-    geometry.spatialReference match {
-      case Some(_) =>
-
-        // Assert that the spatial reference is encoded correctly
-        row.isNullAt(indexForSR) shouldBe false
-        row.get(indexForSR, SparkGeometryTypes.SPATIAL_REFERENCE_TYPE) shouldBe a [InternalRow]
-
-      case None =>
-        // Assert that the spatial reference is null
-        row.isNullAt(indexForSR) shouldBe true
+    // [2] Assert the encoding for latestWkid
+    expected.latestWkid match {
+      case Some(value) => actual.getInt(1) shouldBe value
+      case None => actual.isNullAt(1) shouldBe true
     }
   }
 
   /**
    * Asserts that a point geometry is encoded with the expected coordinates and spatial reference.
    *
-   * @param point point geometry to encode and verify
+   * @param json point geometry to encode and verify
    * @since 0.1.0
    */
-  private def assertPointEncoding(point: PointGeometry): Unit = {
+  private def assertPointEncoding(
+                                   json: String,
+                                   expectedX: Double,
+                                   expectedY: Double,
+                                   spatialReference: Option[SpatialReference]
+                                 ): Unit = {
 
-    val row = GeometryEncoders.forPoints().apply(point)
-    row.getDouble(0) shouldBe point.x
-    row.getDouble(1) shouldBe point.y
-    assertSpatialReferenceEncodingForGeometry(point, row)
+    // [1] Assert that the geometry is encoded correctly
+    val row = GeometryEncoders.forPoints().apply(
+      JsonMethods.parse(json)
+    )
+
+    // [2] Assert that the coordinates are encoded correctly
+    row.getDouble(0) shouldBe expectedX
+    row.getDouble(1) shouldBe expectedY
+
+    // [3] Assert that the spatial reference is encoded correctly
+    spatialReference match {
+      case Some(value) =>
+
+        // [3.1] Assert that the spatial reference is encoded correctly
+        val sr = row.get(2, SparkGeometryTypes.POINT)
+        sr shouldBe a [InternalRow]
+        assertSpatialReferenceEncoding(sr.asInstanceOf[InternalRow], value)
+
+      case None =>
+
+        // [3.2] Assert that the spatial reference is null
+        row.isNullAt(2) shouldBe true
+    }
   }
 
   /**
    * Asserts that a polygon geometry is encoded with the expected rings and spatial reference.
    *
-   * @param polygon polygon geometry to encode and verify
+   * @param json polygon geometry to encode and verify
    * @since 0.1.0
    */
-  private def assertPolygonEncoding(polygon: PolygonGeometry): Unit = {
+  //noinspection SameParameterValue
+  private def assertPolygonEncoding(
+                                     json: String,
+                                     expectedNumberOfPolygons: Int,
+                                     spatialReference: Option[SpatialReference]
+                                   ): Unit = {
 
-    val row = GeometryEncoders.forPolygons().apply(polygon)
+    // [1] Assert that the geometry is encoded correctly
+    val row = GeometryEncoders.forPolygons().apply(
+      JsonMethods.parse(json)
+    )
+
+    // [2] Assertions on rings (Array(Array(Array(Double))))
     val rings = row.getArray(0)
-
-    // Assertions on rings (Array(Array(Array(Double))))
-    rings.numElements() shouldBe polygon.numberOfPolygons
+    rings.numElements() shouldBe expectedNumberOfPolygons
     rings.array(0) shouldBe a [ArrayData]
 
-    // Assertions on first polygon (Array(Array(Double)))
+    // [3] Assertions on first point (Array(Double)): should have size 2 since it's a point
     val firstSetOfPoints = rings.array(0).asInstanceOf[ArrayData]
-    firstSetOfPoints.numElements() shouldBe polygon.numberOfVerticesInPolygon(0)
-
-    // Assertions on first point (Array(Double)): should have size 2 since it's a point
     firstSetOfPoints.array(0) shouldBe a [ArrayData]
     val firstPoint = firstSetOfPoints.array(0).asInstanceOf[ArrayData]
     firstPoint.numElements() shouldBe 2
 
-    assertSpatialReferenceEncodingForGeometry(polygon, row)
+    // [4] Assertions on spatial reference
+    spatialReference match {
+      case Some(value) =>
+
+        // [4.1] Assert that the spatial reference is encoded correctly
+        val sr = row.get(1, SparkGeometryTypes.SPATIAL_REFERENCE_TYPE)
+        sr shouldBe a [InternalRow]
+        assertSpatialReferenceEncoding(sr.asInstanceOf[InternalRow], value)
+
+      case None =>
+
+        // [4.2] Assert that the spatial reference is null
+        row.isNullAt(1) shouldBe true
+    }
   }
 
   describe(`object`[GeometryEncoders.type ]) {
@@ -125,46 +161,73 @@ class GeometryEncodersSpec
 
         it("points") {
 
+          val (x, y, wkid) = (1.23, 4.56, 4326)
+          val pointWithoutSR =
+            f"""
+               |{
+               |  "x" : $x,
+               |  "y" : $y
+               |}""".stripMargin
+
           // [1] Point without spatial reference
           assertPointEncoding(
-            PointGeometry(1.23, 4.56, None)
+            pointWithoutSR, x, y, None
           )
+
+          val pointWithSR =
+            f"""
+               |{
+               |  "x": $x,
+               |  "y": $y,
+               |  "spatialReference": {
+               |    "wkid": $wkid
+               |  }
+               |}""".stripMargin
 
           // [2] Point with spatial reference
           assertPointEncoding(
-            PointGeometry(1.23, 4.56, Some(
-              SpatialReference(Some(4326), None))
-            )
+            pointWithSR, x, y, Some(SpatialReference(Some(wkid), None))
           )
         }
 
         it("polygons") {
 
           // [1] Polygon without spatial reference
-          val polygonWithoutSr = PolygonGeometry(
-            Seq(
-              Seq(
-                Seq(1.23, 4.56)
-              )
-            ), None
-          )
+          val polygonWithoutSr =
+            f"""
+               |{
+               |  "rings": [
+               |    [
+               |      [1.23, 4.56]
+               |    ]
+               |  ]
+               |}""".stripMargin
 
-          assertPolygonEncoding(polygonWithoutSr)
+          assertPolygonEncoding(
+            polygonWithoutSr, 1, None
+          )
 
           // [2] Polygon with spatial reference
-          val polygonWithSr = PolygonGeometry(
-            Seq(
-              Seq(
-                Seq(1.23, 4.56)
-              )
-            ),
-            Some(
-              SpatialReference(
-                Some(4326), None
-              )
+          val (wkid, latestWkid) = (1, 2)
+          val polygonWithSr =
+            f"""
+               |{
+               |  "rings": [
+               |    [
+               |      [1.23, 4.56]
+               |    ]
+               |  ],
+               |  "spatialReference": {
+               |    "wkid": $wkid,
+               |    "latestWkid": $latestWkid
+               |  }
+               |}""".stripMargin
+
+          assertPolygonEncoding(
+            polygonWithSr, 1 , Some(
+              SpatialReference(Some(wkid), Some(latestWkid))
             )
           )
-          assertPolygonEncoding(polygonWithSr)
         }
       }
     }

@@ -1,18 +1,61 @@
 package io.github.dejarol.arcgis.spark.connector.core.models
 
-import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
+import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JSONMixins}
+import org.scalatest.OptionValues
 
 class PointGeometrySpec
-  extends BasicSpec {
+  extends BasicSpec
+    with JSONMixins
+    with OptionValues {
 
-  describe(anInstanceOf[PointGeometry]) {
+  private lazy val (x, y, wkid) = (1.2, 3.4, 5)
+
+  describe(`object`[PointGeometry]) {
     describe(SHOULD) {
-      it("evaluate the geometry type") {
+      describe("deserialize a point geometry from a JSON") {
+        it("with spatial reference") {
 
-        val point = PointGeometry(1.23, 4.56, None)
-        point.`type`() shouldEqual EsriGeometryType.POINT
-        point.isAPoint shouldEqual true
-        point.isAPolygon shouldEqual false
+          val json =
+            f"""
+               |{
+               |  "x": $x,
+               |  "y": $y,
+               |  "spatialReference": {
+               |    "wkid": $wkid
+               |  }
+               |}""".stripMargin
+
+          val point = PointGeometry.fromJSON(asJValue(json))
+
+          point.x shouldBe x
+          point.y shouldBe y
+          point.spatialReference.value shouldBe SpatialReference(Some(wkid), None)
+        }
+
+        it("without spatial reference") {
+
+          val json =
+            f"""
+               |{
+               |  "x": $x,
+               |  "y": $y
+               |}""".stripMargin
+
+          val point = PointGeometry.fromJSON(asJValue(json))
+
+          point.x shouldBe x
+          point.y shouldBe y
+          point.spatialReference shouldBe empty
+        }
+      }
+
+      it("throw an exception for invalid JSON") {
+
+        an[IllegalArgumentException] shouldBe thrownBy {
+          PointGeometry.fromJSON(
+            asJValue("{}")
+          )
+        }
       }
     }
   }
