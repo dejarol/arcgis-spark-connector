@@ -1,7 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.core.models
 
 import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JSONMixins}
-import org.json4s.native.JsonMethods
 import org.scalatest.OptionValues
 
 class PolygonGeometrySpec
