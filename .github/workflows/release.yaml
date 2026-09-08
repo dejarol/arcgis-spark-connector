@@ -1,0 +1,36 @@
+name: release
+on:
+  push:
+    tags:
+      - v*
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Git Checkout'
+        uses: 'actions/checkout@v3'
+      - name: 'Set up JDK'
+        uses: 'actions/setup-java@v4'
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: 'Set up sbt'
+        uses: sbt/setup-sbt@v1
+      - name: 'Release'
+        shell: bash
+        env:
+          PGP_SECRET_KEY: ${{ secrets.PGP_PRIVATE_KEY }}
+          PGP_PASSPHRASE: ${{ secrets.PGP_PASSPHRASE }}
+          SONATYPE_USERNAME: ${{ secrets.SONATYPE_USERNAME }}
+          SONATYPE_PASSWORD: ${{ secrets.SONATYPE_PASSWORD }}
+        run: |
+          . devops/import_key.sh "$PGP_SECRET_KEY"
+          . devops/create_sonatype_sbt_file.sh "$SONATYPE_USERNAME" "$SONATYPE_PASSWORD"
+          sbt "project connector" clean publishSigned
+          sbt "project connector" sonatypeBundleRelease
+      - name: 'Clean up'
+        shell: bash
+        if: always()
+        run: |
+          . devops/delete_sonatype_sbt_file.sh
+          . devops/remove_key.sh

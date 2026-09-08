@@ -1,0 +1,29 @@
+name: master
+on:
+  push:
+    branches:
+      - master
+jobs:
+  master:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 'Git Checkout'
+        uses: 'actions/checkout@v3'
+      - name: 'Set up JDK'
+        uses: 'actions/setup-java@v4'
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: 'Set up sbt'
+        uses: sbt/setup-sbt@v1
+      - name: 'Unit tests'
+        shell: bash
+        run: sbt "project connector" clean test
+      - name: 'Integration tests'
+        shell: bash
+        run: sbt "project integration" clean test
+        env:
+          IS_CI_CD_ENV: true
+          CI_ARCGIS_TESTING_ROOT: ${{ secrets.CI_ARCGIS_TESTING_ROOT }}
+          CI_ARCGIS_USERNAME: ${{ secrets.CI_ARCGIS_USERNAME }}
+          CI_ARCGIS_PASSWORD: ${{ secrets.CI_ARCGIS_PASSWORD }}
