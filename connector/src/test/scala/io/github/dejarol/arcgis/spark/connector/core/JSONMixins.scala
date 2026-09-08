@@ -1,8 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.core
 
-import org.json4s.Formats
 import org.json4s.JsonAST.JValue
 import org.json4s.native.JsonMethods
+import org.json4s.{DefaultFormats, Extraction, Formats, JObject}
 
 /**
  * Mixin trait for JSON conversion utilities.
@@ -29,8 +29,18 @@ trait JSONMixins {
    * @return the extracted value
    * @since 0.1.0
    */
-  protected def jsonStringAS[T: Manifest](rawJson: String, formats: Formats): T = {
+  protected final def jsonStringAS[T: Manifest](rawJson: String, formats: Formats): T = {
 
     asJValue(rawJson).extract[T](formats, manifest[T])
+  }
+
+  protected final def caseClassToJObject[T <: Product](value: T): JObject = {
+
+    Extraction.decompose(value)(DefaultFormats) match {
+      case obj: JObject => obj
+      case _ => throw new IllegalArgumentException(
+        f"Provided argument is not a case class"
+      )
+    }
   }
 }

@@ -21,14 +21,15 @@ case class ArcgisFeature(
    * Looks up an attribute by field name.
    *
    * @param key attribute field name
-   * @return `Some` wrapping the optional attribute value when `key` exists, `None` otherwise
+   * @return the attribute value, as a JSON4s AST value
+   * @throws java.util.NoSuchElementException if the attribute does not exist
    * @since 0.1.0
    */
   def unsafelyGetAttribute(key: String): JValue = {
 
     attributes.get(key) match {
       case Some(value) => value
-      case None => throw new IllegalStateException(
+      case None => throw new NoSuchElementException(
         f"Key $key does not exist within the attributes of this feature"
       )
     }

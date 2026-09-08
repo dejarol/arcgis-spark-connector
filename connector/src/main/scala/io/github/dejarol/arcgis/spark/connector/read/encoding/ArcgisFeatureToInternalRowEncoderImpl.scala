@@ -78,10 +78,19 @@ class ArcgisFeatureToInternalRowEncoderImpl(
                                     geometryType: EsriGeometryType
                                   ): InternalRow = {
 
-    (geometryType, feature.geometry) match {
-      case (EsriGeometryType.POINT, Some(v)) => GeometryEncoders.forPoints().apply(v)
-      case (EsriGeometryType.POLYGON, Some(v)) => GeometryEncoders.forPolygons().apply(v)
-      case _ => throw new UnsupportedArcgisGeometryTypeException(geometryType)
+    // [1] If geometry value exists, process it
+    feature.geometry match {
+      case Some(value) =>
+
+        // [1.1] Process geometry value based on geometry type
+        geometryType match {
+          case EsriGeometryType.POINT => GeometryEncoders.forPoints().apply(value)
+          case EsriGeometryType.POLYGON => GeometryEncoders.forPolygons().apply(value)
+          case _ => throw new UnsupportedArcgisGeometryTypeException(geometryType)
+        }
+
+      // [2] If geometry value does not exist, throw an exception
+      case None => throw new IllegalStateException("Geometry value not found")
     }
   }
 }
