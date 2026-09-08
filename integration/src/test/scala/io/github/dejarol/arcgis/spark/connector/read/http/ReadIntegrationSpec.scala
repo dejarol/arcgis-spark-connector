@@ -2,18 +2,19 @@ package io.github.dejarol.arcgis.spark.connector.read.http
 
 import io.github.dejarol.arcgis.spark.connector.core.schema.SchemaUtils
 import io.github.dejarol.arcgis.spark.connector.read.config.{QueryLayerConfig, ReadConfig}
-import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkSpec}
+import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkMixins}
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.types.StructType
 
 class ReadIntegrationSpec
   extends ArcgisIntegrationSpec
-    with SparkSpec {
+    with SparkMixins {
 
   /**
-   * TODO
-   * @param options
-   * @return
+   * Invokes the datasource defined in this project in read mode using the given options.
+   *
+   * @param options read options
+   * @return a DataFrame containing the query results
    */
   private def invokeDatasourceWithOptions(options: Map[String, String]): DataFrame = {
 

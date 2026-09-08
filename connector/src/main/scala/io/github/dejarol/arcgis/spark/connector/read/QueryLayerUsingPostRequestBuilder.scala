@@ -12,12 +12,10 @@ import sttp.model.Uri
  *
  * @param layerUri       URI of the target layer
  * @param queryParameters parameters to include in the query
- * @param token          ArcGIS authentication token
  */
 case class QueryLayerUsingPostRequestBuilder(
                                               private val layerUri: Uri,
-                                              private val queryParameters: QueryLayerParameters,
-                                              private val token: Option[String]
+                                              private val queryParameters: QueryLayerParameters
                                             )
   extends SttpEitherThrowableOrValueBuilder[QueryLayerResponse] {
 
@@ -26,13 +24,8 @@ case class QueryLayerUsingPostRequestBuilder(
     // [1.1] Append 'query' to the layerUri
     val queryUri = layerUri.addPath("query")
 
-    // [1.2] Append token if provided
-    val queryUriWithToken = token.map {
-      t => queryUri.addParam("token", t)
-    }.getOrElse(queryUri)
-
-    // [1.3] Build the request
-    initial.post(queryUriWithToken).multipartBody(
+    // [1.2] Build the request
+    initial.post(queryUri).multipartBody(
       multipart("f", "json"),
       queryParameters.parts(): _*
     ).response(

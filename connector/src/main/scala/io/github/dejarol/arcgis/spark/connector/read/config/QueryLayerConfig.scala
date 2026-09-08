@@ -16,6 +16,14 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
 
   import QueryLayerConfig._
 
+  /**
+   * Returns a copy of this configuration with the given option set.
+   *
+   * @param key   option name
+   * @param value option value
+   * @return a copy that includes `key`
+   * @since 0.1.0
+   */
   override def withOption(key: String, value: String): QueryLayerConfig = {
 
     this.copy(
@@ -40,9 +48,11 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   def objectIDs: Option[Seq[Int]] = getAs[Seq[Int]](OBJECT_IDS_KEY, PropertyConversions.toListOfInt)
 
   /**
-   * TODO
-   * @param ids
-   * @return
+   * Returns a copy of this configuration with the given object IDs set.
+   *
+   * @param ids object IDs to query
+   * @return a copy whose `objectIds` option is the comma-separated `ids`
+   * @since 0.1.0
    */
   def withObjectIDs(ids: Seq[Int]): QueryLayerConfig = withOption(OBJECT_IDS_KEY, ids.mkString(","))
 
@@ -55,9 +65,11 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   def outFields: Option[Seq[String]] = getAs[Seq[String]](OUT_FIELDS_KEY, PropertyConversions.toListOfString)
 
   /**
-   * TODO
-   * @param fields
-   * @return
+   * Returns a copy of this configuration with the given output field names set.
+   *
+   * @param fields output field names
+   * @return a copy whose `outFields` option is the comma-separated `fields`
+   * @since 0.1.0
    */
   def withOutFields(fields: Seq[String]): QueryLayerConfig = withOption(OUT_FIELDS_KEY, fields.mkString(","))
 

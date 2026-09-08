@@ -6,7 +6,7 @@ import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, F
 class GetFeatureLayerDefinitionRequestBuilderIntegrationSpec
   extends RequestBuilderIntegrationSpec {
 
-  describe(anInstanceOf[GetFeatureServiceDefinitionRequestBuilder]) {
+  describe(anInstanceOf[GetFeatureLayerDefinitionRequestBuilder]) {
     describe(SHOULD) {
       describe("retrieve the definition for") {
         it("a polygon layer") {

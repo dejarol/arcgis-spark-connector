@@ -61,19 +61,17 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
    *
    * @param layerUri        URI of the feature layer
    * @param queryParameters multipart query parameters sent with the request
-   * @param token           optional ArcGIS authentication token
    * @return the query response body
    * @since 0.1.0
    */
   def queryUsingPost(
                       layerUri: Uri,
-                      queryParameters: QueryLayerParameters,
-                      token: Option[String]
+                      queryParameters: QueryLayerParameters
                     ): QueryLayerResponse = {
 
     unsafelySend(
       QueryLayerUsingPostRequestBuilder(
-        layerUri, queryParameters, token
+        layerUri, queryParameters
       )
     )
   }

@@ -129,7 +129,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
 
     withRequestHandlerDo {
       _.queryUsingPost(
-        layerUri, queryParameters, None
+        layerUri, queryParameters
       )
     }
   }

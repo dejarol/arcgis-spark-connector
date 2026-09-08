@@ -90,7 +90,7 @@ class ArcgisFeatureToInternalRowEncoderImpl(
         }
 
       // [2] If geometry value does not exist, throw an exception
-      case None => throw new IllegalStateException("Geometry value not found")
+      case None => throw new IllegalStateException("Geometry value not found in this feature")
     }
   }
 }

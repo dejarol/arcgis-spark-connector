@@ -8,14 +8,14 @@ import sttp.model.Part
  * Parameters sent as multipart form fields to an ArcGIS feature layer query.
  *
  * @param where             optional ArcGIS `where` clause
- * @param objectIDs         TODO
+ * @param objectIDs         the IDs of the features to query
  * @param outFields         optional output field names
  * @param returnGeometry    whether the query should include geometry
  * @param outSR             optional output spatial reference WKID
  * @param resultOffset      optional result offset for pagination
  * @param resultRecordCount optional maximum number of records to return
  * @param returnCountOnly   whether the query should return only the feature count
- * @param token             TODO
+ * @param token             the (optional) token for authenticating the request
  * @since 0.1.0
  */
 case class QueryLayerParameters(
@@ -74,8 +74,10 @@ case class QueryLayerParameters(
   private def whereMultiPart: Part[BasicBodyPart] = multipart("where", where.getOrElse(DEFAULT_WHERE))
 
   /**
-   * TODO
-   * @return
+   * Builds the multipart part for the 'objectIds' clause
+   *
+   * @return an optional part named `objectIds` when `objectIDs` is set
+   * @since 0.1.0
    */
   private def objectIDsMultiPart: Option[Part[BasicBodyPart]] = {
 
@@ -85,8 +87,10 @@ case class QueryLayerParameters(
   }
 
   /**
-   * TODO
-   * @return
+   * Builds the multipart for the token
+   *
+   * @return the token part when set
+   * @since 0.1.0
    */
   private def tokenMultiPart: Option[Part[BasicBodyPart]] = {
 
@@ -180,8 +184,8 @@ object QueryLayerParameters {
    * Builds query parameters that request only the feature count.
    *
    * @param where optional ArcGIS `where` clause
-   * @param objectIDs TODO
-   * @param token TODO
+   * @param objectIDs the object IDs to query
+   * @param token the optional token for authenticating the request
    * @return parameters with `returnCountOnly` set to `true`
    * @since 0.1.0
    */
