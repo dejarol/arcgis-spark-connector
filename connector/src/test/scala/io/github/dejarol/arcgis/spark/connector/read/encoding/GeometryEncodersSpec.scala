@@ -2,7 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.encoding
 
 import io.github.dejarol.arcgis.spark.connector.core.BasicSpec
 import io.github.dejarol.arcgis.spark.connector.core.models.SpatialReference
-import io.github.dejarol.arcgis.spark.connector.core.schema.SparkGeometryTypes
+import io.github.dejarol.arcgis.spark.connector.core.schema.GeometryTypes
 import org.apache.spark.sql.catalyst.InternalRow
 import org.apache.spark.sql.catalyst.util.ArrayData
 import org.json4s.native.JsonMethods
@@ -82,7 +82,7 @@ class GeometryEncodersSpec
       case Some(value) =>
 
         // [3.1] Assert that the spatial reference is encoded correctly
-        val sr = row.get(2, SparkGeometryTypes.POINT)
+        val sr = row.get(2, GeometryTypes.POINT)
         sr shouldBe a [InternalRow]
         assertSpatialReferenceEncoding(sr.asInstanceOf[InternalRow], value)
 
@@ -127,7 +127,7 @@ class GeometryEncodersSpec
       case Some(value) =>
 
         // [4.1] Assert that the spatial reference is encoded correctly
-        val sr = row.get(1, SparkGeometryTypes.SPATIAL_REFERENCE_TYPE)
+        val sr = row.get(1, GeometryTypes.SPATIAL_REFERENCE_TYPE)
         sr shouldBe a [InternalRow]
         assertSpatialReferenceEncoding(sr.asInstanceOf[InternalRow], value)
 

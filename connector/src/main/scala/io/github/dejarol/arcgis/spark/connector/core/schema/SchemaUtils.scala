@@ -72,8 +72,8 @@ object SchemaUtils {
   protected[schema] def geometryField(geometryType: EsriGeometryType): StructField = {
 
     val sparkGeometryType: DataType = geometryType match {
-      case EsriGeometryType.POLYGON => SparkGeometryTypes.POLYGON
-      case EsriGeometryType.POINT => SparkGeometryTypes.POINT
+      case EsriGeometryType.POLYGON => GeometryTypes.POLYGON
+      case EsriGeometryType.POINT => GeometryTypes.POINT
       case _ => throw new UnsupportedArcgisGeometryTypeException(geometryType)
     }
 

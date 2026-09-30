@@ -18,6 +18,12 @@ class ArcgisScan(
   extends Scan {
 
   /**
+   * TODO
+   * @return
+   */
+  def config: ReadConfig = scanConfig
+
+  /**
    * Returns the Spark schema of this scan.
    *
    * @return the table schema

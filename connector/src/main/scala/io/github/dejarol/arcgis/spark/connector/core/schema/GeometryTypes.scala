@@ -9,7 +9,7 @@ import org.apache.spark.sql.types.StructType
  *
  * @since 0.1.0
  */
-object SparkGeometryTypes {
+object GeometryTypes {
 
   /**
    * Spark schema of an ArcGIS spatial reference.

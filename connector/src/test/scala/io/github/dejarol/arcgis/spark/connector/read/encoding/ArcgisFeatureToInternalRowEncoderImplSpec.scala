@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.encoding
 
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriFieldType, EsriGeometryType, FeatureLayerField, Geometry, PointGeometry, PolygonGeometry}
-import io.github.dejarol.arcgis.spark.connector.core.schema.SparkGeometryTypes
+import io.github.dejarol.arcgis.spark.connector.core.schema.GeometryTypes
 import io.github.dejarol.arcgis.spark.connector.core.{BasicSpec, JSONMixins}
 import io.github.dejarol.arcgis.spark.connector.read.models.ArcgisFeature
 import org.apache.spark.sql.catalyst.InternalRow
@@ -119,7 +119,7 @@ class ArcgisFeatureToInternalRowEncoderImplSpec
             row.numFields shouldBe 3
             row.getInt(0) shouldEqual id
             row.getString(1) shouldEqual name
-            row.get(2, SparkGeometryTypes.POINT) shouldBe a[InternalRow]
+            row.get(2, GeometryTypes.POINT) shouldBe a[InternalRow]
           }
 
           it("for polygons") {
@@ -146,7 +146,7 @@ class ArcgisFeatureToInternalRowEncoderImplSpec
             row.numFields shouldBe 3
             row.getInt(0) shouldEqual id
             row.getString(1) shouldEqual name
-            row.get(2, SparkGeometryTypes.POLYGON) shouldBe a[InternalRow]
+            row.get(2, GeometryTypes.POLYGON) shouldBe a[InternalRow]
           }
         }
       }

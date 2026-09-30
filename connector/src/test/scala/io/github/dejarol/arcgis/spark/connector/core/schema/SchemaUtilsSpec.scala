@@ -63,8 +63,8 @@ class SchemaUtilsSpec
 
       it("define the geometry column") {
 
-        assertEsriGeometryColumnMapping(EsriGeometryType.POINT, SparkGeometryTypes.POINT)
-        assertEsriGeometryColumnMapping(EsriGeometryType.POLYGON, SparkGeometryTypes.POLYGON)
+        assertEsriGeometryColumnMapping(EsriGeometryType.POINT, GeometryTypes.POINT)
+        assertEsriGeometryColumnMapping(EsriGeometryType.POLYGON, GeometryTypes.POLYGON)
       }
 
       describe("convert a collection of struct fields to a struct type") {
@@ -86,7 +86,7 @@ class SchemaUtilsSpec
             "objectID" -> IntegerType,
             "name" -> StringType,
             "value" -> DoubleType,
-            SchemaUtils.GEOMETRY_COLUMN_NAME -> SparkGeometryTypes.POINT
+            SchemaUtils.GEOMETRY_COLUMN_NAME -> GeometryTypes.POINT
           )
 
           forAll(actual) {

@@ -25,6 +25,22 @@ class ReadIntegrationSpec
       .load()
   }
 
+  /**
+   * TODO
+   * @param df
+   * @return
+   */
+  private def scanOf(df: DataFrame): Option[ArcgisScan] = {
+
+    df.queryExecution.executedPlan
+      .collectFirst {
+        case scan: BatchScanExec =>
+          scan.scan
+      }.collect {
+        case scan: ArcgisScan => scan
+      }
+  }
+
   describe(s"Datasource ${ArcgisTableProvider.SHORT_NAME}") {
     describe(SHOULD) {
       describe("let users query a feature layer") {
@@ -107,23 +123,24 @@ class ReadIntegrationSpec
       }
 
       describe("support") {
-        it("pushing required columns") {
+        describe("pushing required columns") {
+          it("when geometry is not requested") {
 
-          val df = invokeDatasourceWithOptions(
-            Map(
-              ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString()
-            )
-          ).select(f.col("GEOID"), f.col("NAME"))
+            val requiredColumns = Seq("GEOID", "NAME")
+            val df = invokeDatasourceWithOptions(
+              Map(
+                ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString()
+              )
+            ).select(requiredColumns.map(f.col): _*)
 
-          val scan = df.queryExecution.executedPlan.collectFirst {
-            case scan: BatchScanExec =>
-              scan.scan
-          }.collect {
-            case scan: ArcgisScan => scan
+            val maybeScan = scanOf(df)
+            maybeScan shouldBe defined
+            val scan = maybeScan.get
+            scan.readSchema().fieldNames should contain theSameElementsAs requiredColumns
+            val outFields = scan.config.queryLayerConfig.outFields
+            outFields shouldBe defined
+            outFields.get should contain theSameElementsAs requiredColumns
           }
-
-          val a = 1
-          // TODO
         }
       }
     }
