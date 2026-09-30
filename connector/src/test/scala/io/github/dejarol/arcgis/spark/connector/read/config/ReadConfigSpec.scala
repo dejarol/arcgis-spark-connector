@@ -2,6 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.ConfigSpec
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, NoSuchPropertyException}
+import io.github.dejarol.arcgis.spark.connector.core.http.{DefaultSyncBackendFactory, DisabledCertValidationBackendFactory}
 import org.apache.spark.sql.util.CaseInsensitiveStringMap
 import org.scalatest.OptionValues
 import org.scalatest.enablers.KeyMapping
@@ -117,6 +118,30 @@ class ReadConfigSpec
           partitioningConfig should contain key "k1"
           partitioningConfig shouldNot contain key "k2"
         }
+      }
+
+      it("the backend factory") {
+
+        // [1] Default: option is missing
+        emptyReadConfig.backendFactory shouldBe a[DefaultSyncBackendFactory.type]
+
+        // [2] options is set to false
+        ReadConfig(
+          createCIMap(
+            Map(
+              ReadConfig.DISABLE_CERT_VALIDATION -> "false"
+            )
+          )
+        ).backendFactory shouldBe a[DefaultSyncBackendFactory.type]
+
+        // [3] option is set to true
+        ReadConfig(
+          createCIMap(
+            Map(
+              ReadConfig.DISABLE_CERT_VALIDATION -> "true"
+            )
+          )
+        ).backendFactory shouldBe a[DisabledCertValidationBackendFactory.type]
       }
 
       describe("enrich the existing options with") {

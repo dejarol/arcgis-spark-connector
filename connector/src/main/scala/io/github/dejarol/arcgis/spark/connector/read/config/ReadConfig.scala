@@ -2,6 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.JavaScalaConverters
 import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, ExtendableConfig, NoSuchPropertyException, PropertyConversions}
+import io.github.dejarol.arcgis.spark.connector.core.http.{BackendFactory, DefaultSyncBackendFactory, DisabledCertValidationBackendFactory}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
@@ -27,6 +28,22 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
     this.copy(
       properties = properties + (key, value)
     )
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  def backendFactory: BackendFactory = {
+
+    val disableCertValidation = getAs[Boolean](
+      DISABLE_CERT_VALIDATION, PropertyConversions.ToBoolean, false
+    )
+    if (disableCertValidation) {
+      DisabledCertValidationBackendFactory
+    } else {
+      DefaultSyncBackendFactory
+    }
   }
 
   /**
@@ -109,7 +126,9 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   private def withRequestHandlerDo[R](action: ReadRequestHandler => R): R = {
 
     action(
-      ReadRequestHandler.withDefaultBackend()
+      ReadRequestHandler(
+        backendFactory.buildBackend()
+      )
     )
   }
 
@@ -221,4 +240,10 @@ object ReadConfig {
    * @since 0.1.0
    */
   final val PARTITIONING_PREFIX = "partitioning."
+
+  /**
+   * todo
+   */
+
+  final val DISABLE_CERT_VALIDATION = "disableCertValidation"
 }
