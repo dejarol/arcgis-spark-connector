@@ -13,8 +13,8 @@ import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, F
  * @since 0.1.0
  */
 case class QueryLayerResponse(
-                               geometryType: EsriGeometryType,
-                               spatialReference: SpatialReference,
+                               geometryType: Option[EsriGeometryType],
+                               spatialReference: Option[SpatialReference],
                                fields: Option[Seq[FeatureLayerField]],
                                features: Seq[ArcgisFeature]
                              )

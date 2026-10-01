@@ -27,7 +27,6 @@ class ReadIntegrationSpec
 
   /**
    * TODO
-   * @param df
    * @return
    */
   private def scanImplementationOf(df: DataFrame): Option[ArcgisScan] = {
@@ -124,7 +123,7 @@ class ReadIntegrationSpec
 
       describe("support") {
         describe("pushing required columns") {
-          it("when geometry is not requested") {
+          it("when returnGeometry is not set") {
 
             val requiredColumns = Seq("GEOID", "NAME")
             val df = invokeDatasourceWithOptions(
@@ -133,13 +132,91 @@ class ReadIntegrationSpec
               )
             ).select(requiredColumns.map(f.col): _*)
 
+            // Inspect settings on the scan. We expect
+            // [a] the scan schema to have only the required columns
+            // [b] the scan outFIelds to have the same required columns
             val maybeScan = scanImplementationOf(df)
             maybeScan shouldBe defined
             val scan = maybeScan.get
+
+            scan.readSchema() should have size requiredColumns.size
             scan.readSchema().fieldNames should contain theSameElementsAs requiredColumns
+
             val outFields = scan.config.queryLayerConfig.outFields
             outFields shouldBe defined
+            outFields.get should have size requiredColumns.size
             outFields.get should contain theSameElementsAs requiredColumns
+
+            df.columns should have size requiredColumns.size
+            df.columns should contain theSameElementsAs requiredColumns
+          }
+
+          it("when returnGeometry is set, but geometryColumn is not requested") {
+
+            val requiredColumns = Seq("GEOID", "NAME")
+            val df = invokeDatasourceWithOptions(
+              Map(
+                ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString(),
+                ReadConfig.QUERY_PREFIX + QueryLayerConfig.RETURN_GEOMETRY_KEY -> "true"
+              )
+            ).select(requiredColumns.map(f.col): _*)
+
+            // Inspect settings on the scan. We expect
+            // [a] the scan schema to have only the required columns
+            // [b] the scan outFIelds to have the same required columns
+            // [c] the scan returnGeometry flag set to false
+
+            val maybeScan = scanImplementationOf(df)
+            maybeScan shouldBe defined
+            val scan = maybeScan.get
+
+            scan.readSchema() should have size requiredColumns.size
+            scan.readSchema().fieldNames should contain theSameElementsAs requiredColumns
+
+            val scanQueryLayerConfig = scan.config.queryLayerConfig
+            scanQueryLayerConfig.returnGeometry.get shouldBe false
+            val outFields = scanQueryLayerConfig.outFields
+            outFields shouldBe defined
+            outFields.get should have size requiredColumns.size
+            outFields.get should contain theSameElementsAs requiredColumns
+
+            df.columns should have size requiredColumns.size
+            df.columns should contain theSameElementsAs requiredColumns
+          }
+
+          it("when returnGeometry is set, and geometryColumn is requested") {
+
+            val requiredColumns = Seq("GEOID", "NAME", SchemaUtils.GEOMETRY_COLUMN_NAME)
+            val df = invokeDatasourceWithOptions(
+              Map(
+                ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString(),
+                ReadConfig.QUERY_PREFIX + QueryLayerConfig.RETURN_GEOMETRY_KEY -> "true"
+              )
+            ).select(requiredColumns.map(f.col): _*)
+
+            // Inspect settings on the scan. We expect
+            // [a] the scan schema to have only the required columns
+            // [b] the scan outFIelds to have only the attribute columns
+            // [c] the scan returnGeometry flag set to true
+
+            val maybeScan = scanImplementationOf(df)
+            maybeScan shouldBe defined
+            val scan = maybeScan.get
+
+            scan.readSchema() should have size requiredColumns.size
+            scan.readSchema().fieldNames should contain theSameElementsAs requiredColumns
+
+            val scanQueryLayerConfig = scan.config.queryLayerConfig
+            scanQueryLayerConfig.returnGeometry.get shouldBe true
+            val outFields = scanQueryLayerConfig.outFields
+            outFields shouldBe defined
+            outFields.get should have size requiredColumns.size - 1
+            outFields.get should contain theSameElementsAs requiredColumns.filterNot {
+              _.equalsIgnoreCase(SchemaUtils.GEOMETRY_COLUMN_NAME)
+            }
+
+            df.columns should have size requiredColumns.size
+            df.columns should contain theSameElementsAs requiredColumns
           }
         }
       }

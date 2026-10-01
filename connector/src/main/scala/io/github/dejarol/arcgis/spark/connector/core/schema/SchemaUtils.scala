@@ -16,7 +16,7 @@ object SchemaUtils {
    *
    * @since 0.1.0
    */
-  final val GEOMETRY_COLUMN_NAME = "geometry"
+  final val GEOMETRY_COLUMN_NAME = "_SHAPE"
 
   /**
    * Builds a Spark schema from feature layer fields, optionally appending a geometry column.

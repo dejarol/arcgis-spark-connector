@@ -7,6 +7,7 @@ import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, F
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
 import io.github.dejarol.arcgis.spark.connector.read.models.QueryLayerResponse
+import org.apache.spark.internal.Logging
 import org.apache.spark.sql.catalyst.util.CaseInsensitiveMap
 import org.apache.spark.sql.util.CaseInsensitiveStringMap
 import sttp.model.Uri
@@ -19,10 +20,19 @@ import sttp.model.Uri
  */
 case class ReadConfig(override protected val properties: CaseInsensitiveMap[String])
   extends BaseConfig(properties)
-    with ExtendableConfig[ReadConfig] {
+    with ExtendableConfig[ReadConfig]
+      with Logging {
 
   import ReadConfig._
 
+  /**
+   * Returns a copy of this configuration with the given option set.
+   *
+   * @param key   option name
+   * @param value option value
+   * @return a copy that includes `key`
+   * @since 0.2.0
+   */
   override def withOption(key: String, value: String): ReadConfig = {
 
     this.copy(
@@ -31,8 +41,10 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
-   * TODO
-   * @return
+   * Returns the STTP backend factory selected by the certificate-validation option.
+   *
+   * @return [[DisabledCertValidationBackendFactory]] when disabled, otherwise [[DefaultSyncBackendFactory]]
+   * @since 0.2.0
    */
   def backendFactory: BackendFactory = {
 
@@ -40,14 +52,18 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
       DISABLE_CERT_VALIDATION, PropertyConversions.ToBoolean, false
     )
     if (disableCertValidation) {
+      log.warn("Disabling certificate validation is highly discouraged. Use it at your own risk")
       DisabledCertValidationBackendFactory
     } else {
       DefaultSyncBackendFactory
     }
   }
 
-  /** TODO
-   * @return
+  /**
+   * Returns authentication options taken from properties prefixed with <b>auth.</b>
+   *
+   * @return an authentication configuration with the prefix stripped from each key
+   * @since 0.2.0
    */
   def authConfig: AuthConfig = {
 
@@ -70,6 +86,21 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
     withOption(
       QUERY_PREFIX + QueryLayerConfig.OUT_FIELDS_KEY,
       fields.mkString(",")
+    )
+  }
+
+  /**
+   * Returns a copy of this configuration with option <b>query.returnGeometry</b> set.
+   *
+   * @param flag whether the query should include geometry
+   * @return a copy whose <b>query.returnGeometry</b> option is `flag`
+   * @since 0.2.0
+   */
+  def withReturnGeometry(flag: Boolean): ReadConfig = {
+
+    withOption(
+      QUERY_PREFIX + QueryLayerConfig.RETURN_GEOMETRY_KEY,
+      String.valueOf(flag)
     )
   }
 
@@ -157,7 +188,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
 
     withRequestHandlerDo {
       _.getFeatureLayerFieldsAndGeometry(
-        layerUri, queryLayerConfig.outFields, None
+        layerUri, queryLayerConfig.outFields, maybeRequestToken
       )
     }
   }
@@ -172,7 +203,7 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
 
     withRequestHandlerDo {
       _.returnCountOnly(
-        layerUri, queryLayerConfig.where, queryLayerConfig.objectIDs, None
+        layerUri, queryLayerConfig.where, queryLayerConfig.objectIDs, maybeRequestToken
       ).count
     }
   }
@@ -194,10 +225,12 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
-   * TODO
-   * @return
+   * Requests an ArcGIS token when authentication options are complete.
+   *
+   * @return the generated token, or `None` if root URL or credentials are missing
+   * @since 0.2.0
    */
-  def maybeRequestToken: Option[String] = {
+  private def maybeRequestToken: Option[String] = {
 
     val config = authConfig
     for {
@@ -272,12 +305,16 @@ object ReadConfig {
   final val PARTITIONING_PREFIX = "partitioning."
 
   /**
-   * TODO
+   * Property key for disabling TLS certificate validation.
+   *
+   * @since 0.2.0
    */
   final val DISABLE_CERT_VALIDATION = "disableCertValidation"
 
   /**
-   * TODO
+   * Prefix of properties forwarded to [[AuthConfig]].
+   *
+   * @since 0.2.0
    */
   final val AUTH_PREFIX = "auth."
 }

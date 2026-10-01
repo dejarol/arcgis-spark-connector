@@ -34,7 +34,7 @@ class ReadRequestHandlerIntegrationSpec
                                  ): Unit = {
 
     // [1.1] Assert geometry type
-    response.geometryType shouldEqual expectedGeometryType
+    response.geometryType.value shouldBe expectedGeometryType
 
     // [1.2] Assert some fields exist
     response.fields shouldNot be (empty)
@@ -63,8 +63,11 @@ class ReadRequestHandlerIntegrationSpec
     // [1.6] Assert content of spatialReference
     expectedSR.foreach {
       wkid =>
-        response.spatialReference.wkid.value shouldBe wkid
-        response.spatialReference.latestWkid.value shouldBe wkid
+        val maybeActualSR = response.spatialReference
+        maybeActualSR shouldBe defined
+        val actualSR = maybeActualSR.get
+        actualSR.wkid.value shouldBe wkid
+        actualSR.latestWkid.value shouldBe wkid
     }
   }
 

@@ -8,32 +8,52 @@ import java.security.cert.X509Certificate
 import javax.net.ssl.{SSLContext, X509TrustManager, HttpsURLConnection}
 
 /**
- * TODO
+ * Creates an STTP synchronous backend used to send HTTP requests.
+ *
+ * @since 0.2.0
  */
 trait BackendFactory {
 
   /**
-   * TODO
-   * @return
+   * Builds a synchronous STTP backend.
+   *
+   * @return a backend ready to send requests
+   * @since 0.2.0
    */
   def buildBackend(): SyncBackend
 }
 
 /**
- * TODO
+ * Factory that creates STTP's default synchronous backend.
+ *
+ * @since 0.2.0
  */
 object DefaultSyncBackendFactory
   extends BackendFactory {
 
+  /**
+   * Builds STTP's default synchronous backend.
+   *
+   * @return a default [[sttp.client4.DefaultSyncBackend]]
+   * @since 0.2.0
+   */
   override def buildBackend(): SyncBackend = DefaultSyncBackend()
 }
 
 /**
- * TODO
+ * Factory that creates a backend which does not validate TLS certificates.
+ *
+ * @since 0.2.0
  */
 object DisabledCertValidationBackendFactory
   extends BackendFactory {
 
+  /**
+   * Builds a backend that trusts all TLS certificates.
+   *
+   * @return an HTTP backend with certificate validation disabled
+   * @since 0.2.0
+   */
   override def buildBackend(): SyncBackend = {
 
     // [1] Create a trust manager that trusts all certificates

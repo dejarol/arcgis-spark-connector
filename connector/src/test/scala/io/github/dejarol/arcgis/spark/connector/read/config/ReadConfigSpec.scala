@@ -171,6 +171,15 @@ class ReadConfigSpec
             outFields
           ).queryLayerConfig.outFields.value should contain theSameElementsAs outFields
         }
+
+        it("returnGeometry") {
+
+          val flag = true
+          emptyReadConfig.queryLayerConfig.returnGeometry shouldBe empty
+          emptyReadConfig.withReturnGeometry(
+            flag
+          ).queryLayerConfig.returnGeometry.value shouldBe flag
+        }
       }
     }
   }

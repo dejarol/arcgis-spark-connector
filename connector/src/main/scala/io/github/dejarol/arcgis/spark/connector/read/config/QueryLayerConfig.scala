@@ -32,15 +32,19 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   }
 
   /**
-   * TODO
-   * @param token
-   * @return
+   * Returns a copy of this configuration with the given authentication token set.
+   *
+   * @param token ArcGIS authentication token
+   * @return a copy whose `token` option is `token`
+   * @since 0.2.0
    */
   def withToken(token: String): QueryLayerConfig = withOption(TOKEN, token)
 
   /**
-   * TODO
-   * @return
+   * Returns the ArcGIS authentication token, if set.
+   *
+   * @return the token, or `None` if unset
+   * @since 0.2.0
    */
   def token: Option[String] = get(TOKEN)
 
@@ -106,7 +110,8 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
       objectIDs = objectIDs,
       outFields = outFields,
       returnGeometry = returnGeometry,
-      outSR = outSR
+      outSR = outSR,
+      token = token
     )
   }
 }
@@ -149,7 +154,9 @@ object QueryLayerConfig {
   final val OUT_SR_KEY = "outSR"
 
   /**
-   * TODO
+   * Property key for the ArcGIS authentication token.
+   *
+   * @since 0.2.0
    */
   final val TOKEN = "token"
 }

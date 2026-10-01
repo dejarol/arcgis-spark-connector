@@ -7,8 +7,10 @@ import sttp.model.Uri
 import java.time.Duration
 
 /**
- * TODO
+ * Authentication options used to request an ArcGIS generate-token response.
+ *
  * @param properties configuration entries keyed by property name
+ * @since 0.2.0
  */
 case class AuthConfig(override protected val properties: CaseInsensitiveMap[String])
   extends BaseConfig(properties) {
@@ -16,32 +18,42 @@ case class AuthConfig(override protected val properties: CaseInsensitiveMap[Stri
   import AuthConfig._
 
   /**
-   * TODO
-   * @return
+   * Returns the ArcGIS root URL used for token generation, if set.
+   *
+   * @return the parsed root URI, or `None` if unset
+   * @since 0.2.0
    */
   def rootUrl: Option[Uri] = getAs[Uri](ROOT_URL, PropertyConversions.ToUri)
 
   /**
-   * TODO
-   * @return
+   * Returns the account user name, if set.
+   *
+   * @return the user name, or `None` if unset
+   * @since 0.2.0
    */
   def username: Option[String] = get(USERNAME)
 
   /**
-   * TODO
-   * @return
+   * Returns the account password, if set.
+   *
+   * @return the password, or `None` if unset
+   * @since 0.2.0
    */
   def password: Option[String] = get(PASSWORD)
 
   /**
-   * todo
-   * @return
+   * Returns the HTTP referer sent with the generate-token request, if set.
+   *
+   * @return the referer, or `None` if unset
+   * @since 0.2.0
    */
   def referer: Option[String] = get(REFERER)
 
   /**
-   * TODO
-   * @return
+   * Returns the requested token lifetime in minutes.
+   *
+   * @return the configured lifetime, or `60` when unset
+   * @since 0.2.0
    */
   def tokenExpirationMinutes: Int = {
 
@@ -53,8 +65,10 @@ case class AuthConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
-   * TODO
-   * @return
+   * Builds generate-token parameters when username, password, and referer are all set.
+   *
+   * @return the parameters, or `None` if any required credential is missing
+   * @since 0.2.0
    */
   def generateTokenParameters: Option[GenerateTokenParameters] = {
 
@@ -72,13 +86,38 @@ case class AuthConfig(override protected val properties: CaseInsensitiveMap[Stri
 
 object AuthConfig {
 
+  /**
+   * Property key for the ArcGIS root URL used for token generation.
+   *
+   * @since 0.2.0
+   */
   final val ROOT_URL = "rootUrl"
 
+  /**
+   * Property key for the account user name.
+   *
+   * @since 0.2.0
+   */
   final val USERNAME = "username"
 
+  /**
+   * Property key for the account password.
+   *
+   * @since 0.2.0
+   */
   final val PASSWORD = "password"
 
+  /**
+   * Property key for the HTTP referer sent with the generate-token request.
+   *
+   * @since 0.2.0
+   */
   final val REFERER = "referer"
 
+  /**
+   * Property key for the requested token lifetime in minutes.
+   *
+   * @since 0.2.0
+   */
   final val TOKEN_EXPIRATION_MINUTES = "tokenExpirationMinutes"
 }

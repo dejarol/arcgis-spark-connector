@@ -18,8 +18,10 @@ class ArcgisScan(
   extends Scan {
 
   /**
-   * TODO
-   * @return
+   * Returns the read options used by this scan.
+   *
+   * @return the scan configuration
+   * @since 0.2.0
    */
   def config: ReadConfig = scanConfig
 
