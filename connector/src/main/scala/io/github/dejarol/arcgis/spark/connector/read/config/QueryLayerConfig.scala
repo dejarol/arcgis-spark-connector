@@ -32,6 +32,19 @@ case class QueryLayerConfig(override protected val properties: CaseInsensitiveMa
   }
 
   /**
+   * TODO
+   * @param token
+   * @return
+   */
+  def withToken(token: String): QueryLayerConfig = withOption(TOKEN, token)
+
+  /**
+   * TODO
+   * @return
+   */
+  def token: Option[String] = get(TOKEN)
+
+  /**
    * Returns the ArcGIS `where` clause, if set.
    *
    * @return the where expression, or `None` if unset
@@ -134,4 +147,9 @@ object QueryLayerConfig {
    * @since 0.1.0
    */
   final val OUT_SR_KEY = "outSR"
+
+  /**
+   * TODO
+   */
+  final val TOKEN = "token"
 }

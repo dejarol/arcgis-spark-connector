@@ -5,11 +5,6 @@ import io.github.dejarol.arcgis.spark.connector.core.models.EsriGeometryType
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.models.QueryLayerResponse
 import org.scalatest.{Inspectors, OptionValues}
-import sttp.client4.httpurlconnection.HttpURLConnectionBackend
-
-import java.security.SecureRandom
-import java.security.cert.X509Certificate
-import javax.net.ssl.{SSLContext, X509TrustManager}
 
 class ReadRequestHandlerIntegrationSpec
   extends ArcgisIntegrationSpec

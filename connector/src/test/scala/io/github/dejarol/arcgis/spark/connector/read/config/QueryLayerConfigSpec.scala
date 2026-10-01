@@ -12,6 +12,16 @@ class QueryLayerConfigSpec
   describe(anInstanceOf[QueryLayerConfig]) {
     describe(SHOULD) {
       describe("extract query parameters like") {
+        it("token") {
+
+          emptyConfig.token shouldBe empty
+          val expected = "tk"
+          val actual = QueryLayerConfig(
+            createSingletonCIMap(QueryLayerConfig.TOKEN, expected)
+          ).token
+          actual.value shouldBe expected
+        }
+
         it("where") {
 
           emptyConfig.where shouldBe empty
@@ -84,6 +94,13 @@ class QueryLayerConfigSpec
           emptyConfig.withObjectIDs(
             objIDs
           ).objectIDs.value should contain theSameElementsAs objIDs
+        }
+
+        it("the token") {
+
+          val token = "theToken"
+          emptyConfig.token shouldBe empty
+          emptyConfig.withToken(token).token.value shouldBe token
         }
       }
     }

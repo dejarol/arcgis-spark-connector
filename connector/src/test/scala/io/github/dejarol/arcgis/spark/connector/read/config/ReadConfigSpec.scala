@@ -118,30 +118,48 @@ class ReadConfigSpec
           partitioningConfig should contain key "k1"
           partitioningConfig shouldNot contain key "k2"
         }
-      }
 
-      it("the backend factory") {
+        it("the backend factory") {
 
-        // [1] Default: option is missing
-        emptyReadConfig.backendFactory shouldBe a[DefaultSyncBackendFactory.type]
+          // [1] Default: option is missing
+          emptyReadConfig.backendFactory shouldBe a[DefaultSyncBackendFactory.type]
 
-        // [2] options is set to false
-        ReadConfig(
-          createCIMap(
-            Map(
-              ReadConfig.DISABLE_CERT_VALIDATION -> "false"
+          // [2] options is set to false
+          ReadConfig(
+            createCIMap(
+              Map(
+                ReadConfig.DISABLE_CERT_VALIDATION -> "false"
+              )
             )
-          )
-        ).backendFactory shouldBe a[DefaultSyncBackendFactory.type]
+          ).backendFactory shouldBe a[DefaultSyncBackendFactory.type]
 
-        // [3] option is set to true
-        ReadConfig(
-          createCIMap(
-            Map(
-              ReadConfig.DISABLE_CERT_VALIDATION -> "true"
+          // [3] option is set to true
+          ReadConfig(
+            createCIMap(
+              Map(
+                ReadConfig.DISABLE_CERT_VALIDATION -> "true"
+              )
             )
-          )
-        ).backendFactory shouldBe a[DisabledCertValidationBackendFactory.type]
+          ).backendFactory shouldBe a[DisabledCertValidationBackendFactory.type]
+        }
+
+        it("auth options") {
+
+          emptyReadConfig.authConfig shouldBe empty
+
+          val authConfig = ReadConfig(
+            createCIMap(
+              Map(
+                ReadConfig.AUTH_PREFIX + "k1" -> "v1",
+                "k2" -> "v2"
+              )
+            )
+          ).authConfig
+
+          authConfig shouldNot be(empty)
+          authConfig should contain key "k1"
+          authConfig shouldNot contain key "k2"
+        }
       }
 
       describe("enrich the existing options with") {

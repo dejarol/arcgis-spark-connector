@@ -30,7 +30,7 @@ class ReadIntegrationSpec
    * @param df
    * @return
    */
-  private def scanOf(df: DataFrame): Option[ArcgisScan] = {
+  private def scanImplementationOf(df: DataFrame): Option[ArcgisScan] = {
 
     df.queryExecution.executedPlan
       .collectFirst {
@@ -133,7 +133,7 @@ class ReadIntegrationSpec
               )
             ).select(requiredColumns.map(f.col): _*)
 
-            val maybeScan = scanOf(df)
+            val maybeScan = scanImplementationOf(df)
             maybeScan shouldBe defined
             val scan = maybeScan.get
             scan.readSchema().fieldNames should contain theSameElementsAs requiredColumns

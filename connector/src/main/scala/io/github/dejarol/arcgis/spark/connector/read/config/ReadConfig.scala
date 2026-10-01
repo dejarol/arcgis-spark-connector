@@ -1,7 +1,7 @@
 package io.github.dejarol.arcgis.spark.connector.read.config
 
 import io.github.dejarol.arcgis.spark.connector.core.JavaScalaConverters
-import io.github.dejarol.arcgis.spark.connector.core.config.{BaseConfig, ExtendableConfig, NoSuchPropertyException, PropertyConversions}
+import io.github.dejarol.arcgis.spark.connector.core.config.{AuthConfig, BaseConfig, ExtendableConfig, NoSuchPropertyException, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.http.{BackendFactory, DefaultSyncBackendFactory, DisabledCertValidationBackendFactory}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
@@ -44,6 +44,16 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
     } else {
       DefaultSyncBackendFactory
     }
+  }
+
+  /** TODO
+   * @return
+   */
+  def authConfig: AuthConfig = {
+
+    AuthConfig(
+      propertiesStartingWithPrefix(AUTH_PREFIX)
+    )
   }
 
   /**
@@ -89,9 +99,14 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
    */
   def queryLayerConfig: QueryLayerConfig = {
 
-    QueryLayerConfig(
+    val maybeToken = maybeRequestToken
+    val config = QueryLayerConfig(
       propertiesStartingWithPrefix(QUERY_PREFIX)
     )
+
+    maybeToken.map {
+      config.withToken
+    }.getOrElse(config)
   }
 
   /**
@@ -177,6 +192,21 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
       )
     }
   }
+
+  /**
+   * TODO
+   * @return
+   */
+  def maybeRequestToken: Option[String] = {
+
+    val config = authConfig
+    for {
+      url <- config.rootUrl
+      parameters <- config.generateTokenParameters
+    } yield withRequestHandlerDo {
+      _.requestToken(url, parameters)
+    }
+  }
 }
 
 object ReadConfig {
@@ -242,8 +272,12 @@ object ReadConfig {
   final val PARTITIONING_PREFIX = "partitioning."
 
   /**
-   * todo
+   * TODO
    */
-
   final val DISABLE_CERT_VALIDATION = "disableCertValidation"
+
+  /**
+   * TODO
+   */
+  final val AUTH_PREFIX = "auth."
 }
