@@ -17,6 +17,7 @@ class ReadIntegrationSpec
    *
    * @param options read options
    * @return a DataFrame containing the query results
+   * @since 0.2.0
    */
   private def invokeDatasourceWithOptions(options: Map[String, String]): DataFrame = {
 
@@ -26,8 +27,11 @@ class ReadIntegrationSpec
   }
 
   /**
-   * TODO
-   * @return
+   * Finds the [[ArcgisScan]] used by the given DataFrame's executed plan, if present.
+   *
+   * @param df DataFrame produced by this datasource
+   * @return the scan implementation, or `None` if the plan has no [[ArcgisScan]]
+   * @since 0.2.0
    */
   private def scanImplementationOf(df: DataFrame): Option[ArcgisScan] = {
 

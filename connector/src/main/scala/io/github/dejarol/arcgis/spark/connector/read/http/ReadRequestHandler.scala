@@ -19,10 +19,12 @@ case class ReadRequestHandler(override protected val backend: SyncBackend)
   extends BaseRequestHandler(backend) {
 
   /**
-   * TODO
-   * @param rootUrl
-   * @param parameters
-   * @return
+   * Requests an ArcGIS authentication token.
+   *
+   * @param rootUrl    ArcGIS root URL used for token generation
+   * @param parameters credentials and options sent with the generate-token request
+   * @return the generated token
+   * @since 0.2.0
    */
   def requestToken(
                     rootUrl: Uri,
