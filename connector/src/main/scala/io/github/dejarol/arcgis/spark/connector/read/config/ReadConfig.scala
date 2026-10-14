@@ -162,6 +162,19 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   def shouldReturnGeometry: Boolean = queryLayerConfig.returnGeometry.getOrElse(false)
 
   /**
+   * TODO
+   * @return
+   */
+  def pushdownPredicate: Boolean = {
+
+    getAs[Boolean](
+      PUSHDOWN_PREDICATE_KEY,
+      PropertyConversions.ToBoolean,
+      true
+    )
+  }
+
+  /**
    * Runs an action against a request handler that uses the default STTP backend.
    *
    * @param action function applied to the request handler
@@ -317,4 +330,9 @@ object ReadConfig {
    * @since 0.2.0
    */
   final val AUTH_PREFIX = "auth."
+
+  /**
+   * TODO
+   */
+  final val PUSHDOWN_PREDICATE_KEY = "pushdownPredicate"
 }

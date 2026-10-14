@@ -160,6 +160,21 @@ class ReadConfigSpec
           authConfig should contain key "k1"
           authConfig shouldNot contain key "k2"
         }
+
+        it("pushdownPredicate") {
+
+          // [1] Empty config: should return default
+          emptyReadConfig.pushdownPredicate shouldBe true
+
+          // [2] Non-empty config: should retrieve the user-provided value
+          ReadConfig(
+            createSingletonCIMap(ReadConfig.PUSHDOWN_PREDICATE_KEY, "false")
+          ).pushdownPredicate shouldBe false
+
+          ReadConfig(
+            createSingletonCIMap(ReadConfig.PUSHDOWN_PREDICATE_KEY, "true")
+          ).pushdownPredicate shouldBe true
+        }
       }
 
       describe("enrich the existing options with") {

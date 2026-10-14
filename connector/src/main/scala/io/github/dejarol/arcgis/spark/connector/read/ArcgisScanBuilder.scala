@@ -2,7 +2,8 @@ package io.github.dejarol.arcgis.spark.connector.read
 
 import io.github.dejarol.arcgis.spark.connector.core.schema.SchemaUtils
 import io.github.dejarol.arcgis.spark.connector.read.config.ReadConfig
-import org.apache.spark.sql.connector.read.{Scan, ScanBuilder, SupportsPushDownRequiredColumns}
+import org.apache.spark.sql.connector.expressions.filter.Predicate
+import org.apache.spark.sql.connector.read.{Scan, ScanBuilder, SupportsPushDownRequiredColumns, SupportsPushDownV2Filters}
 import org.apache.spark.sql.types.{StructField, StructType}
 
 /**
@@ -19,10 +20,12 @@ class ArcgisScanBuilder(
                          private val tableSchema: StructType
                        )
   extends ScanBuilder
-    with SupportsPushDownRequiredColumns {
+    with SupportsPushDownRequiredColumns
+    with SupportsPushDownV2Filters {
 
   private var scanSchema = tableSchema
   private var scanConfig = readConfig
+  private var supportedPushedPredicates: Array[Predicate] = Array.empty
 
   /**
    * Restricts the scan to the columns required by Spark.
@@ -75,6 +78,30 @@ class ArcgisScanBuilder(
       .withOutFields(attributeColumnsNames)
       .withReturnGeometry(requiredColumnsIncludeGeometryColumn)
   }
+
+  /**
+   * TODO
+   * @param predicates
+   * @return
+   */
+  override def pushPredicates(predicates: Array[Predicate]): Array[Predicate] = {
+
+    // [1] If predicate pushdown is enabled, evaluate the predicates that can be pushed
+    if (readConfig.pushdownPredicate) {
+
+    // TODO: implement
+      Array.empty
+    } else {
+      // Otherwise, evaluate all predicates after the scan
+      predicates
+    }
+  }
+
+  /**
+   * TODO
+   * @return
+   */
+  override def pushedPredicates(): Array[Predicate] = supportedPushedPredicates
 
   /**
    * Builds a scan for the configured table schema and read options.

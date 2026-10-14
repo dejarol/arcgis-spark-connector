@@ -200,7 +200,7 @@ class ReadIntegrationSpec
 
             // Inspect settings on the scan. We expect
             // [a] the scan schema to have only the required columns
-            // [b] the scan outFIelds to have only the attribute columns
+            // [b] the scan outFields to have only the attribute columns
             // [c] the scan returnGeometry flag set to true
 
             val maybeScan = scanImplementationOf(df)
@@ -221,6 +221,21 @@ class ReadIntegrationSpec
 
             df.columns should have size requiredColumns.size
             df.columns should contain theSameElementsAs requiredColumns
+          }
+        }
+
+        describe("pushing some predicates, like") {
+          it("a") {
+
+            val df = invokeDatasourceWithOptions(
+              Map(
+                ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString()
+              )
+            ).filter(
+              f.col("GEOID") === "01"
+            ).collect()
+
+            val a = 1
           }
         }
       }
