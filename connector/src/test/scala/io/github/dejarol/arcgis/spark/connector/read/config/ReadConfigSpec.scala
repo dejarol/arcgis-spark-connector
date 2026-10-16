@@ -195,6 +195,31 @@ class ReadConfigSpec
             flag
           ).queryLayerConfig.returnGeometry.value shouldBe flag
         }
+
+        it("where") {
+
+          // Empty config should have no where
+          emptyReadConfig.queryLayerConfig.where shouldBe empty
+
+          // Empty config enriched with an empty Seq should have no where
+          emptyReadConfig.withWhere(Seq.empty).queryLayerConfig.where shouldBe empty
+
+          // Empty config enriched with one condition should have that where
+          val (first, second) = ("GEOID = '01'", "NAME = 'john'")
+          emptyReadConfig.withWhere(Seq(first)).queryLayerConfig.where.value shouldBe first
+
+          // Empty config enriched with 2 conditions should have the logical AND of the 2 conditions
+          emptyReadConfig.withWhere(
+            Seq(first, second)
+          ).queryLayerConfig.where.value shouldBe s"($first) and ($second)"
+
+          // Non-empty config enriched with 1 condition should have the logical AND of the 2 conditions
+          ReadConfig(
+            createSingletonCIMap(
+              ReadConfig.QUERY_PREFIX + QueryLayerConfig.WHERE_KEY, first
+            )
+          ).withWhere(Seq(second)).queryLayerConfig.where.value shouldBe s"($first) and ($second)"
+        }
       }
     }
   }

@@ -105,6 +105,35 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
+   * TODO
+   * @param predicates
+   * @return
+   */
+  def withWhere(predicates: Seq[String]): ReadConfig = {
+
+    if (predicates.isEmpty) {
+      this
+    } else {
+
+      val conditionFromPredicates = if (predicates.size.equals(1)) {
+        predicates.head
+      } else {
+        predicates.map {
+          p => f"($p)"
+        }.mkString(" and ")
+      }
+
+      val updatedWhereCondition = queryLayerConfig.where.map {
+        where => f"($where) and $conditionFromPredicates"
+      }.getOrElse(conditionFromPredicates)
+
+      withOption(
+        QUERY_PREFIX + QueryLayerConfig.WHERE_KEY, updatedWhereCondition
+      )
+    }
+  }
+
+  /**
    * Returns the URI of the ArcGIS feature layer to read.
    *
    * @return the parsed layer URI

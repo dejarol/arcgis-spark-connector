@@ -7,7 +7,7 @@ class ArcgisPredicateTranslatorSpec
   extends BasicSpec
     with OptionValues {
 
-  describe(`object`[ArcgisPredicateTranslator.type ]) {
+  describe(`object`[ArcgisSQLPredicateBuilder.type ]) {
     describe(SHOULD) {
       describe("translate Spark predicates to SQL-92 predicates") {
         it("for checking null values") {

@@ -2,6 +2,7 @@ package io.github.dejarol.arcgis.spark.connector.read
 
 import io.github.dejarol.arcgis.spark.connector.core.schema.SchemaUtils
 import io.github.dejarol.arcgis.spark.connector.read.config.ReadConfig
+import io.github.dejarol.arcgis.spark.connector.read.predicates.ArcgisSQLPredicateBuilder
 import org.apache.spark.sql.connector.expressions.filter.Predicate
 import org.apache.spark.sql.connector.read.{Scan, ScanBuilder, SupportsPushDownRequiredColumns, SupportsPushDownV2Filters}
 import org.apache.spark.sql.types.{StructField, StructType}
@@ -25,7 +26,7 @@ class ArcgisScanBuilder(
 
   private var scanSchema = tableSchema
   private var scanConfig = readConfig
-  private var supportedPushedPredicates: Array[Predicate] = Array.empty
+  private var supportedPredicates: Array[Predicate] = Array.empty
 
   /**
    * Restricts the scan to the columns required by Spark.
@@ -89,8 +90,23 @@ class ArcgisScanBuilder(
     // [1] If predicate pushdown is enabled, evaluate the predicates that can be pushed
     if (readConfig.pushdownPredicate) {
 
-    // TODO: implement
-      Array.empty
+      // [1.1] Isolate supported predicates from unsupported
+      val (supported, unsupported) = predicates.partition {
+        p => ArcgisSQLPredicateBuilder.build(p).isDefined
+      }
+
+      // [1.2] Save supported, update scan config
+      supportedPredicates = supported
+      val arcgisSQLWhereConditions = supported.map {
+        ArcgisSQLPredicateBuilder.build
+      }.collect {
+        case Some(value) => value
+      }
+
+      scanConfig = scanConfig.withWhere(arcgisSQLWhereConditions)
+
+      // [1.3] return unsupported
+      unsupported
     } else {
       // Otherwise, evaluate all predicates after the scan
       predicates
@@ -101,7 +117,7 @@ class ArcgisScanBuilder(
    * TODO
    * @return
    */
-  override def pushedPredicates(): Array[Predicate] = supportedPushedPredicates
+  override def pushedPredicates(): Array[Predicate] = supportedPredicates
 
   /**
    * Builds a scan for the configured table schema and read options.

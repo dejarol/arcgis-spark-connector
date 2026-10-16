@@ -227,6 +227,7 @@ class ReadIntegrationSpec
         describe("pushing some predicates, like") {
           it("a") {
 
+            // TODO: complete
             val df = invokeDatasourceWithOptions(
               Map(
                 ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString()
