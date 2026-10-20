@@ -10,5 +10,6 @@ trait SparkMixins {
   protected final lazy val spark: SparkSession = SparkSession.builder()
     .master("local[*]")
     .appName(classOf[SparkMixins].getSimpleName)
+    .config("spark.sql.session.timeZone", "UTC")
     .getOrCreate()
 }

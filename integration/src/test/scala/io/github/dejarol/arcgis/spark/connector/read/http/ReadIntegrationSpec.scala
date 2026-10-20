@@ -5,9 +5,10 @@ import io.github.dejarol.arcgis.spark.connector.read.ArcgisScan
 import io.github.dejarol.arcgis.spark.connector.read.config.{QueryLayerConfig, ReadConfig}
 import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkMixins}
 import org.apache.spark.sql.execution.datasources.v2.BatchScanExec
-import org.apache.spark.sql.{Column, DataFrame, functions => f}
 import org.apache.spark.sql.types.StructType
+import org.apache.spark.sql.{Column, DataFrame, functions => f}
 import org.scalatest.OptionValues
+import sttp.model.Uri
 
 class ReadIntegrationSpec
   extends ArcgisIntegrationSpec
@@ -52,12 +53,13 @@ class ReadIntegrationSpec
    * @param expected
    */
   private def assertPushedPredicate(
+                                     layerUri: Uri,
                                      actual: Column,
                                      expected: String
                                    ): Unit = {
 
     val df = invokeDatasourceWithOptions(
-      Map(ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString())
+      Map(ReadConfig.LAYER_URI_KEY -> layerUri.toString())
     ).filter(actual)
 
     val maybeScan = scanImplementationOf(df)
@@ -68,8 +70,7 @@ class ReadIntegrationSpec
 
   describe(s"Datasource ${ArcgisTableProvider.SHORT_NAME}") {
     describe(SHOULD) {
-      // TODO: remove ignore
-      ignore("let users query a feature layer") {
+      describe("let users query a feature layer") {
         it("setting a where condition") {
 
           val df = invokeDatasourceWithOptions(
@@ -150,8 +151,7 @@ class ReadIntegrationSpec
 
 
       describe("support") {
-        // TODO: remove ignore
-        ignore("pushing required columns") {
+        describe("pushing required columns") {
           it("when returnGeometry is not set") {
 
             val requiredColumns = Seq("GEOID", "NAME")
@@ -250,32 +250,90 @@ class ReadIntegrationSpec
         }
 
         describe("pushing some predicates, like") {
-          describe("equality between a field and") {
-            it("a constant value") {
+          describe("comparisons between a field and") {
+            describe("a constant value of type") {
+              it("string") {
 
-              // String
-              assertPushedPredicate(
-                f.col("GEOID") === "01",
-                "(GEOID is not null) and (GEOID = '01')"
-              )
+                assertPushedPredicate(
+                  polygonLayerUri,
+                  f.col("GEOID") === "01",
+                  "(GEOID is not null) and (GEOID = '01')"
+                )
 
-              // Integer
-              assertPushedPredicate(
-                f.col("B01001_001E") === 10,
-                "(B01001_001E is not null) and (B01001_001E = 10)"
-              )
+              }
 
-              // Double
-              assertPushedPredicate(
-                f.col("B01001_001M") === 0.1,
-                "(B01001_001M is not null) and (B01001_001M = 0.1)"
-              )
+              it("integer") {
+
+                // Equal
+                assertPushedPredicate(
+                  polygonLayerUri,
+                  f.col("B01001_001E") === 10,
+                  "(B01001_001E is not null) and (B01001_001E = 10)"
+                )
+
+                // Less than
+                assertPushedPredicate(
+                  polygonLayerUri,
+                  f.col("B01001_001E") < 10,
+                  "(B01001_001E is not null) and (B01001_001E < 10)"
+                )
+              }
+
+              it("double") {
+
+                // Equal
+                assertPushedPredicate(
+                  polygonLayerUri,
+                  f.col("B01001_001M") === 0.1,
+                  "(B01001_001M is not null) and (B01001_001M = 0.1)"
+                )
+
+                // Greater than
+                assertPushedPredicate(
+                  polygonLayerUri,
+                  f.col("B01001_001M") > 0.1,
+                  "(B01001_001M is not null) and (B01001_001M > 0.1)"
+                )
+              }
+
+              it("date") {
+
+                // WARNING: for these tests to succeed, the timezone for the SparkSession should be set to UTC
+                // Equal
+                assertPushedPredicate(
+                  pointLayerUri,
+                  f.col("Open_Date") === "2024-01-01",
+                  "(Open_Date is not null) and (Open_Date = TIMESTAMP '2024-01-01 00:00:00')"
+                )
+              }
             }
 
             it("another field") {
 
-              // TODO
+              assertPushedPredicate(
+                polygonLayerUri,
+                f.col("GEOID") === f.col("NAME"),
+                "(GEOID is not null) and (NAME is not null) and (GEOID = NAME)"
+              )
             }
+          }
+
+          it("IN clauses") {
+
+            assertPushedPredicate(
+              polygonLayerUri,
+              f.col("GEOID").isin("01", "02"),
+              "GEOID in ('01', '02')"
+            )
+          }
+
+          it("NOT IN clauses") {
+
+            assertPushedPredicate(
+              polygonLayerUri,
+              !f.col("GEOID").isin("01", "02"),
+              "not (GEOID in ('01', '02'))"
+            )
           }
         }
       }
