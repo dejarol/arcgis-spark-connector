@@ -4,6 +4,7 @@ import io.github.dejarol.arcgis.spark.connector.core.JavaScalaConverters
 import io.github.dejarol.arcgis.spark.connector.core.config.{AuthConfig, BaseConfig, ExtendableConfig, NoSuchPropertyException, PropertyConversions}
 import io.github.dejarol.arcgis.spark.connector.core.http.{BackendFactory, DefaultSyncBackendFactory, DisabledCertValidationBackendFactory}
 import io.github.dejarol.arcgis.spark.connector.core.models.{EsriGeometryType, FeatureLayerField}
+import io.github.dejarol.arcgis.spark.connector.core.utils.Strings
 import io.github.dejarol.arcgis.spark.connector.read.QueryLayerParameters
 import io.github.dejarol.arcgis.spark.connector.read.http.ReadRequestHandler
 import io.github.dejarol.arcgis.spark.connector.read.models.QueryLayerResponse
@@ -111,21 +112,33 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
    */
   def withWhere(predicates: Seq[String]): ReadConfig = {
 
+    // If no predicates, are pushed, return this instance
     if (predicates.isEmpty) {
       this
     } else {
 
-      val conditionFromPredicates = if (predicates.size.equals(1)) {
-        predicates.head
-      } else {
-        predicates.map {
-          p => f"($p)"
-        }.mkString(" and ")
-      }
+      // Create an updated where condition
+      val updatedWhereCondition: String = if (predicates.size.equals(1)) {
 
-      val updatedWhereCondition = queryLayerConfig.where.map {
-        where => f"($where) and $conditionFromPredicates"
-      }.getOrElse(conditionFromPredicates)
+        // When only 1 condition is pushed, the updatedWhereCondition is either the pushed condition
+        // itself or the logical and between the user-defined condition and the pushed one
+        val pushedCondition = predicates.head
+        queryLayerConfig.where.map {
+          where => f"${Strings.withParenthesis(where)} and ${Strings.withParenthesis(pushedCondition)}"
+        }.getOrElse(pushedCondition)
+      } else {
+
+        // When more than 1 condition is pushed, the updatedWhereCondition is either the pushed condition
+        // itself or the logical and between the user-defined condition and the pushed one. The difference is
+        // on the building: when having multiple pushes, let's now wrap the logical and within other parentheses
+        val pushedCondition = predicates.map(
+          Strings.withParenthesis
+        ).mkString(" and ")
+
+        queryLayerConfig.where.map {
+          where => f"${Strings.withParenthesis(where)} and $pushedCondition"
+        }.getOrElse(pushedCondition)
+      }
 
       withOption(
         QUERY_PREFIX + QueryLayerConfig.WHERE_KEY, updatedWhereCondition

@@ -1,5 +1,6 @@
 package io.github.dejarol.arcgis.spark.connector.read.predicates
 
+import io.github.dejarol.arcgis.spark.connector.core.utils.Strings
 import org.apache.spark.sql.connector.expressions.filter.Predicate
 import org.apache.spark.sql.connector.expressions.{Expression, Literal, NamedReference}
 import org.apache.spark.sql.types.StringType
@@ -29,7 +30,11 @@ object ArcgisSQLPredicateBuilder {
   private def buildLiteral(lit: Literal[_]): Option[String] = {
 
     lit.dataType() match {
-      case StringType => Some(f"'${String.valueOf(lit.value())}'")
+      case StringType => Some(
+        Strings.withSingleQuote(
+          String.valueOf(lit.value())
+        )
+      )
       case _ => Some(String.valueOf(lit.value()))
     }
   }
@@ -49,7 +54,7 @@ object ArcgisSQLPredicateBuilder {
         predicate, predicate.name().equals("IS_NOT_NULL")
       )
 
-      // [1.2] Comparisons
+      // [1.2] Binary comparison
       case "=" | "<>" | "<" | "<=" | ">" | ">=" => buildBinaryComparisonPredicate(
         predicate, predicate.name()
       )
@@ -65,9 +70,9 @@ object ArcgisSQLPredicateBuilder {
    * @return
    */
   private def buildNullPredicate(
-                                      predicate: Predicate,
-                                      negate: Boolean
-                                    ): Option[String] = {
+                                  predicate: Predicate,
+                                  negate: Boolean
+                                ): Option[String] = {
 
     for {
       firstExpression <- predicate.children().headOption

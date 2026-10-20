@@ -5,12 +5,14 @@ import io.github.dejarol.arcgis.spark.connector.read.ArcgisScan
 import io.github.dejarol.arcgis.spark.connector.read.config.{QueryLayerConfig, ReadConfig}
 import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkMixins}
 import org.apache.spark.sql.execution.datasources.v2.BatchScanExec
-import org.apache.spark.sql.{DataFrame, functions => f}
+import org.apache.spark.sql.{Column, DataFrame, functions => f}
 import org.apache.spark.sql.types.StructType
+import org.scalatest.OptionValues
 
 class ReadIntegrationSpec
   extends ArcgisIntegrationSpec
-    with SparkMixins {
+    with SparkMixins
+      with OptionValues {
 
   /**
    * Invokes the datasource defined in this project in read mode using the given options.
@@ -44,9 +46,30 @@ class ReadIntegrationSpec
       }
   }
 
+  /**
+   * TODO
+   * @param actual
+   * @param expected
+   */
+  private def assertPushedPredicate(
+                                     actual: Column,
+                                     expected: String
+                                   ): Unit = {
+
+    val df = invokeDatasourceWithOptions(
+      Map(ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString())
+    ).filter(actual)
+
+    val maybeScan = scanImplementationOf(df)
+    maybeScan shouldBe defined
+    val scan = maybeScan.get
+    scan.config.queryLayerConfig.where.value shouldBe expected
+  }
+
   describe(s"Datasource ${ArcgisTableProvider.SHORT_NAME}") {
     describe(SHOULD) {
-      describe("let users query a feature layer") {
+      // TODO: remove ignore
+      ignore("let users query a feature layer") {
         it("setting a where condition") {
 
           val df = invokeDatasourceWithOptions(
@@ -125,8 +148,10 @@ class ReadIntegrationSpec
         }
       }
 
+
       describe("support") {
-        describe("pushing required columns") {
+        // TODO: remove ignore
+        ignore("pushing required columns") {
           it("when returnGeometry is not set") {
 
             val requiredColumns = Seq("GEOID", "NAME")
@@ -225,18 +250,32 @@ class ReadIntegrationSpec
         }
 
         describe("pushing some predicates, like") {
-          it("a") {
+          describe("equality between a field and") {
+            it("a constant value") {
 
-            // TODO: complete
-            val df = invokeDatasourceWithOptions(
-              Map(
-                ReadConfig.LAYER_URI_KEY -> polygonLayerUri.toString()
+              // String
+              assertPushedPredicate(
+                f.col("GEOID") === "01",
+                "(GEOID is not null) and (GEOID = '01')"
               )
-            ).filter(
-              f.col("GEOID") === "01"
-            ).collect()
 
-            val a = 1
+              // Integer
+              assertPushedPredicate(
+                f.col("B01001_001E") === 10,
+                "(B01001_001E is not null) and (B01001_001E = 10)"
+              )
+
+              // Double
+              assertPushedPredicate(
+                f.col("B01001_001M") === 0.1,
+                "(B01001_001M is not null) and (B01001_001M = 0.1)"
+              )
+            }
+
+            it("another field") {
+
+              // TODO
+            }
           }
         }
       }

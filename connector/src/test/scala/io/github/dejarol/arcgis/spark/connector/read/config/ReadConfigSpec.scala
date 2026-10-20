@@ -219,6 +219,13 @@ class ReadConfigSpec
               ReadConfig.QUERY_PREFIX + QueryLayerConfig.WHERE_KEY, first
             )
           ).withWhere(Seq(second)).queryLayerConfig.where.value shouldBe s"($first) and ($second)"
+
+          // Non-empty config enriched with 2 conditions should have the logical AND of the 3 conditions
+          ReadConfig(
+            createSingletonCIMap(
+              ReadConfig.QUERY_PREFIX + QueryLayerConfig.WHERE_KEY, first
+            )
+          ).withWhere(Seq(first, second)).queryLayerConfig.where.value shouldBe s"($first) and ($first) and ($second)"
         }
       }
     }
