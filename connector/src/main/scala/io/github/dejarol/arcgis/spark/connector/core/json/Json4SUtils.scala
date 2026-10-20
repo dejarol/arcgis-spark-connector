@@ -1,7 +1,8 @@
 package io.github.dejarol.arcgis.spark.connector.core.json
 
-import org.json4s.JValue
 import org.json4s.JsonAST.JNumber
+import org.json4s.native.Serialization
+import org.json4s.{DefaultFormats, Formats, JValue}
 
 object Json4SUtils {
 
@@ -18,5 +19,20 @@ object Json4SUtils {
       case _: JNumber => true
       case _ => false
     }
+  }
+
+  /**
+   * TODO
+   * @param value
+   * @param formats
+   * @tparam E
+   * @return
+   */
+  def asJSONString[E](
+                       value: E,
+                       formats: Formats = DefaultFormats
+                     ): String = {
+
+    Serialization.write(value)(formats)
   }
 }
