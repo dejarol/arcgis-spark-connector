@@ -1,7 +1,6 @@
-package io.github.dejarol.arcgis.spark.connector.read.http
+package io.github.dejarol.arcgis.spark.connector.read
 
 import io.github.dejarol.arcgis.spark.connector.core.schema.SchemaUtils
-import io.github.dejarol.arcgis.spark.connector.read.ArcgisScan
 import io.github.dejarol.arcgis.spark.connector.read.config.{QueryLayerConfig, ReadConfig}
 import io.github.dejarol.arcgis.spark.connector.{ArcgisIntegrationSpec, ArcgisTableProvider, SparkMixins}
 import org.apache.spark.sql.execution.datasources.v2.BatchScanExec
