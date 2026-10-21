@@ -12,7 +12,7 @@ import sttp.model.Uri
 class ReadIntegrationSpec
   extends ArcgisIntegrationSpec
     with SparkMixins
-      with OptionValues {
+    with OptionValues {
 
   /**
    * Invokes the datasource defined in this project in read mode using the given options.
@@ -47,9 +47,12 @@ class ReadIntegrationSpec
   }
 
   /**
-   * TODO
-   * @param actual
-   * @param expected
+   * Asserts that a DataFrame filter is pushed down as the given ArcGIS where clause.
+   *
+   * @param layerUri feature layer URI used to invoke the datasource
+   * @param actual   Spark column expression applied as a filter
+   * @param expected expected `query.where` value on the resulting scan
+   * @since 0.3.0
    */
   private def assertPushedPredicate(
                                      layerUri: Uri,
@@ -332,6 +335,24 @@ class ReadIntegrationSpec
               polygonLayerUri,
               !f.col("GEOID").isin("01", "02"),
               "not (GEOID in ('01', '02'))"
+            )
+          }
+
+          it("AND clauses") {
+
+            assertPushedPredicate(
+              polygonLayerUri,
+              f.col("GEOID").isNotNull && f.col("NAME").isNotNull,
+              f"(GEOID is not null) and (NAME is not null)"
+            )
+          }
+
+          it("OR clauses") {
+
+            assertPushedPredicate(
+              polygonLayerUri,
+              f.col("GEOID").isNotNull || f.col("NAME").isNotNull,
+              f"(GEOID is not null) or (NAME is not null)"
             )
           }
         }

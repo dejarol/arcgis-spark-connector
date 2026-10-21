@@ -106,9 +106,14 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   }
 
   /**
-   * TODO
-   * @param predicates
-   * @return
+   * Returns a copy of this configuration with option <b>query.where</b> set from the given predicates.
+   *
+   * Combines any existing user-defined where clause with the pushed predicates using `AND`.
+   * Returns this instance unchanged when `predicates` is empty.
+   *
+   * @param predicates SQL fragments to merge into the where clause
+   * @return a copy whose <b>query.where</b> option includes `predicates`, or this instance when none are given
+   * @since 0.3.0
    */
   def withWhere(predicates: Seq[String]): ReadConfig = {
 
@@ -204,8 +209,10 @@ case class ReadConfig(override protected val properties: CaseInsensitiveMap[Stri
   def shouldReturnGeometry: Boolean = queryLayerConfig.returnGeometry.getOrElse(false)
 
   /**
-   * TODO
-   * @return
+   * Reports whether predicate pushdown is enabled.
+   *
+   * @return the `pushdownPredicate` option, or `true` when it is unset
+   * @since 0.3.0
    */
   def pushdownPredicate: Boolean = {
 
@@ -374,7 +381,9 @@ object ReadConfig {
   final val AUTH_PREFIX = "auth."
 
   /**
-   * TODO
+   * Property key for enabling or disabling predicate pushdown.
+   *
+   * @since 0.3.0
    */
   final val PUSHDOWN_PREDICATE_KEY = "pushdownPredicate"
 }

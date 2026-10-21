@@ -4,6 +4,11 @@ import org.json4s.JsonAST.JNumber
 import org.json4s.native.Serialization
 import org.json4s.{DefaultFormats, Formats, JValue}
 
+/**
+ * Helpers for inspecting json4s values and serializing Scala objects to JSON.
+ *
+ * @since 0.1.0
+ */
 object Json4SUtils {
 
   /**
@@ -22,11 +27,13 @@ object Json4SUtils {
   }
 
   /**
-   * TODO
-   * @param value
-   * @param formats
-   * @tparam E
-   * @return
+   * Serializes a value to a JSON string using json4s.
+   *
+   * @param value   value to serialize
+   * @param formats json4s formats used during serialization
+   * @tparam E type of the value to serialize
+   * @return a JSON string representation of `value`
+   * @since 0.3.0
    */
   def asJSONString[E](
                        value: E,

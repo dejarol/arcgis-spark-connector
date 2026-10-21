@@ -81,9 +81,14 @@ class ArcgisScanBuilder(
   }
 
   /**
-   * TODO
-   * @param predicates
-   * @return
+   * Pushes down the Spark V2 predicates that this datasource can evaluate.
+   *
+   * Converts supported predicates to ArcGIS SQL and stores them on the scan
+   * configuration. Returns every predicate unchanged when pushdown is disabled.
+   *
+   * @param predicates predicates requested by Spark
+   * @return the predicates that were not pushed down
+   * @since 0.3.0
    */
   override def pushPredicates(predicates: Array[Predicate]): Array[Predicate] = {
 
@@ -114,8 +119,10 @@ class ArcgisScanBuilder(
   }
 
   /**
-   * TODO
-   * @return
+   * Returns the predicates that were pushed down by [[pushPredicates]].
+   *
+   * @return the supported predicates stored during the last push
+   * @since 0.3.0
    */
   override def pushedPredicates(): Array[Predicate] = supportedPredicates
 
